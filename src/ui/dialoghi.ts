@@ -1,0 +1,79 @@
+import { el } from './dom';
+
+export interface PulsanteFoglio {
+  etichetta: string;
+  stile?: 'primario' | 'pericolo' | 'neutro';
+  /** Restituisce false per lasciare aperto il foglio (es. validazione fallita). */
+  azione?: () => boolean | void;
+}
+
+/**
+ * Foglio modale dal basso (bottom sheet) basato su <dialog>.
+ * Si chiude toccando lo sfondo o un pulsante.
+ */
+export function apriFoglio(titolo: string, contenuto: Node | null, pulsanti: PulsanteFoglio[]): Promise<void> {
+  return new Promise((risolvi) => {
+    const dlg = el('dialog', { class: 'foglio', 'aria-label': titolo });
+    const chiudi = () => {
+      dlg.close();
+    };
+    dlg.addEventListener('close', () => {
+      dlg.remove();
+      risolvi();
+    });
+    dlg.addEventListener('click', (ev) => {
+      if (ev.target === dlg) chiudi();
+    });
+    const barra = el(
+      'div',
+      { class: 'foglio-azioni' },
+      pulsanti.map((p) =>
+        el(
+          'button',
+          {
+            type: 'button',
+            class: `btn btn-${p.stile ?? 'neutro'}`,
+            onclick: () => {
+              if (p.azione?.() === false) return;
+              chiudi();
+            },
+          },
+          p.etichetta,
+        ),
+      ),
+    );
+    dlg.append(el('div', { class: 'foglio-corpo' }, el('h2', {}, titolo), contenuto, barra));
+    document.body.append(dlg);
+    dlg.showModal();
+  });
+}
+
+export async function conferma(
+  titolo: string,
+  messaggio: string,
+  etichettaOk = 'Conferma',
+  pericolo = false,
+): Promise<boolean> {
+  let ok = false;
+  await apriFoglio(titolo, el('p', { class: 'testo-foglio' }, messaggio), [
+    { etichetta: etichettaOk, stile: pericolo ? 'pericolo' : 'primario', azione: () => void (ok = true) },
+    { etichetta: 'Annulla' },
+  ]);
+  return ok;
+}
+
+export function avviso(titolo: string, messaggio: string): Promise<void> {
+  return apriFoglio(titolo, el('p', { class: 'testo-foglio' }, messaggio), [{ etichetta: 'OK', stile: 'primario' }]);
+}
+
+/** Notifica breve in basso. */
+export function toast(messaggio: string): void {
+  document.querySelectorAll('.toast').forEach((t) => t.remove());
+  const t = el('div', { class: 'toast', role: 'status' }, messaggio);
+  document.body.append(t);
+  requestAnimationFrame(() => t.classList.add('visibile'));
+  setTimeout(() => {
+    t.classList.remove('visibile');
+    setTimeout(() => t.remove(), 300);
+  }, 2200);
+}

@@ -1,0 +1,110 @@
+import type { Giornata, Impostazioni } from '../core/tipi';
+import { datiVuoti, migra, type DatiSalvati } from './migrazioni';
+
+const CHIAVE = 'timbrature';
+
+type Ascoltatore = () => void;
+
+/** Stato dell'app in memoria, sincronizzato su localStorage a ogni modifica. */
+class Store {
+  private dati: DatiSalvati;
+  private ascoltatori = new Set<Ascoltatore>();
+  /** Messaggio di errore di caricamento, se i dati salvati erano illeggibili. */
+  erroreCaricamento: string | null = null;
+
+  constructor() {
+    this.dati = this.carica();
+  }
+
+  private carica(): DatiSalvati {
+    let testo: string | null = null;
+    try {
+      testo = localStorage.getItem(CHIAVE);
+    } catch {
+      this.erroreCaricamento = 'Impossibile accedere alla memoria del browser.';
+      return datiVuoti();
+    }
+    if (!testo) return datiVuoti();
+    try {
+      return migra(JSON.parse(testo));
+    } catch (e) {
+      // Conserva la copia illeggibile per non perderla.
+      try {
+        localStorage.setItem(`${CHIAVE}-corrotto-${Date.now()}`, testo);
+      } catch {
+        /* ignora */
+      }
+      this.erroreCaricamento = `Dati salvati non leggibili (${(e as Error).message}). È stata creata una copia di sicurezza.`;
+      return datiVuoti();
+    }
+  }
+
+  private salva(): void {
+    try {
+      localStorage.setItem(CHIAVE, JSON.stringify(this.dati));
+    } catch {
+      alert('Salvataggio non riuscito: memoria del browser piena o non disponibile.');
+    }
+    for (const a of this.ascoltatori) a();
+  }
+
+  ascolta(a: Ascoltatore): () => void {
+    this.ascoltatori.add(a);
+    return () => this.ascoltatori.delete(a);
+  }
+
+  get impostazioni(): Impostazioni {
+    return this.dati.impostazioni;
+  }
+
+  get giornate(): Record<string, Giornata> {
+    return this.dati.giornate;
+  }
+
+  get tutto(): DatiSalvati {
+    return this.dati;
+  }
+
+  giornata(data: string): Giornata {
+    return this.dati.giornate[data] ?? { data, permessoInizioMinuti: 0, eventi: [] };
+  }
+
+  /** Applica una modifica alla giornata (creandola se serve) e salva. */
+  modificaGiornata(data: string, modifica: (g: Giornata) => void): void {
+    const g = structuredClone(this.giornata(data));
+    modifica(g);
+    if (g.eventi.length === 0 && g.permessoInizioMinuti === 0) delete this.dati.giornate[data];
+    else this.dati.giornate[data] = g;
+    this.salva();
+  }
+
+  modificaImpostazioni(modifica: (i: Impostazioni) => void): void {
+    modifica(this.dati.impostazioni);
+    this.salva();
+  }
+
+  /** Sostituisce tutti i dati (ripristino da backup JSON). */
+  sostituisci(dati: DatiSalvati): void {
+    this.dati = dati;
+    this.salva();
+  }
+
+  /** Unisce giornate importate, sovrascrivendo le date già presenti. */
+  unisciGiornate(giornate: Record<string, Giornata>): void {
+    Object.assign(this.dati.giornate, giornate);
+    this.salva();
+  }
+}
+
+export const store = new Store();
+
+/** Chiede al browser di non cancellare i dati in caso di poco spazio. */
+export async function richiediPersistenza(): Promise<boolean> {
+  try {
+    if (navigator.storage?.persisted && (await navigator.storage.persisted())) return true;
+    if (navigator.storage?.persist) return await navigator.storage.persist();
+  } catch {
+    /* non supportato */
+  }
+  return false;
+}

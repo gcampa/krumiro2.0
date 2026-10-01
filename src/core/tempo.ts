@@ -87,10 +87,10 @@ export const NOMI_MESI = [
   'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre',
 ];
 
-/** "2026-10-01" → "giovedì 1 ottobre 2026". */
+/** "2026-10-01" → "Giovedì 1 ottobre 2026". */
 export function formattaDataLunga(data: string): string {
   const [y, m, d] = data.split('-').map(Number);
-  return `${NOMI_GIORNI[giornoSettimana(data)]!.toLowerCase()} ${d} ${NOMI_MESI[m! - 1]} ${y}`;
+  return `${NOMI_GIORNI[giornoSettimana(data)]} ${d} ${NOMI_MESI[m! - 1]} ${y}`;
 }
 
 /** "2026-10-01" → "gio 1". */
