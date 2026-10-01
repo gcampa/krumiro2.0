@@ -13,7 +13,9 @@ export interface PulsanteFoglio {
  */
 export function apriFoglio(titolo: string, contenuto: Node | null, pulsanti: PulsanteFoglio[]): Promise<void> {
   return new Promise((risolvi) => {
-    const dlg = el('dialog', { class: 'foglio', 'aria-label': titolo });
+    // Il foglio stesso prende il focus iniziale: altrimenti showModal() lo darebbe
+    // al primo campo (es. il menu "Tipo"), che su telefono si aprirebbe da solo.
+    const dlg = el('dialog', { class: 'foglio', 'aria-label': titolo, tabindex: -1, autofocus: true });
     const chiudi = () => {
       dlg.close();
     };
@@ -45,6 +47,10 @@ export function apriFoglio(titolo: string, contenuto: Node | null, pulsanti: Pul
     dlg.append(el('div', { class: 'foglio-corpo' }, el('h2', {}, titolo), contenuto, barra));
     document.body.append(dlg);
     dlg.showModal();
+    if (document.activeElement !== dlg) {
+      (document.activeElement as HTMLElement | null)?.blur();
+      dlg.focus({ preventScroll: true });
+    }
   });
 }
 
