@@ -1,31 +1,51 @@
 # Timbrature
 
-Web app installabile (PWA) per registrare le timbrature di lavoro dall'iPhone e sapere
+Web app installabile (PWA) per registrare le timbrature di lavoro da iPhone o Android e sapere
 a che ora si può uscire. Funziona offline, non ha backend: **i dati restano sul telefono**
 (localStorage del browser).
 
 App pubblicata: **https://ricky79.github.io/krumiro2.0/**
 
-## Installare l'app sull'iPhone
+## Installare l'app
+
+Apri `https://ricky79.github.io/krumiro2.0/` dal telefono e segui le istruzioni per il tuo sistema.
+
+### iPhone (Safari)
 
 1. Apri **Safari** (deve essere Safari: le altre app non permettono di installare le PWA
-   su iOS) e vai su `https://ricky79.github.io/krumiro2.0/`.
+   su iOS) e vai sull'indirizzo qui sopra.
 2. Tocca il pulsante **Condividi** (il quadrato con la freccia verso l'alto).
 3. Scorri e scegli **Aggiungi alla schermata Home**.
    Su iOS 18 e successivi verifica che **Apri come app web** sia attivo.
 4. Conferma il nome "Timbrature" e tocca **Aggiungi**.
 5. Apri l'app dall'icona sulla schermata Home: parte a tutto schermo, senza la barra di Safari.
 
-Dopo la prima apertura l'app funziona anche **senza connessione**. Quando pubblichi una
+### Android (Chrome)
+
+1. Apri **Chrome** e vai su `https://ricky79.github.io/krumiro2.0/`.
+2. Tocca il menu **⋮** (in alto a destra).
+3. Scegli **Installa app** (su alcune versioni la voce è **Aggiungi a schermata Home**,
+   poi **Installa**). Se compare in basso il banner "Installa Timbrature", puoi usare quello.
+4. Conferma con **Installa**: l'icona compare nel cassetto delle app e, se vuoi,
+   sulla schermata Home.
+5. Apri l'app dall'icona: parte a tutto schermo, senza la barra di Chrome.
+
+Altri browser Android: in **Samsung Internet** usa il menu **☰ → Aggiungi pagina a →
+Schermata Home** (o l'icona di installazione nella barra dell'indirizzo); in **Firefox**
+usa **⋮ → Installa**. Se la voce non compare, ricarica la pagina e riprova.
+
+Dopo la prima apertura l'app funziona anche **senza connessione**. Quando viene pubblicata una
 nuova versione, viene scaricata in background e applicata alla successiva apertura.
 
 ### Attenzione ai dati
 
-- I dati dell'app installata sono separati da quelli di Safari: usa sempre l'icona sulla Home.
-- Se elimini l'app dalla schermata Home, iOS cancella anche i suoi dati.
+- **iPhone**: i dati dell'app installata sono separati da quelli di Safari, quindi usa sempre
+  l'icona sulla Home. Se elimini l'app dalla schermata Home, iOS cancella anche i suoi dati.
+- **Android**: l'app installata condivide i dati con il sito aperto in Chrome. Se cancelli i
+  dati di navigazione o i "dati del sito" di Chrome, o disinstalli l'app, perdi le timbrature.
 - L'app chiede al sistema la memoria persistente (`navigator.storage.persist()`), ma
   conviene comunque fare ogni tanto un **backup**: *Impostazioni → Esporta backup completo (JSON)*
-  e salvalo in File/iCloud. Per ripristinarlo: *Impostazioni → Importa CSV o backup JSON…*.
+  e salvalo in File/iCloud (iPhone) o in Drive/File (Android). Per ripristinarlo: *Impostazioni → Importa CSV o backup JSON…*.
 
 ## Come si usa
 
@@ -66,8 +86,8 @@ e calcola i totali ignorando gli eventi incoerenti.
 
 Il CSV usa `;` come separatore e la virgola per i decimali, con BOM UTF-8: si apre
 direttamente con Excel in italiano. Contiene una riga per giorno (ore dovute, lavorate,
-permesso, saldo in ore decimali e l'elenco delle timbrature). Su iPhone si apre il foglio
-di condivisione (Mail, File, AirDrop…); dove la condivisione non è disponibile il file
+permesso, saldo in ore decimali e l'elenco delle timbrature). Su iPhone e Android si apre il foglio
+di condivisione (Mail, File, Drive, WhatsApp…); dove la condivisione non è disponibile il file
 viene scaricato. Lo stesso CSV si può reimportare: le giornate presenti vengono
 sovrascritte, le impostazioni restano invariate.
 

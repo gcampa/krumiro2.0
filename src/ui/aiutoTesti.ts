@@ -240,8 +240,10 @@ export function vociAiuto(imp: Impostazioni): VoceAiuto[] {
       sezione: 'Dati e backup',
       domanda: 'Dove sono salvati i miei dati?',
       testo: [
-        'Solo su questo iPhone, nella memoria dell\'app: non vengono inviati a nessun server.',
-        'Attenzione: se elimini l\'app dalla schermata Home, iOS cancella anche i dati. Fai un backup ogni tanto.',
+        'Solo su questo telefono, nella memoria dell\'app: non vengono inviati a nessun server.',
+        '• iPhone: se elimini l\'app dalla schermata Home, iOS cancella anche i dati.',
+        '• Android: l\'app condivide i dati con Chrome, quindi se cancelli i dati del sito o disinstalli l\'app perdi le timbrature.',
+        'In ogni caso, fai un backup ogni tanto.',
       ],
     },
     {
@@ -250,7 +252,7 @@ export function vociAiuto(imp: Impostazioni): VoceAiuto[] {
       domanda: 'Come faccio un backup o esporto in Excel?',
       testo: [
         '• Esporta CSV (Excel): una riga per giorno, separatore ";" e decimali con la virgola, si apre direttamente in Excel.',
-        '• Esporta backup completo (JSON): tutte le timbrature e le impostazioni. Salvalo in File o iCloud Drive.',
+        '• Esporta backup completo (JSON): tutte le timbrature e le impostazioni. Salvalo in File o iCloud Drive (iPhone), oppure in Drive o File (Android).',
         '• Importa: un backup JSON sostituisce tutti i dati; un CSV aggiunge le giornate (sovrascrivendo quelle con la stessa data) senza toccare le impostazioni.',
       ],
     },
@@ -261,10 +263,22 @@ export function vociAiuto(imp: Impostazioni): VoceAiuto[] {
       sezione: 'Installazione',
       domanda: 'Come installo l\'app sull\'iPhone?',
       testo: [
-        '• Apri il sito con Safari.',
+        '• Apri il sito con Safari (le altre app non permettono l\'installazione).',
         '• Tocca Condividi (il quadrato con la freccia in su).',
         '• Scegli "Aggiungi alla schermata Home" e conferma.',
         'Apri sempre l\'app dall\'icona: funziona anche offline e i dati dell\'icona sono separati da quelli di Safari.',
+      ],
+    },
+    {
+      id: 'installazione-android',
+      sezione: 'Installazione',
+      domanda: 'Come installo l\'app su Android?',
+      testo: [
+        '• Apri il sito con Chrome.',
+        '• Tocca il menu ⋮ in alto a destra.',
+        '• Scegli "Installa app" (su alcune versioni "Aggiungi a schermata Home", poi "Installa") e conferma.',
+        'Apri l\'app dall\'icona: parte a tutto schermo e funziona anche offline.',
+        'Con Samsung Internet usa il menu ☰ → "Aggiungi pagina a" → "Schermata Home"; con Firefox ⋮ → "Installa". Se la voce non compare, ricarica la pagina e riprova.',
       ],
     },
     {
