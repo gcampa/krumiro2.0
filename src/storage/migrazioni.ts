@@ -1,0 +1,116 @@
+import { nuovoId } from '../core/id';
+import { dataValida } from '../core/tempo';
+import {
+  IMPOSTAZIONI_PREDEFINITE,
+  TIPI_EVENTO,
+  type Evento,
+  type Giornata,
+  type Impostazioni,
+  type TipoEvento,
+} from '../core/tipi';
+
+export const VERSIONE_CORRENTE = 1;
+
+export interface DatiSalvati {
+  version: typeof VERSIONE_CORRENTE;
+  impostazioni: Impostazioni;
+  giornate: Record<string, Giornata>;
+}
+
+export function datiVuoti(): DatiSalvati {
+  return { version: VERSIONE_CORRENTE, impostazioni: clonaImpostazioni(IMPOSTAZIONI_PREDEFINITE), giornate: {} };
+}
+
+export function clonaImpostazioni(i: Impostazioni): Impostazioni {
+  return {
+    ...i,
+    minutiDovuti: { predefinito: i.minutiDovuti.predefinito, perGiorno: [...i.minutiDovuti.perGiorno] },
+    pranzo: { ...i.pranzo },
+  };
+}
+
+export class ErroreMigrazione extends Error {}
+
+type Grezzo = Record<string, unknown>;
+const isObj = (v: unknown): v is Grezzo => typeof v === 'object' && v !== null && !Array.isArray(v);
+const intIn = (v: unknown, min: number, max: number): number | undefined =>
+  typeof v === 'number' && Number.isInteger(v) && v >= min && v <= max ? v : undefined;
+
+/**
+ * Porta dati grezzi (localStorage o backup JSON) allo schema corrente.
+ * Ogni passo `vN → vN+1` va aggiunto a MIGRAZIONI.
+ */
+const MIGRAZIONI: Record<number, (d: Grezzo) => Grezzo> = {
+  // v0 = dati senza campo version (prototipi / import manuali): stessa forma di v1.
+  0: (d) => ({ ...d, version: 1 }),
+};
+
+export function migra(grezzo: unknown): DatiSalvati {
+  if (!isObj(grezzo)) throw new ErroreMigrazione('Formato dati non riconosciuto.');
+  let d: Grezzo = grezzo;
+  let v = typeof d.version === 'number' ? d.version : 0;
+  if (v > VERSIONE_CORRENTE) {
+    throw new ErroreMigrazione(`I dati provengono da una versione più recente dell'app (v${v}).`);
+  }
+  while (v < VERSIONE_CORRENTE) {
+    const passo = MIGRAZIONI[v];
+    if (!passo) throw new ErroreMigrazione(`Migrazione da v${v} non disponibile.`);
+    d = passo(d);
+    v++;
+  }
+  return normalizza(d);
+}
+
+/** Valida e ripulisce dati in forma v1, sostituendo i valori mancanti con i predefiniti. */
+function normalizza(d: Grezzo): DatiSalvati {
+  const out = datiVuoti();
+  out.impostazioni = normalizzaImpostazioni(d.impostazioni);
+  if (isObj(d.giornate)) {
+    for (const [chiave, g] of Object.entries(d.giornate)) {
+      const giornata = normalizzaGiornata(g, chiave);
+      if (giornata) out.giornate[giornata.data] = giornata;
+    }
+  }
+  return out;
+}
+
+export function normalizzaImpostazioni(v: unknown): Impostazioni {
+  const p = IMPOSTAZIONI_PREDEFINITE;
+  const imp = clonaImpostazioni(p);
+  if (!isObj(v)) return imp;
+  if (isObj(v.minutiDovuti)) {
+    imp.minutiDovuti.predefinito = intIn(v.minutiDovuti.predefinito, 0, 1440) ?? p.minutiDovuti.predefinito;
+    if (Array.isArray(v.minutiDovuti.perGiorno) && v.minutiDovuti.perGiorno.length === 7) {
+      imp.minutiDovuti.perGiorno = v.minutiDovuti.perGiorno.map((x) => (x === null ? null : intIn(x, 0, 1440) ?? null));
+    }
+  }
+  if (isObj(v.pranzo)) {
+    const inizio = intIn(v.pranzo.inizio, 0, 1439);
+    const fine = intIn(v.pranzo.fine, 0, 1440);
+    if (inizio !== undefined && fine !== undefined && fine > inizio) imp.pranzo = { inizio, fine };
+  }
+  imp.pausaDaScalare = intIn(v.pausaDaScalare, 0, 600) ?? p.pausaDaScalare;
+  imp.orarioMinimoConteggio = intIn(v.orarioMinimoConteggio, 0, 1439) ?? p.orarioMinimoConteggio;
+  imp.pausaMinima = intIn(v.pausaMinima, 0, 600) ?? p.pausaMinima;
+  return imp;
+}
+
+function normalizzaGiornata(g: unknown, chiave: string): Giornata | null {
+  if (!isObj(g)) return null;
+  const data = typeof g.data === 'string' ? g.data : chiave;
+  if (!dataValida(data)) return null;
+  const eventi: Evento[] = [];
+  if (Array.isArray(g.eventi)) {
+    for (const e of g.eventi) {
+      if (!isObj(e)) continue;
+      const tipo = e.tipo as TipoEvento;
+      const minuti = intIn(e.minuti, 0, 1439);
+      if (!TIPI_EVENTO.includes(tipo) || minuti === undefined) continue;
+      const ev: Evento = { id: typeof e.id === 'string' && e.id ? e.id : nuovoId(), tipo, minuti };
+      const pc = intIn(e.pausaConfermata, 0, 1440);
+      if (tipo === 'RIENTRO_PERMESSO' && pc !== undefined) ev.pausaConfermata = pc;
+      eventi.push(ev);
+    }
+  }
+  return { data, permessoInizioMinuti: intIn(g.permessoInizioMinuti, 0, 1440) ?? 0, eventi };
+}

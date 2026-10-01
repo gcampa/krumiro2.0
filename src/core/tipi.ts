@@ -1,0 +1,111 @@
+/** Tipi di evento registrabili con un orario. */
+export type TipoEvento =
+  | 'ENTRATA'
+  | 'INIZIO_PAUSA'
+  | 'FINE_PAUSA'
+  | 'USCITA_PERMESSO'
+  | 'RIENTRO_PERMESSO'
+  | 'USCITA'
+  | 'USCITA_ANTICIPATA';
+
+export const TIPI_EVENTO: readonly TipoEvento[] = [
+  'ENTRATA',
+  'INIZIO_PAUSA',
+  'FINE_PAUSA',
+  'USCITA_PERMESSO',
+  'RIENTRO_PERMESSO',
+  'USCITA',
+  'USCITA_ANTICIPATA',
+];
+
+export const ETICHETTE_EVENTO: Record<TipoEvento, string> = {
+  ENTRATA: 'Entrata',
+  INIZIO_PAUSA: 'Inizio pausa',
+  FINE_PAUSA: 'Fine pausa',
+  USCITA_PERMESSO: 'Uscita in permesso',
+  RIENTRO_PERMESSO: 'Rientro da permesso',
+  USCITA: 'Uscita',
+  USCITA_ANTICIPATA: 'Uscita anticipata',
+};
+
+export interface Evento {
+  id: string;
+  tipo: TipoEvento;
+  /** Minuti dalla mezzanotte, ora locale Europe/Rome (es. 510 = 08:30). */
+  minuti: number;
+  /**
+   * Solo su RIENTRO_PERMESSO: minuti dell'intervallo di permesso che l'utente
+   * ha confermato come pausa pranzo. Se assente si usa la proposta automatica.
+   */
+  pausaConfermata?: number;
+}
+
+export interface Giornata {
+  /** 'YYYY-MM-DD' nel fuso Europe/Rome. */
+  data: string;
+  /** Permesso a inizio giornata (ingresso posticipato), in minuti. */
+  permessoInizioMinuti: number;
+  eventi: Evento[];
+}
+
+export interface Impostazioni {
+  minutiDovuti: {
+    predefinito: number;
+    /** Indice 0 = domenica … 6 = sabato. null = usa il predefinito. */
+    perGiorno: (number | null)[];
+  };
+  pranzo: { inizio: number; fine: number };
+  /** Minuti di permesso da considerare pausa se il permesso copre la fascia pranzo. */
+  pausaDaScalare: number;
+  /** Le timbrature precedenti questo orario contano come questo orario. */
+  orarioMinimoConteggio: number;
+  /** Una pausa più breve di così conta come questa durata. */
+  pausaMinima: number;
+}
+
+export const IMPOSTAZIONI_PREDEFINITE: Impostazioni = {
+  minutiDovuti: { predefinito: 480, perGiorno: [0, null, null, null, null, null, 0] },
+  pranzo: { inizio: 720, fine: 870 },
+  pausaDaScalare: 60,
+  orarioMinimoConteggio: 510,
+  pausaMinima: 30,
+};
+
+export type StatoGiornata = 'NON_INIZIATA' | 'AL_LAVORO' | 'IN_PAUSA' | 'IN_PERMESSO' | 'CHIUSA';
+
+/** Ripartizione pausa/permesso di un permesso che copre la fascia pranzo. */
+export interface Ripartizione {
+  /** Id dell'evento RIENTRO_PERMESSO (assente se il permesso è ancora in corso). */
+  eventoRientroId?: string;
+  da: number;
+  a: number;
+  /** Proposta automatica in minuti di pausa. */
+  proposta: number;
+  /** Minuti effettivamente considerati pausa. */
+  pausa: number;
+  /** Minuti effettivamente considerati permesso. */
+  permesso: number;
+  confermata: boolean;
+}
+
+export interface RisultatoGiornata {
+  stato: StatoGiornata;
+  daCorreggere: boolean;
+  problemi: string[];
+  dovuti: number;
+  lavorati: number;
+  /** Pausa effettivamente conteggiata (registrata, con il minimo applicato, + scalata). */
+  pausa: number;
+  permessoInizio: number;
+  permessoIntermedio: number;
+  permessoUscita: number;
+  permesso: number;
+  coperti: number;
+  saldo: number;
+  /** Minuti dalla mezzanotte; null se non applicabile. */
+  uscitaPrevista: number | null;
+  /** True se l'uscita prevista include la pausa pranzo non ancora fatta. */
+  uscitaPrevistaConPausa: boolean;
+  pausaFatta: boolean;
+  ripartizioni: Ripartizione[];
+}
