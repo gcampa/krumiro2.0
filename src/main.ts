@@ -6,9 +6,10 @@ import { el, monta } from './ui/dom';
 import { impostaOrologio, vistaGiorno, type Adesso } from './ui/giorno';
 import { vistaImpostazioni } from './ui/impostazioni';
 import { vistaStorico } from './ui/storico';
-import { EVENTO_APRI_AIUTO, vistaAiuto } from './ui/aiuto';
+import { apriAiuto, EVENTO_APRI_AIUTO, vistaAiuto } from './ui/aiuto';
 import { registraServiceWorker } from './pwa';
 import { avviaTema } from './ui/tema';
+import { avviaBannerInstallazione } from './ui/installa';
 
 type Scheda = 'oggi' | 'storico' | 'impostazioni' | 'aiuto';
 
@@ -104,4 +105,5 @@ document.addEventListener('visibilitychange', () => {
 
 void richiediPersistenza();
 registraServiceWorker();
+avviaBannerInstallazione(() => apriAiuto('installazione'));
 if (store.erroreCaricamento) void avviso('Attenzione', store.erroreCaricamento);
