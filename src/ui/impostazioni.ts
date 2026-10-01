@@ -8,6 +8,7 @@ import { el } from './dom';
 import { linkAiuto } from './aiuto';
 import { esportaBackupJson, esportaCsvCondividi, importaFile } from './dati';
 import type { Adesso } from './giorno';
+import { impostaPreferenza, preferenzaTema, type PreferenzaTema } from './tema';
 
 /** Lunedì → domenica, come in un calendario italiano. */
 const ORDINE_GIORNI = [1, 2, 3, 4, 5, 6, 0];
@@ -41,6 +42,32 @@ function riga(etichetta: string, controllo: HTMLElement, nota?: string): HTMLEle
 }
 
 const salvato = () => toast('Impostazioni salvate');
+
+const OPZIONI_TEMA: [PreferenzaTema, string][] = [
+  ['auto', 'Automatico'],
+  ['chiaro', 'Chiaro'],
+  ['scuro', 'Scuro'],
+];
+
+/** Pulsanti Automatico / Chiaro / Scuro: il tema cambia subito, senza ridisegnare la vista. */
+function selettoreTema(): HTMLElement {
+  const pulsanti = OPZIONI_TEMA.map(([valore, testo]) =>
+    el(
+      'button',
+      {
+        type: 'button',
+        class: 'chip',
+        'aria-pressed': String(preferenzaTema() === valore),
+        onclick: () => {
+          impostaPreferenza(valore);
+          pulsanti.forEach((b, i) => b.setAttribute('aria-pressed', String(OPZIONI_TEMA[i]![0] === valore)));
+        },
+      },
+      testo,
+    ),
+  );
+  return el('div', { class: 'preset', role: 'group', 'aria-label': 'Tema' }, pulsanti);
+}
 
 export function vistaImpostazioni(adesso: Adesso): HTMLElement {
   const imp = store.impostazioni;
@@ -142,6 +169,13 @@ export function vistaImpostazioni(adesso: Adesso): HTMLElement {
         },
         'Ripristina valori predefiniti',
       ),
+    ),
+    el(
+      'div',
+      { class: 'scheda' },
+      el('h2', { class: 'titolo-sezione' }, 'Aspetto'),
+      selettoreTema(),
+      el('p', { class: 'nota' }, 'Automatico segue il tema chiaro o scuro del telefono.'),
     ),
     el(
       'div',
