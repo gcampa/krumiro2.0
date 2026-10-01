@@ -39,6 +39,9 @@ nuova versione, viene scaricata in background e applicata alla successiva apertu
   (permesso usato e saldo del mese). Con *+ Giornata dimenticata* inserisci un giorno passato.
 - **Impostazioni**: ore dovute (anche diverse per giorno della settimana), fascia pranzo,
   pausa da scalare, pausa minima, orario di inizio conteggio, export e import dei dati.
+- **Aiuto**: risposte ai dubbi più comuni (per esempio la differenza tra *Esco in permesso*
+  e *Uscita anticipata*), con ricerca. I link **?** nelle schermate aprono direttamente
+  la risposta che riguarda quel punto. Gli esempi usano le tue impostazioni correnti.
 
 ## Regole di calcolo
 
@@ -86,7 +89,8 @@ Struttura:
 ```
 src/core/      logica pura, senza DOM: tipi, macchina a stati, calcolo, riepilogo, CSV
 src/storage/   localStorage, schema versionato e migrazioni
-src/ui/        viste (Oggi/giornata, Storico, Impostazioni), dialoghi, editor
+src/ui/        viste (Oggi/giornata, Storico, Impostazioni, Aiuto), dialoghi, editor
+               (i testi dell'aiuto sono in src/ui/aiutoTesti.ts)
 tests/         test Vitest
 ```
 

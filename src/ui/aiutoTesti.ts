@@ -1,0 +1,293 @@
+import type { Azione } from '../core/statoGiornata';
+import { formattaDurata, formattaOra } from '../core/tempo';
+import type { Impostazioni } from '../core/tipi';
+
+/**
+ * Contenuti dell'aiuto. Testo semplice: ogni elemento di `testo` è un paragrafo;
+ * le righe che iniziano con "• " diventano un elenco puntato.
+ * Gli importi (fascia pranzo, pausa da scalare…) seguono le impostazioni correnti.
+ */
+export interface VoceAiuto {
+  id: string;
+  sezione: string;
+  domanda: string;
+  testo: string[];
+  /** Azione dell'app a cui la voce si riferisce, per l'aiuto contestuale. */
+  azione?: Azione;
+}
+
+export const SEZIONI_AIUTO = [
+  'Primi passi',
+  'I bottoni',
+  'Come si calcola',
+  'Correggere gli errori',
+  'Storico e riepilogo',
+  'Dati e backup',
+  'Installazione',
+] as const;
+
+export function vociAiuto(imp: Impostazioni): VoceAiuto[] {
+  const pranzo = `${formattaOra(imp.pranzo.inizio)}–${formattaOra(imp.pranzo.fine)}`;
+  const scalare = formattaDurata(imp.pausaDaScalare);
+  const minimo = formattaOra(imp.orarioMinimoConteggio);
+  const pausaMin = formattaDurata(imp.pausaMinima);
+  const dovute = formattaDurata(imp.minutiDovuti.predefinito);
+
+  return [
+    // --- Primi passi
+    {
+      id: 'come-funziona',
+      sezione: 'Primi passi',
+      domanda: 'Come funziona l\'app?',
+      testo: [
+        'Ogni volta che timbri al lavoro, tocca il bottone grande nella schermata Oggi: l\'app registra l\'orario attuale e ti propone già l\'azione successiva (Entrata → Inizio pausa → Fine pausa → Uscita).',
+        'In alto vedi l\'ora di uscita prevista, le ore coperte rispetto a quelle dovute e il saldo della giornata.',
+        'Sotto il bottone grande compaiono le azioni meno frequenti (permessi, uscita anticipata…), solo quando hanno senso in quel momento.',
+      ],
+    },
+    {
+      id: 'ore-coperte',
+      sezione: 'Primi passi',
+      domanda: 'Cosa sono le ore "coperte", "lavorate" e il "saldo"?',
+      testo: [
+        '• Lavorate: il tempo effettivamente passato al lavoro, escluse le pause.',
+        '• Permesso: le ore di permesso (a inizio giornata, a metà giornata o per uscita anticipata).',
+        '• Coperte: lavorate + permesso. È il numero che deve arrivare alle ore dovute.',
+        '• Saldo: coperte − dovute. Positivo = straordinario, negativo = ore mancanti.',
+        'Mentre la giornata è in corso, al posto di un saldo negativo vedi "Mancano", cioè quanto ti resta da coprire.',
+      ],
+    },
+
+    // --- I bottoni
+    {
+      id: 'entrata',
+      sezione: 'I bottoni',
+      azione: 'ENTRATA',
+      domanda: 'Entrata',
+      testo: ['Registra l\'inizio della giornata lavorativa all\'orario attuale.'],
+    },
+    {
+      id: 'pausa',
+      sezione: 'I bottoni',
+      azione: 'INIZIO_PAUSA',
+      domanda: 'Inizio pausa / Fine pausa',
+      testo: [
+        'Servono per la pausa pranzo, che non conta come ore coperte.',
+        `Se la pausa dura meno di ${pausaMin}, viene comunque conteggiata come ${pausaMin}.`,
+        'Finché non hai fatto la pausa, l\'uscita prevista la include già (te lo segnala la scritta "inclusa pausa pranzo").',
+      ],
+    },
+    {
+      id: 'fine-pausa',
+      sezione: 'I bottoni',
+      azione: 'FINE_PAUSA',
+      domanda: 'Durante la pausa, cosa indica l\'uscita prevista?',
+      testo: [`È l'orario di uscita se rientrassi adesso, tenendo conto che la pausa vale almeno ${pausaMin}.`],
+    },
+    {
+      id: 'uscita',
+      sezione: 'I bottoni',
+      azione: 'USCITA',
+      domanda: 'Uscita',
+      testo: [
+        'Chiude la giornata in modo normale. Se esci prima di aver coperto le ore dovute, il saldo sarà negativo: se invece vuoi coprire le ore mancanti con un permesso usa "Uscita anticipata".',
+      ],
+    },
+    {
+      id: 'permesso-vs-anticipata',
+      sezione: 'I bottoni',
+      azione: 'USCITA_PERMESSO',
+      domanda: 'Differenza tra "Esco in permesso" e "Uscita anticipata"',
+      testo: [
+        'La differenza è se poi rientri al lavoro.',
+        '• Esco in permesso: esci a metà giornata e poi torni (medico, commissione…). Il permesso va dall\'uscita al rientro e il bottone grande diventa "Rientro da permesso".',
+        '• Uscita anticipata: esci e non torni più. Tutte le ore che mancano per arrivare alle dovute diventano permesso e il saldo è 0.',
+        `Esempio con ${dovute} dovute: entrata 08:30, pausa 12:30–13:30, uscita anticipata 15:30 → lavorate 6h, permesso 2h, saldo 0.`,
+        'Hai usato "Esco in permesso" ma poi non rientri? Tocca "Non rientro": l\'uscita in permesso diventa un\'uscita anticipata.',
+      ],
+    },
+    {
+      id: 'uscita-anticipata',
+      sezione: 'I bottoni',
+      azione: 'USCITA_ANTICIPATA',
+      domanda: 'Uscita anticipata',
+      testo: [
+        'Chiude la giornata in permesso: le ore che mancano per arrivare alle dovute diventano ore di permesso, quindi il saldo è 0.',
+        'Prima di registrarla l\'app ti mostra quante ore di permesso verranno conteggiate e chiede conferma.',
+        'Se avevi già coperto tutte le ore, non viene conteggiato alcun permesso.',
+      ],
+    },
+    {
+      id: 'rientro',
+      sezione: 'I bottoni',
+      azione: 'RIENTRO_PERMESSO',
+      domanda: 'Rientro da permesso e pausa pranzo',
+      testo: [
+        `Se il permesso si sovrappone alla fascia pranzo (${pranzo}) e quel giorno non hai registrato una pausa, una parte del permesso (fino a ${scalare}) viene considerata pausa pranzo e non permesso.`,
+        'Al rientro l\'app ti mostra la ripartizione proposta, per esempio "1h pausa + 1h30 permesso", e puoi modificarla con − / + prima di confermare.',
+        'Puoi cambiarla anche dopo, toccando il rientro nella timeline.',
+      ],
+    },
+    {
+      id: 'non-rientro',
+      sezione: 'I bottoni',
+      azione: 'NON_RIENTRO',
+      domanda: 'Non rientro (chiudi in permesso)',
+      testo: [
+        'Compare mentre sei in permesso. Trasforma l\'ultima "Uscita in permesso" in "Uscita anticipata": la giornata si chiude e le ore mancanti diventano permesso.',
+      ],
+    },
+    {
+      id: 'entro-dopo',
+      sezione: 'I bottoni',
+      azione: 'PERMESSO_INIZIO_GIORNATA',
+      domanda: 'Entro dopo (permesso a inizio giornata)',
+      testo: [
+        'Per gli ingressi posticipati: indichi quante ore di permesso prendi a inizio giornata (es. 2h). Non è un orario ma una durata, e conta come ore coperte.',
+        'Puoi registrare l\'entrata insieme al permesso oppure aggiungere il permesso dopo, con "+ Permesso inizio giornata" sotto la timeline.',
+        `Esempio con ${dovute} dovute: permesso 2h, entrata 10:30, pausa 12:30–13:30 → uscita prevista 17:30.`,
+      ],
+    },
+    {
+      id: 'riapri',
+      sezione: 'I bottoni',
+      azione: 'RIAPRI',
+      domanda: 'Riapri giornata',
+      testo: ['Elimina l\'ultima uscita (normale o anticipata) e riporta la giornata allo stato "Al lavoro". Utile se hai timbrato l\'uscita per sbaglio.'],
+    },
+
+    // --- Come si calcola
+    {
+      id: 'uscita-prevista',
+      sezione: 'Come si calcola',
+      domanda: 'Come viene calcolata l\'uscita prevista?',
+      testo: [
+        'Uscita prevista = adesso + (ore dovute − ore coperte).',
+        `Se non hai ancora fatto la pausa e l'uscita cadrebbe dopo la fascia pranzo (${pranzo}), vengono aggiunti ${scalare} di pausa.`,
+        'Quando l\'orario supera l\'uscita prevista compare "Ore completate alle…": da lì in poi è straordinario.',
+      ],
+    },
+    {
+      id: 'orario-minimo',
+      sezione: 'Come si calcola',
+      domanda: `Perché un'entrata prima delle ${minimo} non viene contata?`,
+      testo: [
+        `Ogni timbratura precedente le ${minimo} viene considerata come se fosse alle ${minimo}, in tutti i calcoli (uscita prevista, ore lavorate e saldo).`,
+        `Esempio: entrata 08:00, pausa 12:00–13:00, uscita 18:00 → lavorate 8h30 (dalle ${minimo}), saldo +30 min.`,
+        'L\'orario si cambia in Impostazioni → Conteggio.',
+      ],
+    },
+    {
+      id: 'pausa-minima',
+      sezione: 'Come si calcola',
+      domanda: `Perché una pausa breve conta ${pausaMin}?`,
+      testo: [
+        `Una pausa più breve di ${pausaMin} viene conteggiata come ${pausaMin}: la differenza viene tolta dalle ore lavorate.`,
+        'Esempio: pausa 12:30–12:45 (15 min) → conta 30 min, quindi 15 min in meno di lavoro.',
+        'Il valore si cambia in Impostazioni → Pausa pranzo.',
+      ],
+    },
+    {
+      id: 'ore-dovute',
+      sezione: 'Come si calcola',
+      domanda: 'Come imposto le ore dovute?',
+      testo: [
+        `In Impostazioni → Ore dovute: il valore predefinito (ora ${dovute}) vale per tutti i giorni con "predefinito" spuntato.`,
+        'Per un giorno diverso (es. venerdì corto) togli la spunta e scegli le ore. 00:00 significa giorno libero: tutto ciò che lavori è straordinario.',
+      ],
+    },
+
+    // --- Correggere gli errori
+    {
+      id: 'modifica',
+      sezione: 'Correggere gli errori',
+      domanda: 'Ho sbagliato o dimenticato una timbratura',
+      testo: [
+        'Tocca la timbratura nella timeline per cambiarne l\'orario o il tipo, oppure per eliminarla.',
+        'Per una timbratura dimenticata usa "+ Aggiungi timbratura" e scegli tipo e orario. Le timbrature vengono sempre ordinate per orario.',
+      ],
+    },
+    {
+      id: 'da-correggere',
+      sezione: 'Correggere gli errori',
+      domanda: 'Cosa significa "Giornata da correggere"?',
+      testo: [
+        'La sequenza delle timbrature non è coerente: per esempio una "Fine pausa" senza "Inizio pausa", due entrate, o una giornata passata senza uscita.',
+        'L\'app spiega il problema nel riquadro arancione e calcola i totali ignorando le timbrature incoerenti (evidenziate in rosso). Aggiungi, modifica o elimina le timbrature finché il riquadro sparisce.',
+      ],
+    },
+    {
+      id: 'giorno-passato',
+      sezione: 'Correggere gli errori',
+      domanda: 'Come inserisco una giornata passata?',
+      testo: ['In Storico tocca "+ Giornata dimenticata", scegli la data e aggiungi le timbrature con "+ Aggiungi timbratura".'],
+    },
+
+    // --- Storico
+    {
+      id: 'storico',
+      sezione: 'Storico e riepilogo',
+      domanda: 'Cosa mostra lo Storico?',
+      testo: [
+        'Le giornate del mese con ore lavorate, permesso e saldo. In alto il riepilogo: saldo del mese, permesso usato, ore lavorate e giorni registrati.',
+        'La giornata di oggi non entra nel saldo del mese finché non è chiusa. Tocca un giorno per vederlo e correggerlo.',
+      ],
+    },
+
+    // --- Dati
+    {
+      id: 'dove-dati',
+      sezione: 'Dati e backup',
+      domanda: 'Dove sono salvati i miei dati?',
+      testo: [
+        'Solo su questo iPhone, nella memoria dell\'app: non vengono inviati a nessun server.',
+        'Attenzione: se elimini l\'app dalla schermata Home, iOS cancella anche i dati. Fai un backup ogni tanto.',
+      ],
+    },
+    {
+      id: 'backup',
+      sezione: 'Dati e backup',
+      domanda: 'Come faccio un backup o esporto in Excel?',
+      testo: [
+        '• Esporta CSV (Excel): una riga per giorno, separatore ";" e decimali con la virgola, si apre direttamente in Excel.',
+        '• Esporta backup completo (JSON): tutte le timbrature e le impostazioni. Salvalo in File o iCloud Drive.',
+        '• Importa: un backup JSON sostituisce tutti i dati; un CSV aggiunge le giornate (sovrascrivendo quelle con la stessa data) senza toccare le impostazioni.',
+      ],
+    },
+
+    // --- Installazione
+    {
+      id: 'installazione',
+      sezione: 'Installazione',
+      domanda: 'Come installo l\'app sull\'iPhone?',
+      testo: [
+        '• Apri il sito con Safari.',
+        '• Tocca Condividi (il quadrato con la freccia in su).',
+        '• Scegli "Aggiungi alla schermata Home" e conferma.',
+        'Apri sempre l\'app dall\'icona: funziona anche offline e i dati dell\'icona sono separati da quelli di Safari.',
+      ],
+    },
+    {
+      id: 'aggiornamenti',
+      sezione: 'Installazione',
+      domanda: 'Come si aggiorna?',
+      testo: ['Da sola: quando c\'è una nuova versione viene scaricata in background e usata dall\'apertura successiva. I dati non vengono toccati.'],
+    },
+  ];
+}
+
+/** Ricerca senza distinzione tra maiuscole/minuscole e accenti. */
+export function filtraAiuto(voci: VoceAiuto[], query: string): VoceAiuto[] {
+  const norm = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  const parole = norm(query).split(/\s+/).filter(Boolean);
+  if (parole.length === 0) return voci;
+  return voci.filter((v) => {
+    const t = norm(`${v.domanda} ${v.sezione} ${v.testo.join(' ')}`);
+    return parole.every((p) => t.includes(p));
+  });
+}
+
+/** Voce di aiuto per un'azione (per i link contestuali). */
+export function aiutoPerAzione(voci: VoceAiuto[], azione: Azione): VoceAiuto | undefined {
+  return voci.find((v) => v.azione === azione);
+}
