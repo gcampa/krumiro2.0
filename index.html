@@ -6,8 +6,19 @@
     <title>Timbrature</title>
     <meta name="description" content="Registra le timbrature di lavoro e calcola l'ora di uscita." />
     <meta name="color-scheme" content="light dark" />
-    <meta name="theme-color" content="#f2f2f7" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f2f2f7" />
+    <script>
+      // Applica subito il tema scelto (vedi src/ui/tema.ts) per evitare un lampo di colore all'apertura.
+      (function () {
+        var p = null;
+        try {
+          p = localStorage.getItem('timbrature-tema');
+        } catch (e) {}
+        var scuro = p === 'scuro' || (p !== 'chiaro' && matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.setAttribute('data-tema', scuro ? 'scuro' : 'chiaro');
+        document.querySelector('meta[name="theme-color"]').setAttribute('content', scuro ? '#000000' : '#f2f2f7');
+      })();
+    </script>
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />

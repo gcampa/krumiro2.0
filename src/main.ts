@@ -8,6 +8,7 @@ import { vistaImpostazioni } from './ui/impostazioni';
 import { vistaStorico } from './ui/storico';
 import { EVENTO_APRI_AIUTO, vistaAiuto } from './ui/aiuto';
 import { registraServiceWorker } from './pwa';
+import { avviaTema } from './ui/tema';
 
 type Scheda = 'oggi' | 'storico' | 'impostazioni' | 'aiuto';
 
@@ -18,6 +19,7 @@ const stato: { scheda: Scheda; mese: string; giornoAperto: string | null; aiuto:
   giornoAperto: null,
 };
 
+avviaTema();
 impostaOrologio(() => adessoRoma());
 
 const app = document.getElementById('app')!;
