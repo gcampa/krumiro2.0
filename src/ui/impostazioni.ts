@@ -5,6 +5,7 @@ import { clonaImpostazioni } from '../storage/migrazioni';
 import { store } from '../storage/store';
 import { conferma, toast } from './dialoghi';
 import { el } from './dom';
+import { linkAiuto } from './aiuto';
 import { esportaBackupJson, esportaCsvCondividi, importaFile } from './dati';
 import type { Adesso } from './giorno';
 
@@ -80,7 +81,7 @@ export function vistaImpostazioni(adesso: Adesso): HTMLElement {
   return el(
     'section',
     { class: 'vista' },
-    el('header', { class: 'intestazione' }, el('h1', {}, 'Impostazioni')),
+    el('header', { class: 'intestazione' }, el('h1', {}, 'Impostazioni'), linkAiuto('Come vengono usati questi valori?', 'come-si-calcola')),
     el(
       'div',
       { class: 'scheda' },

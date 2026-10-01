@@ -6,12 +6,14 @@ import { el, monta } from './ui/dom';
 import { impostaOrologio, vistaGiorno, type Adesso } from './ui/giorno';
 import { vistaImpostazioni } from './ui/impostazioni';
 import { vistaStorico } from './ui/storico';
+import { EVENTO_APRI_AIUTO, vistaAiuto } from './ui/aiuto';
 import { registraServiceWorker } from './pwa';
 
-type Scheda = 'oggi' | 'storico' | 'impostazioni';
+type Scheda = 'oggi' | 'storico' | 'impostazioni' | 'aiuto';
 
-const stato: { scheda: Scheda; mese: string; giornoAperto: string | null } = {
+const stato: { scheda: Scheda; mese: string; giornoAperto: string | null; aiuto: string | null } = {
   scheda: 'oggi',
+  aiuto: null,
   mese: adessoRoma().data.slice(0, 7),
   giornoAperto: null,
 };
@@ -30,6 +32,9 @@ function render(forza = true): void {
   // Evita di ridisegnare (e perdere lo scroll) se nulla è cambiato.
   const chiave = `${adesso.data} ${adesso.minuti}`;
   if (!forza && chiave === ultimoRender) return;
+  // Aiuto e impostazioni non dipendono dall'orario: niente refresh periodico
+  // (chiuderebbe le risposte aperte e toglierebbe il focus dai campi).
+  if (!forza && (stato.scheda === 'aiuto' || stato.scheda === 'impostazioni')) return;
   if (!forza && document.querySelector('dialog[open]')) return; // non disturbare un dialogo aperto
   ultimoRender = chiave;
 
@@ -48,6 +53,9 @@ function render(forza = true): void {
           render();
           window.scrollTo(0, 0);
         });
+  } else if (stato.scheda === 'aiuto') {
+    vista = vistaAiuto(stato.aiuto);
+    stato.aiuto = null;
   } else vista = vistaImpostazioni(adesso);
   monta(contenuto, vista);
   window.scrollTo(0, scroll);
@@ -59,6 +67,7 @@ function render(forza = true): void {
         ['oggi', 'Oggi', '◉'],
         ['storico', 'Storico', '☰'],
         ['impostazioni', 'Impostazioni', '⚙︎'],
+        ['aiuto', 'Aiuto', '?'],
       ] as const
     ).map(([id, testo, icona]) =>
       el(
@@ -79,6 +88,10 @@ function vai(scheda: Scheda): void {
 }
 
 store.ascolta(() => render());
+window.addEventListener(EVENTO_APRI_AIUTO, (e) => {
+  stato.aiuto = (e as CustomEvent<string | undefined>).detail ?? null;
+  vai('aiuto');
+});
 render();
 
 // Aggiorna l'orario ogni 15 s e quando l'app torna in primo piano.

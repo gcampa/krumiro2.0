@@ -1,0 +1,35 @@
+import { describe, expect, it } from 'vitest';
+import { ETICHETTE_AZIONE, type Azione } from '../src/core/statoGiornata';
+import { aiutoPerAzione, filtraAiuto, SEZIONI_AIUTO, vociAiuto } from '../src/ui/aiutoTesti';
+import { impostazioni } from './helpers';
+
+const voci = vociAiuto(impostazioni());
+
+describe('aiuto', () => {
+  it('ogni azione dell\'app ha una spiegazione', () => {
+    const azioni = Object.keys(ETICHETTE_AZIONE) as Azione[];
+    for (const a of azioni) {
+      expect(aiutoPerAzione(voci, a), `manca l'aiuto per ${a}`).toBeDefined();
+    }
+  });
+
+  it('id univoci e sezioni valide', () => {
+    expect(new Set(voci.map((v) => v.id)).size).toBe(voci.length);
+    for (const v of voci) expect(SEZIONI_AIUTO).toContain(v.sezione);
+    for (const s of SEZIONI_AIUTO) expect(voci.some((v) => v.sezione === s)).toBe(true);
+  });
+
+  it('i testi seguono le impostazioni correnti', () => {
+    const v = vociAiuto(impostazioni({ pranzo: { inizio: 750, fine: 840 }, pausaDaScalare: 45 }));
+    const rientro = v.find((x) => x.id === 'rientro')!;
+    expect(rientro.testo.join(' ')).toContain('12:30–14:00');
+    expect(rientro.testo.join(' ')).toContain('45 min');
+  });
+
+  it('la ricerca ignora maiuscole e accenti e richiede tutte le parole', () => {
+    expect(filtraAiuto(voci, 'USCITA anticipata').map((v) => v.id)).toContain('permesso-vs-anticipata');
+    expect(filtraAiuto(voci, 'perche entrata').map((v) => v.id)).toContain('orario-minimo');
+    expect(filtraAiuto(voci, 'zzzz')).toEqual([]);
+    expect(filtraAiuto(voci, '  ')).toHaveLength(voci.length);
+  });
+});

@@ -6,6 +6,7 @@ import { ETICHETTE_EVENTO, type Evento, type RisultatoGiornata } from '../core/t
 import { store } from '../storage/store';
 import { conferma, toast } from './dialoghi';
 import { el } from './dom';
+import { linkAiuto } from './aiuto';
 import { confermaRipartizione, editorEvento, editorPermessoInizio } from './editor';
 
 export interface Adesso {
@@ -101,6 +102,7 @@ function boxProblemi(problemi: string[]): HTMLElement {
     el('p', { class: 'etichetta' }, '⚠︎ Giornata da correggere'),
     el('ul', {}, problemi.map((p) => el('li', {}, p))),
     el('p', { class: 'nota' }, 'Tocca una timbratura per modificarla o eliminarla.'),
+    linkAiuto('Cosa significa?', 'da-correggere'),
   );
 }
 
@@ -125,6 +127,11 @@ function pulsantiAzione(data: string, r: RisultatoGiornata, adesso: number): HTM
             el('button', { type: 'button', class: 'btn btn-secondario', onclick: () => void eseguiAzione(a, data) }, ETICHETTE_AZIONE[a]),
           ),
         )
+      : null,
+    primaria || secondarie.length > 0
+      ? secondarie.includes('USCITA_PERMESSO') && secondarie.includes('USCITA_ANTICIPATA')
+        ? linkAiuto('Esco in permesso o uscita anticipata?', 'permesso-vs-anticipata')
+        : linkAiuto('Quale bottone uso?', 'i-bottoni')
       : null,
   );
 }
