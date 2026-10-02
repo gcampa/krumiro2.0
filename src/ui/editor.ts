@@ -69,6 +69,7 @@ export async function editorEvento(data: string, evento: Evento | null, minutiPr
           if (!e) return;
           e.tipo = tipo;
           e.minuti = minuti;
+          if (tipo !== 'USCITA_PERMESSO') delete e.sigaretta;
           if (tipo !== 'RIENTRO_PERMESSO' || !ripartizione || auto.checked) delete e.pausaConfermata;
           else e.pausaConfermata = pausa.leggi();
         });

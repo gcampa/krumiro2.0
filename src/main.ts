@@ -4,6 +4,7 @@ import { richiediPersistenza, store } from './storage/store';
 import { avviso } from './ui/dialoghi';
 import { el, monta } from './ui/dom';
 import { impostaOrologio, vistaGiorno, type Adesso } from './ui/giorno';
+import { riprendiPausaSigaretta } from './ui/sigaretta';
 import { vistaImpostazioni } from './ui/impostazioni';
 import { vistaStorico } from './ui/storico';
 import { apriAiuto, EVENTO_APRI_AIUTO, vistaAiuto } from './ui/aiuto';
@@ -62,6 +63,8 @@ function render(forza = true): void {
   } else vista = vistaImpostazioni(adesso);
   monta(contenuto, vista);
   window.scrollTo(0, scroll);
+  // Pausa sigaretta in corso (app riaperta o tornata in primo piano): ripresenta la schermata.
+  riprendiPausaSigaretta(adesso.data);
 
   monta(
     tabbar,

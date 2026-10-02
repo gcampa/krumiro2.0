@@ -99,6 +99,7 @@ function descriviIncoerenza(stato: StatoGiornata, e: Evento, etichetta: string):
 /** Azioni proponibili in UI. */
 export type Azione =
   | TipoEvento
+  | 'PAUSA_SIGARETTA'
   | 'PERMESSO_INIZIO_GIORNATA'
   | 'NON_RIENTRO'
   | 'RIAPRI';
@@ -111,6 +112,7 @@ export const ETICHETTE_AZIONE: Record<Azione, string> = {
   RIENTRO_PERMESSO: 'Rientro da permesso',
   USCITA: 'Uscita',
   USCITA_ANTICIPATA: 'Uscita anticipata',
+  PAUSA_SIGARETTA: 'Pausa sigaretta',
   PERMESSO_INIZIO_GIORNATA: 'Entro dopo (permesso a inizio giornata)',
   NON_RIENTRO: 'Non rientro (chiudi in permesso)',
   RIAPRI: 'Riapri giornata',
@@ -131,8 +133,8 @@ export function azioniDisponibili(stato: StatoGiornata, pausaFatta: boolean): Az
       return { primaria: 'ENTRATA', secondarie: ['PERMESSO_INIZIO_GIORNATA'] };
     case 'AL_LAVORO':
       return pausaFatta
-        ? { primaria: 'USCITA', secondarie: ['USCITA_PERMESSO', 'USCITA_ANTICIPATA'] }
-        : { primaria: 'INIZIO_PAUSA', secondarie: ['USCITA_PERMESSO', 'USCITA_ANTICIPATA', 'USCITA'] };
+        ? { primaria: 'USCITA', secondarie: ['PAUSA_SIGARETTA', 'USCITA_PERMESSO', 'USCITA_ANTICIPATA'] }
+        : { primaria: 'INIZIO_PAUSA', secondarie: ['PAUSA_SIGARETTA', 'USCITA_PERMESSO', 'USCITA_ANTICIPATA', 'USCITA'] };
     case 'IN_PAUSA':
       return { primaria: 'FINE_PAUSA', secondarie: [] };
     case 'IN_PERMESSO':
