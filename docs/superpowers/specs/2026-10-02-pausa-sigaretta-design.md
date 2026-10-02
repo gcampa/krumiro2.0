@@ -45,9 +45,9 @@ schermata a tutto schermo dentro l'app.
   registrata vale almeno un blocco, anche se uscita e rientro cadono nello stesso minuto
   (possibile con tolleranza 0).
 - `esitoRientroSigaretta(trascorsiMs, tolleranzaMin)` →
-  - `{ tipo: 'annulla' }` se `trascorsiMs ≤ tolleranza × 60 000` (confronto al secondo, coerente
+  - `'annulla'` se `trascorsiMs ≤ tolleranza × 60 000` (confronto al secondo, coerente
     con la sigaretta che si vede finire);
-  - `{ tipo: 'permesso' }` altrimenti.
+  - `'permesso'` altrimenti.
 - `sigarettaInCorso(giornata)` → l'evento `USCITA_PERMESSO` con `sigaretta` che ha portato la
   giornata nello stato `IN_PERMESSO` (ultimo evento valido), oppure `null`.
 
@@ -57,7 +57,9 @@ schermata a tutto schermo dentro l'app.
 - Per un intervallo sigaretta **chiuso** di durata `d`:
   - permesso conteggiato = `permessoSigaretta(d)`;
   - eccedenza `permessoSigaretta(d) − d` tolta dalle lavorate (stesso schema della penalità
-    di pausa minima), con lavorate mai sotto 0;
+    di pausa minima). Se il lavoro registrato non basta ad assorbirla (sigaretta nei primi minuti
+    di lavoro), la parte non assorbita non viene conteggiata finché non c'è abbastanza lavoro:
+    le ore coperte non superano mai il tempo trascorso;
   - **nessuna** sovrapposizione con la fascia pranzo: non genera ripartizione pausa/permesso
     e non consuma la pausa da scalare.
 - Intervallo sigaretta **aperto** (pausa in corso): conta la durata reale, come un permesso
