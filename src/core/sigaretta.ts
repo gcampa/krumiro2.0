@@ -63,3 +63,11 @@ export function sigarettaInCorso(giornata: Giornata): Evento | null {
   const uscita = a.eventiValidi[a.eventiValidi.length - 1];
   return uscita?.tipo === 'USCITA_PERMESSO' && uscita.sigaretta === true ? uscita : null;
 }
+
+/**
+ * Pausa sigaretta da ripresentare da sola (app riaperta, nuovo render): solo se la giornata
+ * è coerente. Con timbrature incoerenti l'utente sta correggendo e la schermata non deve bloccarlo.
+ */
+export function sigarettaDaRiprendere(giornata: Giornata): Evento | null {
+  return analizzaGiornata(giornata).idScartati.size === 0 ? sigarettaInCorso(giornata) : null;
+}

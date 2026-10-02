@@ -505,6 +505,34 @@ describe('pausa sigaretta', () => {
     expect(dopo.permesso).toBe(30);
   });
 
+  it('interamente prima dell’inizio conteggio non costa permesso', () => {
+    const g = conSigaretta(
+      giornata([
+        ['ENTRATA', '08:00'],
+        ['USCITA_PERMESSO', '08:10'],
+        ['RIENTRO_PERMESSO', '08:25'],
+        ['INIZIO_PAUSA', '12:30'],
+        ['FINE_PAUSA', '13:30'],
+        ['USCITA', '17:30'],
+      ]),
+    );
+    const r = calcolaGiornata(g, imp, null);
+    expect(r.permesso).toBe(0);
+    expect(r.lavorati).toBe(480);
+    expect(r.sigarette.map((x) => x.permesso)).toEqual([0]);
+    const inCorso = conSigaretta(giornata([['ENTRATA', '08:00'], ['USCITA_PERMESSO', '08:10']]));
+    expect(anteprimaSigaretta(inCorso, imp, h('08:25'))?.permesso).toBe(0);
+  });
+
+  it('a cavallo dell’inizio conteggio vale il blocco', () => {
+    const r = calcolaGiornata(
+      conSigaretta(giornata([['ENTRATA', '08:00'], ['USCITA_PERMESSO', '08:20'], ['RIENTRO_PERMESSO', '08:40'], ['USCITA', '17:30']])),
+      imp,
+      null,
+    );
+    expect(r.permesso).toBe(30);
+  });
+
   it('anteprima del permesso rientrando adesso', () => {
     const g = conSigaretta(giornata([['ENTRATA', '08:30'], ['USCITA_PERMESSO', '10:00']]));
     expect(anteprimaSigaretta(g, imp, h('10:20'))).toMatchObject({ durata: 20, permesso: 30 });

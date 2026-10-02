@@ -15,6 +15,8 @@ interface Intervallo {
   pausaConfermata?: number;
   /** Per i permessi: aperto da una pausa sigaretta. */
   sigaretta?: boolean;
+  /** Per i permessi chiusi: orario reale del rientro (prima del minimo di conteggio). */
+  rientroReale?: number;
 }
 
 /** Minuti dovuti per la data indicata secondo le impostazioni. */
@@ -77,7 +79,7 @@ export function calcolaGiornata(
         aperto = { tipo: 'permesso', da: t, sigaretta: e.sigaretta === true };
         break;
       case 'RIENTRO_PERMESSO':
-        chiudi(t, { rientroId: e.id, pausaConfermata: e.pausaConfermata });
+        chiudi(t, { rientroId: e.id, rientroReale: e.minuti, pausaConfermata: e.pausaConfermata });
         aperto = { tipo: 'lavoro', da: t };
         break;
       case 'USCITA':
@@ -138,7 +140,9 @@ export function calcolaGiornata(
       if (i.aperto) {
         permessoIntermedio += d;
       } else {
-        const permesso = permessoSigaretta(d);
+        // Tutta prima dell'inizio conteggio: quel tempo non conta, quindi nemmeno il permesso.
+        const primaDelConteggio = i.rientroReale !== undefined && i.rientroReale <= minimo;
+        const permesso = primaDelConteggio ? 0 : permessoSigaretta(d);
         permessoIntermedio += permesso;
         eccedenzaSigarette += permesso - d;
         sigarette.push({ eventoRientroId: i.rientroId, da: i.da, a: i.a, durata: d, permesso });

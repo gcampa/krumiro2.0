@@ -5,13 +5,13 @@ import {
   countdown,
   esitoRientroSigaretta,
   istanteDaMinuti,
-  sigarettaInCorso,
+  sigarettaDaRiprendere,
   testoTimer,
 } from '../core/sigaretta';
-import { adessoRoma, formattaDurata, formattaOra } from '../core/tempo';
+import { adessoRoma, formattaDataLunga, formattaDurata, formattaOra } from '../core/tempo';
 import type { Evento } from '../core/tipi';
 import { store } from '../storage/store';
-import { conferma, toast } from './dialoghi';
+import { avviso, conferma, toast } from './dialoghi';
 import { el } from './dom';
 
 /** Istante preciso di inizio: è uno stato del dispositivo, non dei dati (come tema e banner). */
@@ -87,16 +87,16 @@ let aperta = false;
 
 /** Registra l'uscita della pausa sigaretta e apre la schermata. */
 export function avviaPausaSigaretta(data: string, minuti: number): void {
-  const id = nuovoId();
-  salvaInizio({ data, eventoId: id, inizio: Date.now() });
-  store.modificaGiornata(data, (g) => void g.eventi.push({ id, tipo: 'USCITA_PERMESSO', minuti, sigaretta: true }));
-  riprendiPausaSigaretta(data);
+  const uscita: Evento = { id: nuovoId(), tipo: 'USCITA_PERMESSO', minuti, sigaretta: true };
+  salvaInizio({ data, eventoId: uscita.id, inizio: Date.now() });
+  store.modificaGiornata(data, (g) => void g.eventi.push({ ...uscita }));
+  if (!aperta) apriSchermata(data, uscita);
 }
 
-/** Apre la schermata se nella giornata c'è una pausa sigaretta in corso (e non è già aperta). */
+/** Riapre la schermata se nella giornata c'è una pausa sigaretta in corso (e non è già aperta). */
 export function riprendiPausaSigaretta(data: string): void {
   if (aperta) return;
-  const uscita = sigarettaInCorso(store.giornata(data));
+  const uscita = sigarettaDaRiprendere(store.giornata(data));
   if (uscita) apriSchermata(data, uscita);
 }
 
@@ -118,6 +118,18 @@ function apriSchermata(data: string, uscita: Evento): void {
     chiusaDaNoi = true;
     dlg.close();
   };
+  /** Il giorno è cambiato a pausa aperta: non si scrive nulla, la giornata va corretta dallo Storico. */
+  const giornoCambiato = (): boolean => {
+    if (chiusaDaNoi) return true;
+    if (adessoRoma().data === data) return false;
+    termina();
+    cancellaInizio();
+    void avviso(
+      'Pausa sigaretta non chiusa',
+      `Il rientro di ${formattaDataLunga(data)} non è stato registrato: correggi la giornata dallo Storico.`,
+    );
+    return true;
+  };
 
   const dlg = el(
     'dialog',
@@ -135,6 +147,7 @@ function apriSchermata(data: string, uscita: Evento): void {
           type: 'button',
           class: 'btn btn-primario',
           onclick: () => {
+            if (giornoCambiato()) return;
             termina();
             rientra(data, uscita, inizio);
           },
@@ -147,13 +160,14 @@ function apriSchermata(data: string, uscita: Evento): void {
           type: 'button',
           class: 'sigaretta-annulla',
           onclick: async () => {
+            if (giornoCambiato()) return;
             const ok = await conferma(
               'Annullare la pausa?',
               'L\'uscita per la pausa sigaretta verrà eliminata, come se non l\'avessi registrata.',
               'Annulla pausa',
               true,
             );
-            if (!ok) return;
+            if (!ok || giornoCambiato()) return;
             termina();
             cancellaInizio();
             store.modificaGiornata(data, (g) => void (g.eventi = g.eventi.filter((e) => e.id !== uscita.id)));
@@ -166,6 +180,7 @@ function apriSchermata(data: string, uscita: Evento): void {
   );
 
   const aggiorna = () => {
+    if (giornoCambiato()) return;
     const c = countdown(Date.now() - inizio, tolleranza);
     cartina.setAttribute('width', String(CARTINA * (1 - c.consumata)));
     punta.setAttribute('transform', `translate(${-CARTINA * c.consumata} 0)`);

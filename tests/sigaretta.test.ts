@@ -4,6 +4,7 @@ import {
   esitoRientroSigaretta,
   istanteDaMinuti,
   permessoSigaretta,
+  sigarettaDaRiprendere,
   sigarettaInCorso,
   testoTimer,
 } from '../src/core/sigaretta';
@@ -88,5 +89,27 @@ describe('pausa sigaretta in corso', () => {
     ]);
     g.eventi[1]!.sigaretta = true;
     expect(sigarettaInCorso(g)).toBeNull();
+  });
+});
+
+describe('schermata da riaprire da sola', () => {
+  it('sì se la pausa è in corso e la giornata è coerente', () => {
+    const g = giornata([
+      ['ENTRATA', '08:30'],
+      ['USCITA_PERMESSO', '10:05'],
+    ]);
+    g.eventi[1]!.sigaretta = true;
+    expect(sigarettaDaRiprendere(g)?.id).toBe(g.eventi[1]!.id);
+  });
+
+  it('no se la giornata ha timbrature incoerenti (es. rientro spostato prima dell’uscita)', () => {
+    const g = giornata([
+      ['ENTRATA', '08:30'],
+      ['RIENTRO_PERMESSO', '10:02'],
+      ['USCITA_PERMESSO', '10:05'],
+    ]);
+    g.eventi[2]!.sigaretta = true;
+    expect(sigarettaInCorso(g)?.id).toBe(g.eventi[2]!.id);
+    expect(sigarettaDaRiprendere(g)).toBeNull();
   });
 });

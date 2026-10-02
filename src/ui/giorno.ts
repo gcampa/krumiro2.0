@@ -197,7 +197,10 @@ async function eseguiAzione(azione: Azione, data: string): Promise<void> {
       if (!ok) return;
       store.modificaGiornata(data, (g) => {
         const ultima = [...g.eventi].sort((a, b) => b.minuti - a.minuti).find((e) => e.tipo === 'USCITA_PERMESSO');
-        if (ultima) ultima.tipo = 'USCITA_ANTICIPATA';
+        if (ultima) {
+          ultima.tipo = 'USCITA_ANTICIPATA';
+          delete ultima.sigaretta;
+        }
       });
       break;
     }
