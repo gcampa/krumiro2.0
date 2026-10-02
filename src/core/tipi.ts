@@ -93,6 +93,18 @@ export interface Ripartizione {
   confermata: boolean;
 }
 
+/** Pausa sigaretta conclusa: permesso conteggiato a blocchi. */
+export interface PermessoSigaretta {
+  /** Id dell'evento RIENTRO_PERMESSO che l'ha chiusa. */
+  eventoRientroId?: string;
+  da: number;
+  a: number;
+  /** Durata reale in minuti. */
+  durata: number;
+  /** Permesso conteggiato (blocchi da 30 min). */
+  permesso: number;
+}
+
 export interface RisultatoGiornata {
   stato: StatoGiornata;
   daCorreggere: boolean;
@@ -113,4 +125,5 @@ export interface RisultatoGiornata {
   uscitaPrevistaConPausa: boolean;
   pausaFatta: boolean;
   ripartizioni: Ripartizione[];
+  sigarette: PermessoSigaretta[];
 }

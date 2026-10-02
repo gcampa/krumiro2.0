@@ -1,6 +1,7 @@
+import { permessoSigaretta } from './sigaretta';
 import { analizzaGiornata } from './statoGiornata';
 import { giornoSettimana } from './tempo';
-import type { Giornata, Impostazioni, Ripartizione, RisultatoGiornata } from './tipi';
+import type { Giornata, Impostazioni, PermessoSigaretta, Ripartizione, RisultatoGiornata } from './tipi';
 
 type TipoIntervallo = 'lavoro' | 'pausa' | 'permesso';
 
@@ -12,6 +13,8 @@ interface Intervallo {
   /** Per i permessi chiusi: evento di rientro. */
   rientroId?: string;
   pausaConfermata?: number;
+  /** Per i permessi: aperto da una pausa sigaretta. */
+  sigaretta?: boolean;
 }
 
 /** Minuti dovuti per la data indicata secondo le impostazioni. */
@@ -43,12 +46,14 @@ export function calcolaGiornata(
 
   // 1. Intervalli dagli eventi validi, con orari "contati" (mai prima delle 08:30).
   const intervalli: Intervallo[] = [];
-  let aperto: { tipo: TipoIntervallo; da: number } | null = null;
+  let aperto: { tipo: TipoIntervallo; da: number; sigaretta?: boolean } | null = null;
   let anticipata = false;
   let pausaRegistrata = false;
 
   const chiudi = (a: number, extra: Partial<Intervallo> = {}) => {
-    if (aperto) intervalli.push({ tipo: aperto.tipo, da: aperto.da, a: Math.max(a, aperto.da), aperto: false, ...extra });
+    if (aperto) {
+      intervalli.push({ tipo: aperto.tipo, da: aperto.da, a: Math.max(a, aperto.da), aperto: false, sigaretta: aperto.sigaretta, ...extra });
+    }
     aperto = null;
   };
 
@@ -69,7 +74,7 @@ export function calcolaGiornata(
         break;
       case 'USCITA_PERMESSO':
         chiudi(t);
-        aperto = { tipo: 'permesso', da: t };
+        aperto = { tipo: 'permesso', da: t, sigaretta: e.sigaretta === true };
         break;
       case 'RIENTRO_PERMESSO':
         chiudi(t, { rientroId: e.id, pausaConfermata: e.pausaConfermata });
@@ -85,10 +90,16 @@ export function calcolaGiornata(
     }
   }
 
-  const apertoFinale = aperto as { tipo: TipoIntervallo; da: number } | null;
+  const apertoFinale = aperto as { tipo: TipoIntervallo; da: number; sigaretta?: boolean } | null;
   if (apertoFinale) {
     if (adesso !== null) {
-      intervalli.push({ tipo: apertoFinale.tipo, da: apertoFinale.da, a: Math.max(conta(adesso), apertoFinale.da), aperto: true });
+      intervalli.push({
+        tipo: apertoFinale.tipo,
+        da: apertoFinale.da,
+        a: Math.max(conta(adesso), apertoFinale.da),
+        aperto: true,
+        sigaretta: apertoFinale.sigaretta,
+      });
     } else {
       problemi.push('Manca la timbratura di uscita.');
     }
@@ -110,16 +121,30 @@ export function calcolaGiornata(
       }
     }
   }
-  const lavorati = Math.max(0, lavoroLordo - penalitaPausa);
 
   // 3. Permessi intermedi, con eventuale quota di pausa se coprono il pranzo.
   const ripartizioni: Ripartizione[] = [];
+  const sigarette: PermessoSigaretta[] = [];
   let permessoIntermedio = 0;
   let pausaScalata = 0;
   let residuoDaScalare = imp.pausaDaScalare;
+  let eccedenzaSigarette = 0;
   for (const i of intervalli) {
     if (i.tipo !== 'permesso') continue;
     const d = i.a - i.da;
+    if (i.sigaretta) {
+      // Mai pausa pranzo. Conclusa vale blocchi da 30 min: l'eccedenza sul tempo
+      // reale passa dalle lavorate al permesso (ore coperte invariate).
+      if (i.aperto) {
+        permessoIntermedio += d;
+      } else {
+        const permesso = permessoSigaretta(d);
+        permessoIntermedio += permesso;
+        eccedenzaSigarette += permesso - d;
+        sigarette.push({ eventoRientroId: i.rientroId, da: i.da, a: i.a, durata: d, permesso });
+      }
+      continue;
+    }
     const overlap = pausaRegistrata ? 0 : sovrapposizione(i.da, i.a, imp.pranzo.inizio, imp.pranzo.fine);
     if (overlap > 0) {
       const proposta = Math.min(residuoDaScalare, overlap);
@@ -141,6 +166,12 @@ export function calcolaGiornata(
       permessoIntermedio += d;
     }
   }
+
+  // L'eccedenza si toglie solo dal lavoro che c'è: le coperte non superano mai il tempo trascorso.
+  const lavoroNetto = Math.max(0, lavoroLordo - penalitaPausa);
+  const eccedenzaApplicata = Math.min(eccedenzaSigarette, lavoroNetto);
+  permessoIntermedio -= eccedenzaSigarette - eccedenzaApplicata;
+  const lavorati = lavoroNetto - eccedenzaApplicata;
 
   // 4. Totali.
   const dovuti = minutiDovuti(giornata.data, imp);
@@ -187,6 +218,7 @@ export function calcolaGiornata(
     uscitaPrevistaConPausa,
     pausaFatta,
     ripartizioni,
+    sigarette,
   };
 }
 
@@ -205,4 +237,21 @@ export function propostaRientro(
   };
   const r = calcolaGiornata(simulata, imp, minuti);
   return r.ripartizioni.find((x) => x.eventoRientroId === '__simulato__') ?? null;
+}
+
+/**
+ * Permesso che verrebbe conteggiato rientrando alle `minuti` dalla pausa sigaretta
+ * in corso. Null se la giornata non è in una pausa sigaretta.
+ */
+export function anteprimaSigaretta(
+  giornata: Giornata,
+  imp: Impostazioni,
+  minuti: number,
+): PermessoSigaretta | null {
+  const simulata: Giornata = {
+    ...giornata,
+    eventi: [...giornata.eventi, { id: '__simulato__', tipo: 'RIENTRO_PERMESSO', minuti }],
+  };
+  const r = calcolaGiornata(simulata, imp, minuti);
+  return r.sigarette.find((x) => x.eventoRientroId === '__simulato__') ?? null;
 }
