@@ -38,6 +38,8 @@ export interface Evento {
    * ha confermato come pausa pranzo. Se assente si usa la proposta automatica.
    */
   pausaConfermata?: number;
+  /** Solo su USCITA_PERMESSO: il permesso che apre è una pausa sigaretta. */
+  sigaretta?: true;
 }
 
 export interface Giornata {
@@ -61,6 +63,8 @@ export interface Impostazioni {
   orarioMinimoConteggio: number;
   /** Una pausa più breve di così conta come questa durata. */
   pausaMinima: number;
+  /** Una pausa sigaretta che non supera questi minuti viene cancellata al rientro. */
+  tolleranzaSigaretta: number;
 }
 
 export const IMPOSTAZIONI_PREDEFINITE: Impostazioni = {
@@ -69,6 +73,7 @@ export const IMPOSTAZIONI_PREDEFINITE: Impostazioni = {
   pausaDaScalare: 60,
   orarioMinimoConteggio: 510,
   pausaMinima: 30,
+  tolleranzaSigaretta: 11,
 };
 
 export type StatoGiornata = 'NON_INIZIATA' | 'AL_LAVORO' | 'IN_PAUSA' | 'IN_PERMESSO' | 'CHIUSA';
