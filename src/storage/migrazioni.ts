@@ -92,6 +92,7 @@ export function normalizzaImpostazioni(v: unknown): Impostazioni {
   imp.pausaDaScalare = intIn(v.pausaDaScalare, 0, 600) ?? p.pausaDaScalare;
   imp.orarioMinimoConteggio = intIn(v.orarioMinimoConteggio, 0, 1439) ?? p.orarioMinimoConteggio;
   imp.pausaMinima = intIn(v.pausaMinima, 0, 600) ?? p.pausaMinima;
+  imp.tolleranzaSigaretta = intIn(v.tolleranzaSigaretta, 0, 60) ?? p.tolleranzaSigaretta;
   return imp;
 }
 
@@ -109,6 +110,7 @@ function normalizzaGiornata(g: unknown, chiave: string): Giornata | null {
       const ev: Evento = { id: typeof e.id === 'string' && e.id ? e.id : nuovoId(), tipo, minuti };
       const pc = intIn(e.pausaConfermata, 0, 1440);
       if (tipo === 'RIENTRO_PERMESSO' && pc !== undefined) ev.pausaConfermata = pc;
+      if (tipo === 'USCITA_PERMESSO' && e.sigaretta === true) ev.sigaretta = true;
       eventi.push(ev);
     }
   }

@@ -23,13 +23,14 @@ function quota(campo: string): string {
   return /[";\r\n]/.test(campo) ? `"${campo.replace(/"/g, '""')}"` : campo;
 }
 
-/** "08:30 Entrata, 14:30 Rientro da permesso (pausa 60)" */
+/** "08:30 Entrata, 10:05 Uscita in permesso (sigaretta), 14:30 Rientro da permesso (pausa 60)" */
 export function eventiInTesto(eventi: readonly Evento[]): string {
   return [...eventi]
     .sort((a, b) => a.minuti - b.minuti)
     .map((e) => {
       const base = `${formattaOra(e.minuti)} ${ETICHETTE_EVENTO[e.tipo]}`;
-      return e.pausaConfermata !== undefined ? `${base} (pausa ${e.pausaConfermata})` : base;
+      if (e.pausaConfermata !== undefined) return `${base} (pausa ${e.pausaConfermata})`;
+      return e.sigaretta ? `${base} (sigaretta)` : base;
     })
     .join(', ');
 }
@@ -132,7 +133,7 @@ export function importaCsv(testo: string): Record<string, Giornata> {
     for (const pezzo of (r[iEventi] ?? '').split(',')) {
       const p = pezzo.trim();
       if (!p) continue;
-      const m = /^(\d{1,2}[:.]\d{2})\s+(.+?)(?:\s*\(pausa\s+(\d+)\))?$/i.exec(p);
+      const m = /^(\d{1,2}[:.]\d{2})\s+(.+?)(?:\s*\((?:pausa\s+(\d+)|(sigaretta))\))?$/i.exec(p);
       const minuti = m ? parseOra(m[1]!) : null;
       const tipo = m ? TIPO_DA_ETICHETTA.get(m[2]!.trim().toLowerCase()) : undefined;
       if (!m || minuti === null || !tipo) {
@@ -140,6 +141,7 @@ export function importaCsv(testo: string): Record<string, Giornata> {
       }
       const ev: Evento = { id: nuovoId(), tipo, minuti };
       if (m[3] !== undefined && tipo === 'RIENTRO_PERMESSO') ev.pausaConfermata = Number(m[3]);
+      if (m[4] !== undefined && tipo === 'USCITA_PERMESSO') ev.sigaretta = true;
       eventi.push(ev);
     }
     giornate[data] = { data, permessoInizioMinuti: permesso, eventi };
