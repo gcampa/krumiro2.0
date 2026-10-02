@@ -55,6 +55,31 @@ describe('CSV', () => {
     }
   });
 
+  it('pausa sigaretta: suffisso nel CSV, permesso a blocchi e ritorno', () => {
+    const g = giornata(
+      [
+        ['ENTRATA', '08:30'],
+        ['USCITA_PERMESSO', '10:05'],
+        ['RIENTRO_PERMESSO', '10:20'],
+        ['USCITA', '17:30'],
+      ],
+      { data: '2026-10-02' },
+    );
+    g.eventi[1]!.sigaretta = true;
+    const csv = esportaCsv({ [g.data]: g }, imp, oggi);
+    expect(csv).toContain('10:05 Uscita in permesso (sigaretta)');
+    // dovute 8h, lavorate 8h30, permesso 30 min (blocco), saldo +1h
+    expect(csv).toContain('2026-10-02;Venerdì;8,00;8,50;0,50;1,00;');
+    const i = importaCsv(csv)[g.data]!;
+    expect(i.eventi.map((e) => e.sigaretta)).toEqual([undefined, true, undefined, undefined]);
+  });
+
+  it('il suffisso (sigaretta) vale solo sulle uscite in permesso', () => {
+    const csv = 'Data;Eventi\r\n2026-10-02;08:30 Entrata (sigaretta), 10:05 Uscita in permesso (sigaretta)\r\n';
+    const i = importaCsv(csv)['2026-10-02']!;
+    expect(i.eventi.map((e) => e.sigaretta)).toEqual([undefined, true]);
+  });
+
   it('parser con campi tra virgolette', () => {
     expect(parseCsv('a;"b;c";"d ""e"""\r\n1;2;3\n')).toEqual([
       ['a', 'b;c', 'd "e"'],

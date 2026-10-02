@@ -26,6 +26,13 @@ describe('aiuto', () => {
     expect(rientro.testo.join(' ')).toContain('45 min');
   });
 
+  it('la pausa sigaretta usa la tolleranza impostata', () => {
+    const v = vociAiuto(impostazioni({ tolleranzaSigaretta: 7 }));
+    const voce = v.find((x) => x.id === 'pausa-sigaretta')!;
+    expect(voce.azione).toBe('PAUSA_SIGARETTA');
+    expect(voce.testo.join(' ')).toContain('7 min');
+  });
+
   it('la ricerca ignora maiuscole e accenti e richiede tutte le parole', () => {
     expect(filtraAiuto(voci, 'USCITA anticipata').map((v) => v.id)).toContain('permesso-vs-anticipata');
     expect(filtraAiuto(voci, 'perche entrata').map((v) => v.id)).toContain('orario-minimo');

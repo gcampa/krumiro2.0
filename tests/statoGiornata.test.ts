@@ -39,7 +39,8 @@ describe('azioni disponibili', () => {
   });
 
   it('azioni secondarie sensate', () => {
-    expect(azioniDisponibili('AL_LAVORO', true).secondarie).toEqual(['USCITA_PERMESSO', 'USCITA_ANTICIPATA']);
+    expect(azioniDisponibili('AL_LAVORO', true).secondarie).toEqual(['PAUSA_SIGARETTA', 'USCITA_PERMESSO', 'USCITA_ANTICIPATA']);
+    expect(azioniDisponibili('AL_LAVORO', false).secondarie).toEqual(['PAUSA_SIGARETTA', 'USCITA_PERMESSO', 'USCITA_ANTICIPATA', 'USCITA']);
     expect(azioniDisponibili('IN_PAUSA', false).secondarie).toEqual([]);
     expect(azioniDisponibili('IN_PERMESSO', false).secondarie).toContain('NON_RIENTRO');
   });

@@ -51,14 +51,17 @@ nuova versione, viene scaricata in background e applicata alla successiva apertu
 
 - **Oggi**: il bottone grande propone l'azione più probabile
   (Entrata → Inizio pausa → Fine pausa → Uscita). Sotto trovi le azioni secondarie:
-  *Esco in permesso*, *Rientro da permesso*, *Uscita anticipata*, *Entro dopo*
+  *Pausa sigaretta*, *Esco in permesso*, *Rientro da permesso*, *Uscita anticipata*, *Entro dopo*
   (permesso a inizio giornata). In alto vedi l'**uscita prevista**, le ore coperte e il saldo.
+- **Pausa sigaretta**: registra un'uscita e apre una schermata con il conto alla rovescia e una
+  sigaretta che si consuma. Se rientri entro la tolleranza (11 min, configurabile) la pausa si
+  cancella; altrimenti diventa permesso a blocchi di 30 min.
 - Tocca una timbratura nella timeline per **modificarla o eliminarla**. Con
   *+ Aggiungi timbratura* puoi inserirne una a mano, per esempio se l'hai dimenticata.
 - **Storico**: le giornate del mese con lavorate, permesso e saldo, più il riepilogo mensile
   (permesso usato e saldo del mese). Con *+ Giornata dimenticata* inserisci un giorno passato.
 - **Impostazioni**: ore dovute (anche diverse per giorno della settimana), fascia pranzo,
-  pausa da scalare, pausa minima, orario di inizio conteggio, export e import dei dati.
+  pausa da scalare, pausa minima, orario di inizio conteggio, tolleranza della pausa sigaretta, export e import dei dati.
 - **Aiuto**: risposte ai dubbi più comuni (per esempio la differenza tra *Esco in permesso*
   e *Uscita anticipata*), con ricerca. I link **?** nelle schermate aprono direttamente
   la risposta che riguarda quel punto. Gli esempi usano le tue impostazioni correnti.
@@ -75,6 +78,7 @@ nuova versione, viene scaricata in background e applicata alla successiva apertu
 | Pausa più breve di 30 min | conta come 30 min (in tutti i calcoli) |
 | Pausa pranzo | non conta come coperta |
 | Permesso a metà giornata | conta come coperto |
+| Pausa sigaretta | entro la tolleranza (11 min) viene cancellata; oltre vale permesso a blocchi di 30 min (15 min → 30 min, 42 min → 1h), le ore coperte non cambiano e non diventa mai pausa pranzo |
 | Uscita anticipata | le ore mancanti diventano permesso (saldo 0) |
 | Permesso che copre la fascia pranzo (12:00–14:30) senza pausa registrata | fino a 60 min diventano pausa; al rientro l'app mostra la ripartizione proposta (es. "1h pausa + 1h30 permesso"), che puoi modificare prima di confermare |
 

@@ -8,6 +8,7 @@ import { conferma, toast } from './dialoghi';
 import { el } from './dom';
 import { linkAiuto } from './aiuto';
 import { confermaRipartizione, editorEvento, editorPermessoInizio } from './editor';
+import { avviaPausaSigaretta } from './sigaretta';
 
 export interface Adesso {
   data: string;
@@ -124,7 +125,11 @@ function pulsantiAzione(data: string, r: RisultatoGiornata, adesso: number): HTM
           'div',
           { class: 'azioni-secondarie' },
           secondarie.map((a) =>
-            el('button', { type: 'button', class: 'btn btn-secondario', onclick: () => void eseguiAzione(a, data) }, ETICHETTE_AZIONE[a]),
+            el(
+              'button',
+              { type: 'button', class: 'btn btn-secondario', onclick: () => void eseguiAzione(a, data) },
+              a === 'PAUSA_SIGARETTA' ? `🚬 ${ETICHETTE_AZIONE[a]}` : ETICHETTE_AZIONE[a],
+            ),
           ),
         )
       : null,
@@ -152,6 +157,9 @@ async function eseguiAzione(azione: Azione, data: string): Promise<void> {
     });
 
   switch (azione) {
+    case 'PAUSA_SIGARETTA':
+      avviaPausaSigaretta(data, minuti);
+      return;
     case 'PERMESSO_INIZIO_GIORNATA':
       await editorPermessoInizio(data, store.giornata(data).eventi.length === 0 ? minuti : null);
       return;
@@ -189,7 +197,10 @@ async function eseguiAzione(azione: Azione, data: string): Promise<void> {
       if (!ok) return;
       store.modificaGiornata(data, (g) => {
         const ultima = [...g.eventi].sort((a, b) => b.minuti - a.minuti).find((e) => e.tipo === 'USCITA_PERMESSO');
-        if (ultima) ultima.tipo = 'USCITA_ANTICIPATA';
+        if (ultima) {
+          ultima.tipo = 'USCITA_ANTICIPATA';
+          delete ultima.sigaretta;
+        }
       });
       break;
     }
@@ -237,11 +248,16 @@ function timeline(
   }
   for (const e of ordinati) {
     const rip = r.ripartizioni.find((x) => x.eventoRientroId === e.id);
+    const sig = r.sigarette.find((x) => x.eventoRientroId === e.id);
     const dettaglio = rip
       ? `${formattaDurata(rip.pausa)} pausa + ${formattaDurata(rip.permesso)} permesso${rip.confermata ? '' : ' (proposta)'}`
-      : scartati.has(e.id)
-        ? 'non coerente: da correggere'
-        : null;
+      : sig
+        ? `${formattaDurata(sig.permesso)} di permesso (pausa sigaretta di ${formattaDurata(sig.durata)})`
+        : scartati.has(e.id)
+          ? 'non coerente: da correggere'
+          : e.tipo === 'USCITA_PERMESSO' && e.sigaretta
+            ? '🚬 pausa sigaretta'
+            : null;
     voci.push(
       el(
         'li',

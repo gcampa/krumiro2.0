@@ -39,4 +39,37 @@ describe('migrazioni', () => {
     d.impostazioni.minutiDovuti.perGiorno[1] = 100;
     expect(IMPOSTAZIONI_PREDEFINITE.minutiDovuti.perGiorno[1]).toBeNull();
   });
+
+  it('conserva la pausa sigaretta solo sulle uscite in permesso', () => {
+    const d = migra({
+      version: 1,
+      giornate: {
+        '2026-10-01': {
+          data: '2026-10-01',
+          permessoInizioMinuti: 0,
+          eventi: [
+            { id: 'a', tipo: 'ENTRATA', minuti: 510, sigaretta: true },
+            { id: 'b', tipo: 'USCITA_PERMESSO', minuti: 600, sigaretta: true },
+            { id: 'c', tipo: 'RIENTRO_PERMESSO', minuti: 620, sigaretta: 'si' },
+          ],
+        },
+      },
+    });
+    expect(d.giornate['2026-10-01']!.eventi).toEqual([
+      { id: 'a', tipo: 'ENTRATA', minuti: 510 },
+      { id: 'b', tipo: 'USCITA_PERMESSO', minuti: 600, sigaretta: true },
+      { id: 'c', tipo: 'RIENTRO_PERMESSO', minuti: 620 },
+    ]);
+  });
+
+  it('tolleranza della pausa sigaretta: predefinita 11, valori non validi scartati', () => {
+    const tolleranza = (v: unknown) => migra({ version: 1, impostazioni: { tolleranzaSigaretta: v } }).impostazioni.tolleranzaSigaretta;
+    expect(migra({}).impostazioni.tolleranzaSigaretta).toBe(11);
+    expect(tolleranza(5)).toBe(5);
+    expect(tolleranza(0)).toBe(0);
+    expect(tolleranza(60)).toBe(60);
+    expect(tolleranza(61)).toBe(11);
+    expect(tolleranza(7.5)).toBe(11);
+    expect(tolleranza('11')).toBe(11);
+  });
 });

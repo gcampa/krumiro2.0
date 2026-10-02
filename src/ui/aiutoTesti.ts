@@ -32,6 +32,7 @@ export function vociAiuto(imp: Impostazioni): VoceAiuto[] {
   const minimo = formattaOra(imp.orarioMinimoConteggio);
   const pausaMin = formattaDurata(imp.pausaMinima);
   const dovute = formattaDurata(imp.minutiDovuti.predefinito);
+  const tolleranza = formattaDurata(imp.tolleranzaSigaretta);
 
   return [
     // --- Primi passi
@@ -135,6 +136,21 @@ export function vociAiuto(imp: Impostazioni): VoceAiuto[] {
       domanda: 'Non rientro (chiudi in permesso)',
       testo: [
         'Compare mentre sei in permesso. Trasforma l\'ultima "Uscita in permesso" in "Uscita anticipata": la giornata si chiude e le ore mancanti diventano permesso.',
+      ],
+    },
+    {
+      id: 'pausa-sigaretta',
+      sezione: 'I bottoni',
+      azione: 'PAUSA_SIGARETTA',
+      domanda: 'Pausa sigaretta',
+      testo: [
+        `Registra un'uscita in permesso e apre una schermata con il conto alla rovescia di ${tolleranza}: la sigaretta si consuma mentre il tempo passa. Quando torni tocca "Rientro".`,
+        `• Rientri entro ${tolleranza}: la pausa viene cancellata e non resta nessuna timbratura.`,
+        '• Rientri dopo: la pausa diventa permesso a blocchi di 30 min (fino a 30 min → 30 min, fino a 1h → 1h, e così via).',
+        'Le ore coperte e l\'uscita prevista non cambiano: il tempo del blocco oltre la pausa reale passa dalle ore lavorate al permesso.',
+        'Esempio: pausa di 15 min → 30 min di permesso e 15 min in meno di lavorate; pausa di 42 min → 1h di permesso.',
+        'Hai toccato il bottone per sbaglio? Usa "Annulla pausa" nella schermata. Se chiudi l\'app durante la pausa, alla riapertura il conto riprende da dove era.',
+        'La tolleranza si cambia in Impostazioni → Pausa sigaretta.',
       ],
     },
     {
