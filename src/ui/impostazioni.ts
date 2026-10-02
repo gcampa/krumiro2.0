@@ -18,8 +18,8 @@ function inputHHMM(minuti: number, onCambio: (v: number) => void, aria: string):
   return selettoreOra(minuti, { aria, onChange: onCambio }).elemento;
 }
 
-function inputMinuti(valore: number, onCambio: (v: number) => void, aria: string, max = 600): HTMLInputElement {
-  const i = el('input', { type: 'number', inputmode: 'numeric', min: 0, max, step: 5, value: String(valore), 'aria-label': aria });
+function inputMinuti(valore: number, onCambio: (v: number) => void, aria: string, max = 600, step = 5): HTMLInputElement {
+  const i = el('input', { type: 'number', inputmode: 'numeric', min: 0, max, step, value: String(valore), 'aria-label': aria });
   i.addEventListener('change', () => {
     const v = Math.round(Number(i.value));
     if (!Number.isFinite(v) || v < 0 || v > max) {
@@ -150,6 +150,16 @@ export function vistaImpostazioni(adesso: Adesso): HTMLElement {
     el(
       'div',
       { class: 'scheda' },
+      el('h2', { class: 'titolo-sezione' }, 'Pausa sigaretta'),
+      riga('Tolleranza (min)', inputMinuti(imp.tolleranzaSigaretta, (v) => {
+        store.modificaImpostazioni((i) => void (i.tolleranzaSigaretta = v));
+        salvato();
+      }, 'Tolleranza della pausa sigaretta in minuti', 60, 1), 'entro questo tempo la pausa non viene conteggiata'),
+      linkAiuto('Come funziona la pausa sigaretta?', 'pausa-sigaretta'),
+    ),
+    el(
+      'div',
+      { class: 'scheda' },
       el('h2', { class: 'titolo-sezione' }, 'Conteggio'),
       riga('Inizio conteggio', inputHHMM(imp.orarioMinimoConteggio, (v) => {
         store.modificaImpostazioni((i) => void (i.orarioMinimoConteggio = v));
@@ -161,7 +171,7 @@ export function vistaImpostazioni(adesso: Adesso): HTMLElement {
           type: 'button',
           class: 'btn btn-secondario',
           onclick: async () => {
-            if (await conferma('Ripristinare le impostazioni?', 'Tornano i valori predefiniti (8h lun–ven, pranzo 12:00–14:30, 60 min da scalare). Le timbrature non vengono toccate.', 'Ripristina', true)) {
+            if (await conferma('Ripristinare le impostazioni?', 'Tornano i valori predefiniti (8h lun–ven, pranzo 12:00–14:30, 60 min da scalare, tolleranza sigaretta 11 min). Le timbrature non vengono toccate.', 'Ripristina', true)) {
               store.modificaImpostazioni((i) => Object.assign(i, clonaImpostazioni(IMPOSTAZIONI_PREDEFINITE)));
               salvato();
             }
