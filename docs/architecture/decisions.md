@@ -129,7 +129,7 @@ confermata) non devono perdersi.
 **Conseguenze**: logica di dominio `high`, con test dedicati in `tests/portale.test.ts`.
 
 ## D16 — Documentazione unica in krumiro2.0
-**Stato**: proposta (Q2). Con D19 non c'è la cartella `firebase/`.
+**Stato**: approvata il 2026-10-03 (Q2). Con D19 non c'è la cartella `firebase/`.
 **Decisione**: `docs/` di krumiro2.0 contiene architettura, sicurezza, piano e avanzamento dell'intera
 integrazione; outatime ha solo un `docs/README.md` che rimanda qui; la configurazione Firebase sta in
 `krumiro2.0/firebase/`.
@@ -180,7 +180,7 @@ dipendere dall'estensione.
 [regole-outatime.md](regole-outatime.md).
 
 ## D21 — Gestione oraria a configurazioni (Presenza, FILM, Smart working)
-**Stato**: proposta (Q24).
+**Stato**: approvata il 2026-10-03 (Q24); dettagli in D23.
 **Decisione**: krumiro2.0 calcola l'uscita con la formula unica di
 [regole-outatime.md § 2](regole-outatime.md#2-una-sola-formula-per-le-tre-configurazioni-proposta-d21) e tre
 configurazioni con i valori predefiniti di outatime v0.2.3, tutti modificabili in Impostazioni: ingresso minimo,
@@ -194,10 +194,60 @@ che vale per i soli campi opzionali); `Giornata.smart` nuovo; test di krumiro2.0
 casi di riferimento.
 
 ## D22 — outatime: `main` allineato alla release 0.2.3
-**Stato**: proposta (Q29).
+**Stato**: approvata il 2026-10-03 (Q29); PR in bozza [gcampa/outatime#3](https://github.com/gcampa/outatime/pull/3)
+aperta da Claude, merge dell'utente.
 **Decisione**: si porta `firefox-support` in `main` di outatime con una PR e un commit di merge (opzione A di
 [outatime-unione-main.md](../implementation/outatime-unione-main.md)); poi si eliminano `firefox-support` e
 `feature/bun-firefox` e si lavora solo da `main`.
 **Motivo**: richiesta dell'utente di rispettare quanto rilasciato nell'ultima versione; oggi il ramo predefinito
 mostra la 0.1. Il merge conserva la storia e lascia i tag `v0.2.0`–`v0.2.3` raggiungibili da `main`.
 **Conseguenze**: nessun cambio di codice né nuova release (`main` = `v0.2.3` + `.npmrc`); F4 parte da `main`.
+
+## D23 — Dettagli del calcolo della gestione oraria
+**Stato**: approvata il 2026-10-03 (Q25–Q28, fasce per configurazione); i punti marcati *(plenaria)* sono
+dedotti dalla plenaria per rendere eseguibili i task, l'utente può sostituirli con una nuova voce.
+**Decisione**:
+- Configurazione: ingresso minimo, pausa minima, "pausa minima solo nella fascia pranzo" (FILM), fascia pranzo,
+  pausa prevista (`pausaDaScalare`), uscita minima, fasce obbligatorie (max 4); valori predefiniti di outatime nella
+  tabella di [F2-gestione-oraria.md](../implementation/F2-gestione-oraria.md).
+- **FILM** (Q25, Q26): pausa minima 30 sui minuti di pausa dentro 13:00–15:00, calcolata sulla giornata intera; i
+  minuti prima delle 13:00 contano come pausa; **i minuti dopo le 15:00 non riducono il lavoro** (come outatime).
+  Con entrata 09:00 e pausa 13:01–13:42 l'uscita è 17:41 (sempre 8 ore di lavoro).
+- **FILM vale per tutti i giorni in presenza**, anche quelli passati, finché è attivo *(plenaria)*: è la modalità
+  contrattuale dell'utente, cambia di rado.
+- **Uscita minima** solo nei giorni con le ore dovute predefinite *(plenaria)*: un giorno ridotto (es. venerdì 6h)
+  non viene portato a 17:30.
+- **Pausa prevista** separata dalla pausa minima *(plenaria)*: serve a non cambiare i risultati dei 92 test storici;
+  i predefiniti coincidono con la pausa minima (60/30/30).
+- **Durante la pausa** l'ora di levarsi si stima simulando il rientro *(plenaria)*: tiene conto di FILM e uscita
+  minima.
+- **Fasce obbligatorie per configurazione**, solo avviso, valutate quando la fascia è conclusa; coprono lavoro,
+  permessi, permesso a inizio giornata e uscita anticipata. Predefinite: Presenza e Smart working 10:00–12:30 e
+  15:00–17:30; FILM 10:00–12:30 e 15:00–17:00.
+- **Effettivi** = minuti reali tra entrate e uscite; **Straordinari** = effettivi − ore dovute del giorno (Q28);
+  "Ora di levarsi 👋" al posto di "Uscita prevista"; 💸 Volontariato in F3.
+**Motivo**: risposte dell'utente del 2026-10-03; i 17 casi di outatime e i 92 test storici restano veri.
+**Conseguenze**: task T2.01–T2.17; schema v2.
+
+## D24 — Effort degli esecutori: solo medium
+**Stato**: approvata il 2026-10-03 (Q14).
+**Decisione**: tutti i task con `Effort: medium`; un task che richiederebbe `high` si spezza; formule, firme, testi
+e casi di test sono scritti nel file di fase.
+**Motivo**: scelta dell'utente.
+**Conseguenze**: F2 ha 17 task in 7 sessioni più la chiusura.
+
+## D25 — rubadab: hook in locale
+**Stato**: approvata il 2026-10-03 (Q13).
+**Decisione**: il modello degli hook è
+[rubadab-settings.example.json](../implementation/rubadab-settings.example.json) (progetto `krumiro2.0`); l'utente lo
+copia in `.claude/settings.json` e crea `.mcp.json` sulla macchina dove gira rubadab. Fino ad allora
+`Applied lessons: none (rubadab non disponibile)`.
+**Motivo**: la sessione cloud non raggiunge `localhost:8899`; un hook attivo qui fallirebbe a ogni prompt.
+**Conseguenze**: punto fisso 1 rinviato all'attivazione locale.
+
+## D26 — Nessuna fase F1 di design
+**Stato**: approvata il 2026-10-03 (Q11).
+**Decisione**: niente F1 separata; F2 e F3 descrivono i controlli nuovi nei task, nello stile esistente; le
+schermate del QR si progettano nel P di F4.
+**Motivo**: interfaccia nuova piccola, nello stile già definito.
+**Conseguenze**: deroga allo scheletro (F1 "solo se c'è UI") registrata in progress.md.

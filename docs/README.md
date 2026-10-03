@@ -6,8 +6,7 @@ adotta le regole di calcolo di outatime, poi acquisisce le timbrature del portal
 mostrato da outatime sul PC e letto dal telefono, senza servizi esterni).
 
 Metodo: skill `metodo-fasi`, adattato in [implementation/gestione-fasi.md](implementation/gestione-fasi.md).
-Stato: **F0 in corso — architettura QR approvata (D19), ordine delle fasi approvato (D20); da chiudere le domande
-di F2 (Q24–Q29).**
+Stato: **F0 completa, in attesa di R-F0** — domande di F2 chiuse (D21–D26), piano di F2 scritto.
 
 ## Indice
 
@@ -16,8 +15,12 @@ di F2 (Q24–Q29).**
 | [architecture/regole-outatime.md](architecture/regole-outatime.md) | gestione oraria di outatime v0.2.3 (Presenza, FILM, Smart working), formula unica, confronto sui 17 casi di test |
 | [architecture/integrazione-outatime.md](architecture/integrazione-outatime.md) | inventario dei due repository, architettura QR, flusso, contratto dati, classificazione e unione |
 | [architecture/sicurezza.md](architecture/sicurezza.md) | modello delle minacce, controlli S1–S17, rischi residui |
-| [architecture/decisions.md](architecture/decisions.md) | registro decisioni D1–D22 |
+| [architecture/decisions.md](architecture/decisions.md) | registro decisioni D1–D26 |
 | [implementation/gestione-fasi.md](implementation/gestione-fasi.md) | metodo adattato al progetto |
+| [implementation/README.md](implementation/README.md) | istruzioni per l'esecutore, regole B/W, comandi, DoD |
+| [implementation/prompts.md](implementation/prompts.md) | prompt del progetto |
+| [implementation/F2-gestione-oraria.md](implementation/F2-gestione-oraria.md) | piano di F2: 17 task |
+| [implementation/f2-sessioni.md](implementation/f2-sessioni.md) | sessioni, prompt e checklist di F2 |
 | [implementation/roadmap.md](implementation/roadmap.md) | fasi F0, F2–F6 e milestone |
 | [implementation/progress.md](implementation/progress.md) | avanzamento, Dubbi, Blocchi |
 | [implementation/outatime-unione-main.md](implementation/outatime-unione-main.md) | valutazione e procedura per riunire outatime in `main` (D22) |
@@ -36,66 +39,16 @@ di F2 (Q24–Q29).**
 
 ## Domande aperte
 
-Ognuna ha la raccomandazione della plenaria; decide l'utente. Le prime cinque bloccano la pianificazione di F2.
+Nessuna blocca F2. Restano quelle delle fasi successive, da chiudere nel loro P (a scelta multipla).
 
-### Per F2 — gestione oraria di outatime ([regole-outatime.md](architecture/regole-outatime.md))
-- **Q24 — Modello a configurazioni.** krumiro2.0 adotta le tre configurazioni di outatime v0.2.3 con un'unica
-  formula (verificata sui 17 casi di test di outatime):
-
-  | | Presenza | Presenza FILM | Smart working |
-  |---|---|---|---|
-  | Ingresso minimo | 08:30 | 08:30 | 07:00 |
-  | Pausa minima | 60 min | 30 min | 30 min |
-  | Finestra della pausa minima | — | 13:00–15:00 | — |
-  | Uscita minima | 17:30 | 17:00 | 17:30 |
-  | Ore dovute | 8:00 | 8:00 | 8:00 |
-
-  *Raccomandazione*: tutti i valori modificabili in *Impostazioni → Orari*; **FILM** è un interruttore globale
-  (come il popup di outatime) che sceglie quale configurazione vale per i giorni in presenza; **Smart working** si
-  sceglie per giornata (interruttore nella schermata del giorno). Le ore dovute per giorno della settimana
-  (sab–dom 0) restano come oggi. Un backup v1 importato porta giornate e tolleranza sigaretta; le regole orarie
-  partono dai valori di outatime (D21).
-- **Q25 — FILM, pausa dopo le 15:00.** outatime conta solo i minuti di pausa prima delle 13:00 e quelli oltre i 30
-  dentro 13:00–15:00: una pausa 14:30–15:30 dà uscita 17:00 come una di 30 minuti. È la regola o una svista?
-  *Raccomandazione*: svista; anche i minuti dopo le 15:00 ritardano l'uscita (pausa 14:30–15:30 → 17:30).
-- **Q26 — Esempio dell'issue #2.** "Entrata 09:00, pausa 13:01–13:42, uscita 17:11" non torna con la regola
-  (17:41); il test di outatime usa entrata 08:30. *Raccomandazione*: l'esempio ha un refuso; vale 17:41 con
-  entrata 09:00 e 17:11 con 08:30.
-- **Q27 — Fasce obbligatorie in smart working.** L'issue #2 cita 10:00–12:30 e 15:00–17:30 obbligatorie, non
-  implementate in outatime. *Raccomandazione*: due fasce configurabili nella configurazione Smart working; se una
-  timbratura le lascia scoperte, la giornata mostra l'avviso "Fascia obbligatoria 10:00–12:30 non coperta", senza
-  cambiare il calcolo.
-- **Q28 — Etichette e totali.** *Raccomandazione*: "**Ora di levarsi 👋**" al posto di "Uscita prevista"; nei
-  dettagli della giornata e nello storico **🐫 Effettivi** (somma reale delle coppie entrata/uscita) e
-  **Straordinari** (effettivi − ore dovute, se positivi). Il 💸 **Volontariato** (effettivi − ore pagate dal
-  portale) arriva in F3, quando si inseriscono le ore pagate.
-- **Q29 — outatime: riunire tutto in `main`.** `main` è fermo alla 0.1; la release 0.2.3 sta su
-  `firefox-support`; i due rami divergono (1 solo commit di `main` fuori, banale: `.npmrc` e `.gitignore`).
-  *Raccomandazione*: opzione A di [outatime-unione-main.md](implementation/outatime-unione-main.md) — branch
-  `chore/unione-main` con merge, PR verso `main` in bozza aperta da Claude, merge fatto da te con commit di merge;
-  poi eliminare `firefox-support` e `feature/bun-firefox` (D22). Nessuna nuova release.
-
-### Processo
-- **Q11 — F1 Design.** *Raccomandazione*: nessuna F1 separata (deroga registrata): F2 e F3 aggiungono campi e un
-  dialogo nello stile esistente, descritti per esteso nei task; le schermate del QR (outatime e lettore) si
-  progettano nel P di F4 in `docs/design/pages-and-widgets.md`, approvato da te.
-- **Q14 — Effort degli esecutori.** *Raccomandazione*: `medium/high` (calcolo, classificazione, unione,
-  cifratura sono `high`).
-- **Q13 — rubadab.** *Raccomandazione*: hook e `.mcp.json` li aggiungi tu dove gira il servizio; fino ad allora
-  `Applied lessons: none (rubadab non disponibile)`.
-- **Q2 — Dove vive il piano.** *Raccomandazione*: documentazione unica in krumiro2.0, outatime rimanda qui (D16).
-
-### Per fasi successive (si chiudono nel loro P)
-- **Q7 — Struttura del cartellino** (F4): la struttura è già descritta dalla fixture sintetica di
-  `test/content.spec.ts` di outatime v0.2.3; resta da sapere se esistono diciture oltre a Entrata/Uscita/SMART
-  WORKING (ferie, giustificativi, timbrature corrette).
-- **Q12 — "Ora di levarsi" nella pagina del portale** (F4): *raccomandazione* tenerla (è la funzione principale di
-  outatime) e allinearla alle risposte Q25–Q26.
-- **Q15 — Distribuzione dell'estensione** (F4): *raccomandazione* lo zip Chrome delle release di outatime, caricato
-  non pacchettizzato (come oggi).
+- **Q7 — Struttura del cartellino** (F3/F4): la fixture sintetica di `test/content.spec.ts` di outatime descrive la
+  struttura; resta da sapere se esistono diciture oltre a Entrata/Uscita/SMART WORKING (ferie, giustificativi,
+  timbrature corrette).
+- **Q12 — "Ora di levarsi" nella pagina del portale** (F4): *raccomandazione* tenerla e allinearla a D23.
+- **Q15 — Distribuzione dell'estensione** (F4): *raccomandazione* zip Chrome delle release, caricato non
+  pacchettizzato.
 - **Q17 — Telefono** (F5): iPhone o Android, per la lettura del QR.
-- **Q23 — Chiave del QR** (F4): passphrase scritta su PC e telefono, oppure chiave casuale passata una volta con un
-  QR di abbinamento (più robusta, nessuna password da ricordare). *Raccomandazione*: QR di abbinamento.
+- **Q23 — Chiave del QR** (F4): passphrase oppure QR di abbinamento. *Raccomandazione*: QR di abbinamento.
 
 ## Domande chiuse
 
@@ -112,6 +65,17 @@ Ognuna ha la raccomandazione della plenaria; decide l'utente. Le prime cinque bl
 - **Q16 — Conflitto con le regole aziendali** → 2026-10-03: opzione B, trasferimento offline con QR → D19; D8
   scartata. Ordine delle fasi → D20.
 - **Q9, Q10** (regione dei dati, sessioni) → 2026-10-03: decadute con D19 (nessun server).
+- **Q24 — Configurazioni** → 2026-10-03: FILM globale, smart working per giornata, tutto modificabile → D21.
+- **Q25 — FILM, pausa dopo le 15:00** → 2026-10-03: come outatime (non riduce il lavoro) → D23.
+- **Q26 — Esempio issue #2** → 2026-10-03: FILM = 30 min di pausa e sempre 8 ore di lavoro; 09:00 + 13:01–13:42 →
+  17:41 → D23.
+- **Q27 — Fasce obbligatorie** → 2026-10-03: per configurazione, solo avviso; FILM fino alle 17:00 → D23.
+- **Q28 — Etichette e totali** → 2026-10-03: Ora di levarsi 👋, Effettivi, Straordinari; Volontariato in F3 → D23.
+- **Q29 — outatime in `main`** → 2026-10-03: sì → D22, PR gcampa/outatime#3.
+- **Q2 — Documentazione** → 2026-10-03: tutto in krumiro2.0 → D16.
+- **Q11 — F1** → 2026-10-03: nessuna fase di design → D26.
+- **Q13 — rubadab** → 2026-10-03: hook dopo, in locale → D25.
+- **Q14 — Effort** → 2026-10-03: solo medium → D24.
 - **Q18–Q22** (pausa minima, fascia pranzo, entrata dopo le 09:30, smart working, etichette) → 2026-10-03:
   superate. Erano basate su outatime 0.1; l'utente ha chiarito: orari configurabili, configurazione FILM, portare
   in krumiro2.0 la gestione oraria di outatime → sostituite da Q24–Q29 su outatime v0.2.3.

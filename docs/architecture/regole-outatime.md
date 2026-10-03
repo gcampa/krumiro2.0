@@ -2,7 +2,7 @@
 
 Stato: **F0, analisi del 2026-10-03 (rifatta su outatime v0.2.3).** Obiettivo dell'utente: portare in krumiro2.0
 la gestione oraria di outatime, con **orari configurabili** e la configurazione **FILM**. Base della fase F2.
-Domande aperte citate (Q24–Q29) in [../README.md](../README.md#domande-aperte).
+Decisioni in § 5.
 
 > La prima analisi (commit `447ba9b`) leggeva `main` di outatime, fermo alla 0.1. La versione in uso è
 > **v0.2.3** (branch `firefox-support`, tag `v0.2.3`): TypeScript, esbuild, Jest, CI e release, popup FILM.
@@ -89,13 +89,9 @@ configurazioni** e la scelta della configurazione per giornata.
   aggiungendo la pausa minima.
 - **Giornate passate**: saldo, storico, CSV.
 
-## 5. Punti da decidere
+## 5. Decisioni (2026-10-03)
 
-| Punto | Domanda |
-|---|---|
-| Modello a configurazioni, valori predefiniti di outatime, tutto modificabile, FILM come scelta globale, smart working per giornata | Q24 |
-| FILM: minuti di pausa **dopo le 15:00** — outatime li ignora (pausa 14:30–15:30 → uscita 17:00) | Q25 |
-| Issue #2: "Entrata 09:00, pausa 13:01–13:42, uscita 17:11" contraddice la regola (17:41); il test usa 08:30 | Q26 |
-| Smart working: issue #2 cita fasce obbligatorie 10:00–12:30 e 15:00–17:30, non implementate in outatime | Q27 |
-| Etichette e totali di outatime in krumiro2.0 | Q28 |
-| Branch di riferimento di outatime (`main` è fermo alla 0.1) | Q29 |
+Tutti i punti aperti sono chiusi in [D21](decisions.md#d21--gestione-oraria-a-configurazioni-presenza-film-smart-working)
+e [D23](decisions.md#d23--dettagli-del-calcolo-della-gestione-oraria): FILM globale, smart working per giornata, minuti
+di pausa FILM dopo le 15:00 come outatime, 09:00 + 13:01–13:42 → 17:41, fasce obbligatorie per configurazione
+(solo avviso), "Ora di levarsi 👋", Effettivi, Straordinari; outatime `main` allineato a 0.2.3 (D22).

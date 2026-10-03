@@ -3,6 +3,9 @@
 Spuntare `[x]` a fine task con data e nota breve: `- [x] T2.01 … — 2026-01-15, ok (…conteggi test…)`.
 Sotto ogni task la riga `Applied lessons: [<id>, …]` oppure `Applied lessons: none`.
 
+Cambio di processo — 2026-10-03: nessuna F1 (D26); effort degli esecutori solo medium (D24); prompt di S1 crea il
+branch della fase perché il piano è fuori da `main` (gestione-fasi.md § Ciclo).
+
 Cambio di processo — 2026-10-03: adozione del metodo a fasi (skill `metodo-fasi`) per l'integrazione outatime;
 recepito in [gestione-fasi.md](gestione-fasi.md). Lavoro fino a 1.5.0 registrato come fase chiusa prima
 dell'adozione (D5).
@@ -37,9 +40,36 @@ precache 16 voci (98.96 KiB), Node 22.22.0. outatime @ `f655344`, versione 0.1, 
   v0.2.3 verificata su copia pulita (typecheck ok, 41/41 test, build ok, 0 vulnerabilità); opzione A raccomandata
   in `outatime-unione-main.md`, D22 proposta
   Applied lessons: none (rubadab non disponibile)
-- [ ] Q29 / D22: conferma dell'utente per branch `chore/unione-main` e PR in bozza su outatime; merge dell'utente
-- [ ] Q24–Q28 (gestione oraria di F2), Q11, Q13, Q14, Q2 chiuse con l'utente
-- [ ] Decisioni proposte (D7, D9, D11, D14, D16) approvate o sostituite
-- [ ] `docs/implementation/README.md` (esecutore), `prompts.md`, `F2-gestione-oraria.md`, `f2-sessioni.md`
-- [ ] `.claude/settings.json` e `.mcp.json` di rubadab (Q13)
+- [x] Plenaria 2026-10-03 (5): Q29 sì → branch `chore/unione-main` su outatime (merge di `main` in `firefox-support`,
+  `.gitignore` risolto, diff da v0.2.3 solo `.npmrc`, typecheck ok, 41/41 test, build ok) e PR in bozza
+  gcampa/outatime#3; domande a scelta multipla: Q24–Q28, Q2, Q11, Q13, Q14 chiuse → D16, D21, D22 approvate,
+  D23–D26 nuove
+  Applied lessons: none (rubadab non disponibile)
+- [x] Piano di F2 (`F2-gestione-oraria.md`, 17 task) con "Allineamento al codice", `f2-sessioni.md` (7 sessioni,
+  R1 dopo T2.12), README per l'esecutore, `prompts.md`, modello hook rubadab — 2026-10-03
+  Applied lessons: none (rubadab non disponibile)
+- [ ] Merge di gcampa/outatime#3 (utente, "Create a merge commit") e pulizia dei rami (D22)
+- [ ] Decisioni proposte D7, D9, D14 approvate o sostituite in R-F0
+- [ ] Hook rubadab attivati in locale (D25)
 - [ ] **R-F0 — pianificazione**: da fare
+
+## F2 — Gestione oraria di outatime
+**Baseline (S1, <data>)**: da scrivere in S1.
+- [ ] T2.01 Tipi e valori predefiniti delle configurazioni
+- [ ] T2.02 Schema v2: migrazione e validazione
+- [ ] T2.03 Calcolo: parametri dalla configurazione della giornata
+- [ ] T2.04 Calcolo: pausa minima FILM
+- [ ] T2.05 Calcolo: uscita minima e stima durante la pausa
+- [ ] T2.06 Calcolo: effettivi e straordinari
+- [ ] T2.07 Calcolo: fasce obbligatorie scoperte
+- [ ] T2.08 Casi di riferimento di outatime
+- [ ] T2.09 Impostazioni → Orari: FILM e configurazioni
+- [ ] T2.10 Impostazioni → Orari: fasce obbligatorie
+- [ ] T2.11 Giornata: smart working e configurazione
+- [ ] T2.12 Giornata: "Ora di levarsi 👋", effettivi, straordinari, fasce
+- [ ] **R1 — gestione oraria dall'interfaccia**: da fare
+- [ ] T2.13 Storico: effettivi e straordinari del mese
+- [ ] T2.14 CSV: configurazione, effettivi, straordinari
+- [ ] T2.15 Aiuto: testi della gestione oraria
+- [ ] T2.16 Pulizia dei campi vecchi delle impostazioni
+- [ ] T2.17 Pubblicazione su gcampa e versione 2.0.0
