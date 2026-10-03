@@ -1,28 +1,29 @@
 # Roadmap
 
 Ogni fase si chiude con i propri criteri di uscita e una revisione obbligatoria. Metodo in
-[gestione-fasi.md](gestione-fasi.md); avanzamento in [progress.md](progress.md). Fasi **proposte**: diventano
-definitive con R-F0. F2–F4 dipendono da Q16 (A: Firebase; B: QR offline, senza Firebase).
+[gestione-fasi.md](gestione-fasi.md); avanzamento in [progress.md](progress.md). Ordine delle fasi approvato il
+2026-10-03 (D20); contenuti definitivi con R-F0.
 
 ```mermaid
 flowchart LR
-    F00[Fino a 1.5.0<br/>chiusa ✓] --> F0[F0<br/>Pianificazione] --> F1[F1<br/>Design leggero] --> F2[F2<br/>Fondamenta]
-    F2 --> F3[F3<br/>outatime scrive] --> F4[F4<br/>krumiro legge] --> F6[F6<br/>Consolidamento]
+    F00[Fino a 1.5.0<br/>chiusa ✓] --> F0[F0<br/>Pianificazione] --> F2[F2<br/>Timbratura manuale<br/>regole outatime]
+    F2 --> F3[F3<br/>Inserimento manuale<br/>dal portale] --> F4[F4<br/>outatime 1.0<br/>QR] --> F5[F5<br/>krumiro legge<br/>il QR] --> F6[F6<br/>Consolidamento]
 ```
 
 | Fase | Contenuto | Uscita | Piano | Stato |
 |---|---|---|---|---|
 | Fino a 1.5.0 | calcolo, PWA, aiuto, tema, banner, pausa sigaretta | 92 test verdi, in `main` | `docs/superpowers/` | chiusa prima dell'adozione |
-| F0 Pianificazione | architettura, sicurezza, decisioni, contratto dati, fasi | documenti approvati, Domande aperte chiuse | — | in corso: plenaria 2026-10-03, 6 domande chiuse, Q16 bloccante |
-| F1 Design leggero | Impostazioni → Sincronizzazione, etichetta "portale", toast Annulla, popup estensione | `pages-and-widgets.md` approvato | — | da fare |
-| F2 Fondamenta | progetto Firebase (manuale), `firebase/` con regole + test emulatore + CI, outatime 1.0 TS/Vite/Vitest/CI, modulo cifratura + vettori, login/logout Google in PWA e popup | regole testate in CI; login → logout da PWA e popup | F2-fondamenta.md | da fare |
-| F3 outatime scrive | parser del cartellino, content script automatico, passphrase, cifratura, scrittura solo dei cambiamenti, stato nel popup | cartellino aperto → documenti cifrati in Firestore; riapertura → 0 scritture | F3-outatime-scrive.md | da fare |
-| F4 krumiro2.0 legge | decifratura, classificazione, unione, `onSnapshot`, etichetta "portale", Annulla | portale aperto → krumiro2.0 aggiornato entro 10 s | F4-krumiro-legge.md | da fare |
-| ~~F5 Notifiche~~ | — | — | — | scartata il 2026-10-03 (D18) |
-| F6 Consolidamento | revisione di sicurezza, Disconnetti/Cancella, CSP, Aiuto/README, distribuzione estensione, E2E | revisione di sicurezza superata | F6-consolidamento.md | da fare |
+| F0 Pianificazione | architettura QR, sicurezza, regole outatime, decisioni, fasi | documenti approvati, domande di F2 chiuse | — | in corso: D19, D20 approvate; Q18–Q22 aperte |
+| ~~F1 Design~~ | — | — | — | deroga proposta (Q11): design delle schermate QR nel P di F4 |
+| F2 Timbratura manuale con le regole di outatime | pausa minima, fascia pranzo, fascia di ingresso, smart working, etichette e totali (Q18–Q22); pubblicazione su `gcampa.github.io` (D17) | dal browser: Entrata 08:45, pausa 13:00–13:40 → "Ora di levarsi" 17:45, come outatime; app pubblicata su `https://gcampa.github.io/krumiro2.0/` | F2-regole-outatime.md | da fare |
+| F3 Inserimento manuale dal portale | dialogo "Timbrature dal portale" (Entrata/Uscita), classificazione e unione (D15), etichetta "portale", Annulla | scrivo le timbrature del cartellino di oggi → la giornata si aggiorna, sigaretta toccata a mano conservata, Annulla ripristina | F3-inserimento-portale.md | da fare |
+| F4 outatime 1.0 con QR | estensione TypeScript con build e test, parser del cartellino, cifratura, QR; schermate in `pages-and-widgets.md` | apro il cartellino → outatime mostra il QR; nessuna richiesta di rete esterna | F4-outatime-qr.md | da fare |
+| F5 krumiro2.0 legge il QR | fotocamera, decifratura, riuso di F3, rifiuto di QR vecchi o estranei | inquadro il QR → le giornate si aggiornano; QR estraneo → rifiutato | F5-leggi-qr.md | da fare |
+| F6 Consolidamento | revisione di sicurezza S1–S17, CSP, Aiuto e README, E2E di F2–F5 | revisione di sicurezza superata | F6-consolidamento.md | da fare |
 
 | Milestone | Fasi | Risultato |
 |---|---|---|
-| M0 | F0–F1 | Piano e design approvati |
-| M1 | F2–F4 | Sincronizzazione sicura portale → krumiro2.0, senza notifiche (già utilizzabile) |
-| M2 | F6 | Revisione di sicurezza: pronto all'uso quotidiano |
+| M0 | F0 | Piano approvato |
+| M1 | F2 | Timbratura manuale con le regole di outatime, pubblicata da `gcampa` (uso quotidiano) |
+| M2 | F3–F5 | Acquisizione dal portale: prima a mano, poi con il QR |
+| M3 | F6 | Revisione di sicurezza: pronto |

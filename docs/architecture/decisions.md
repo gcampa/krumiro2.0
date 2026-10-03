@@ -67,8 +67,8 @@ ricreati alla prossima apertura del portale; il backup resta quello di krumiro2.
 **Conseguenze**: conservazione breve (D13); nessuna sincronizzazione da krumiro2.0 verso Firebase.
 
 ## D8 — Firebase come backend
-**Stato**: proposta, **sospesa** il 2026-10-03: le regole aziendali non permettono il trasferimento dei dati a un
-servizio personale (Q1 → Q16).
+**Stato**: ~~proposta~~ scartata il 2026-10-03: le regole aziendali non permettono il trasferimento dei dati a
+un servizio personale (Q1 → Q16); sostituita da D19.
 **Decisione**: Authentication (solo Google), Firestore, Cloud Functions 2ª gen., Cloud Messaging, in un progetto
 dedicato del proprietario, regione UE (Q9).
 **Motivo**: richiesta esplicita; un unico fornitore per login, dati in tempo reale e notifiche.
@@ -91,21 +91,21 @@ oggi, invia una Web Push generica ai token di `utenti/{uid}/dispositivi`.
 (iOS 16.4+) e permesso concesso.
 
 ## D11 — outatime 1.0 riscritta
-**Stato**: proposta.
+**Stato**: proposta; parte di rete e popup di accesso aggiornate da D19 (outatime mostra un QR, non scrive in rete).
 **Decisione**: TypeScript, build Vite, test Vitest, CI GitHub Actions, content script automatico sulla pagina del
 cartellino, service worker per autenticazione e scrittura, popup per accesso, passphrase e stato.
 **Motivo**: MV3 vieta codice remoto (l'SDK va impacchettato); serve un parser testato.
 **Conseguenze**: il file `background.js` 0.1 viene sostituito; versione `1.0.0`.
 
 ## D12 — Sincronizzazione opzionale in krumiro2.0
-**Stato**: proposta.
+**Stato**: ~~proposta~~ decaduta il 2026-10-03 con D8 (nessun server).
 **Decisione**: disattivata di default; si attiva in *Impostazioni → Sincronizzazione portale*; l'SDK Firebase si
 carica con import dinamico solo se attiva.
 **Motivo**: chi non la usa non cambia nulla (dimensione, privacy, funzionamento offline).
 **Conseguenze**: il budget di precache va misurato (baseline 98.96 KiB) e l'SDK escluso dal precache iniziale.
 
 ## D13 — Conservazione 90 giorni
-**Stato**: proposta.
+**Stato**: ~~proposta~~ decaduta il 2026-10-03 con D8 (nessun server).
 **Decisione**: campo `scadeIl` = scrittura + 90 giorni con politica TTL di Firestore; token dispositivo 60 giorni
 senza uso.
 **Motivo**: minimizzazione (S9); il cartellino copre al più il mese corrente.
@@ -127,7 +127,7 @@ confermata) non devono perdersi.
 **Conseguenze**: logica di dominio `high`, con test dedicati in `tests/portale.test.ts`.
 
 ## D16 — Documentazione unica in krumiro2.0
-**Stato**: proposta (Q2).
+**Stato**: proposta (Q2). Con D19 non c'è la cartella `firebase/`.
 **Decisione**: `docs/` di krumiro2.0 contiene architettura, sicurezza, piano e avanzamento dell'intera
 integrazione; outatime ha solo un `docs/README.md` che rimanda qui; la configurazione Firebase sta in
 `krumiro2.0/firebase/`.
@@ -156,3 +156,23 @@ lettura del QR con Q16-B).
 **Motivo**: scelta dell'utente.
 **Conseguenze**: niente Cloud Function, niente FCM, niente piano Blaze (S19–S21, S23 decadono); la fase F5
 Notifiche esce dalla roadmap.
+
+## D19 — Trasferimento offline con QR
+**Stato**: approvata il 2026-10-03 (Q16-B).
+**Decisione**: outatime legge il cartellino e mostra un QR cifrato (AES-256-GCM) con le ultime giornate;
+krumiro2.0 lo legge con la fotocamera, lo decifra, classifica e unisce (D15). Nessun servizio esterno, nessun
+account, nessun traffico di rete verso l'esterno.
+**Motivo**: le regole aziendali vietano il trasferimento dei dati di presenza a un servizio personale (Q1); il QR
+equivale a ricopiare il cartellino a mano.
+**Conseguenze**: D8, D10, D12, D13 non si applicano; un'inquadratura per ogni aggiornamento; modello di sicurezza
+riscritto ([sicurezza.md](sicurezza.md)); formato del QR in [integrazione-outatime.md § 5.2](integrazione-outatime.md#52-contenuto-del-qr-proposta-si-fissa-nel-p-di-f4).
+
+## D20 — Ordine delle fasi
+**Stato**: approvata il 2026-10-03.
+**Decisione**: prima la timbratura manuale in krumiro2.0 con le regole di outatime (F2), poi l'acquisizione:
+inserimento manuale delle timbrature del portale (F3), outatime con QR (F4), lettura del QR in krumiro2.0 (F5),
+consolidamento (F6).
+**Motivo**: richiesta dell'utente; ogni fase dà qualcosa di usabile; F3 costruisce classificazione e unione senza
+dipendere dall'estensione.
+**Conseguenze**: roadmap e gestione-fasi riscritte; confronto delle regole in
+[regole-outatime.md](regole-outatime.md).

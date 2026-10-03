@@ -1,22 +1,24 @@
 # Documentazione — krumiro2.0 + integrazione outatime
 
 Scopo: krumiro2.0 è una PWA che registra le timbrature e calcola l'uscita prevista (vedi il
-[README del progetto](../README.md)). Questa documentazione pianifica l'**integrazione con outatime**: l'estensione
-Chrome legge il cartellino del portale timbrature, lo salva cifrato sul Firebase del proprietario e una notifica
-aggiorna krumiro2.0.
+[README del progetto](../README.md)). Questa documentazione pianifica l'**integrazione con outatime**: prima krumiro2.0
+adotta le regole di calcolo di outatime, poi acquisisce le timbrature del portale (a mano, poi con un QR cifrato
+mostrato da outatime sul PC e letto dal telefono, senza servizi esterni).
 
 Metodo: skill `metodo-fasi`, adattato in [implementation/gestione-fasi.md](implementation/gestione-fasi.md).
-Stato: **F0 in corso — bozza da discutere in plenaria.**
+Stato: **F0 in corso — architettura QR approvata (D19), ordine delle fasi approvato (D20); da chiudere le domande
+di F2 (Q18–Q22).**
 
 ## Indice
 
 | Documento | Contenuto |
 |---|---|
-| [architecture/integrazione-outatime.md](architecture/integrazione-outatime.md) | inventario dei due repository, architettura, flussi, contratto dati, classificazione e unione |
-| [architecture/sicurezza.md](architecture/sicurezza.md) | modello delle minacce, controlli S1–S26, bozza delle regole Firestore, rischi residui |
-| [architecture/decisions.md](architecture/decisions.md) | registro decisioni (D1–D5 rilevate, D6–D16 proposte) |
+| [architecture/regole-outatime.md](architecture/regole-outatime.md) | regole di calcolo di outatime, confronto misurato con krumiro2.0 |
+| [architecture/integrazione-outatime.md](architecture/integrazione-outatime.md) | inventario dei due repository, architettura QR, flusso, contratto dati, classificazione e unione |
+| [architecture/sicurezza.md](architecture/sicurezza.md) | modello delle minacce, controlli S1–S17, rischi residui |
+| [architecture/decisions.md](architecture/decisions.md) | registro decisioni D1–D20 |
 | [implementation/gestione-fasi.md](implementation/gestione-fasi.md) | metodo adattato al progetto |
-| [implementation/roadmap.md](implementation/roadmap.md) | fasi proposte F0–F6 e milestone |
+| [implementation/roadmap.md](implementation/roadmap.md) | fasi F0, F2–F6 e milestone |
 | [implementation/progress.md](implementation/progress.md) | avanzamento, Dubbi, Blocchi |
 | [superpowers/](superpowers/) | archivio dei piani precedenti all'adozione (D5) |
 
@@ -24,46 +26,55 @@ Stato: **F0 in corso — bozza da discutere in plenaria.**
 
 | Requisito dell'utente | Dove |
 |---|---|
-| Accedo al portale normalmente (nessun passo in più) | integrazione § 4.1 (content script automatico), D11 |
-| outatime salva sul **mio** Firebase | D8, sicurezza § 5 (progetto dedicato) |
-| Una notifica aggiorna krumiro2.0 | integrazione § 4.2, D10 |
-| Assolutamente sicuro | sicurezza (tutto), D6, D13 |
-| krumiro2.0 continua a funzionare come oggi | D12, D7 |
+| Timbrare a mano con orari, configurazioni e convenzioni di outatime | regole-outatime, F2 |
+| Inserimento manuale delle timbrature del portale | integrazione § 6–7, D15, F3 |
+| Accedo al portale normalmente, i dati arrivano a krumiro2.0 | D19, integrazione § 4, F4–F5 |
+| Rispetto delle regole aziendali (nessun servizio personale) | D19, sicurezza S1–S2 |
+| Assolutamente sicuro | sicurezza (tutto), D6 |
+| Solo per me, pubblicata da `gcampa` | D17 |
 
 ## Domande aperte
 
-In ordine di priorità. Ognuna ha la raccomandazione della plenaria; decide l'utente.
+Ognuna ha la raccomandazione della plenaria; decide l'utente. Le prime cinque bloccano la pianificazione di F2.
 
-- **Q16 — Conflitto con le regole aziendali (bloccante, nuova il 2026-10-03).** Alla Q1 hai risposto che le
-  regole interne **non** permettono di portare i dati di presenza su un servizio personale. L'architettura
-  Firebase (D8) fa esattamente questo, da un PC aziendale gestito, con un'estensione non pubblicata: è il rischio
-  più alto del piano (disciplinare, e un controllo DLP/EDR dell'azienda può rilevarlo), più di qualunque attacco
-  tecnico. Il piano Firebase è **sospeso** finché non scegli:
-  - **(A) Autorizzazione scritta** dell'azienda (IT/privacy) a usare l'estensione e il servizio personale. Con
-    l'autorizzazione il piano Firebase resta com'è, senza notifiche (D18).
-  - **(B) Trasferimento offline con QR code** *(raccomandata)*: outatime mostra sul PC un QR cifrato con le
-    timbrature recenti; krumiro2.0 lo legge con la fotocamera del telefono. Nessun dato passa dalla rete
-    aziendale verso un servizio esterno, nessun Firebase, nessun account, nessun costo: equivale a ricopiare a mano
-    il cartellino, che fai già. Costo per te: un'inquadratura dopo aver aperto il portale.
-  La plenaria non pianifica una strada che aggira le regole aziendali.
-- **Q17 — Telefono.** iPhone o Android? Serve per la lettura del QR (B): su Android Chrome c'è `BarcodeDetector`
-  nativo; su iPhone serve una libreria di decodifica dentro la PWA (nuova dipendenza, D1).
-- **Q2 — Dove vive il piano.** *Raccomandazione*: documentazione unica in krumiro2.0, outatime rimanda qui (D16).
-- **Q7 — Struttura del cartellino.** Serve una descrizione **anonimizzata** dell'HTML di una giornata con tutte le
-  diciture possibili (Entrata, Uscita, "per SMART WORKING", "Nessuna timbratura", giustificativi, ferie,
-  timbrature corrette a mano…) per i test del parser con HTML sintetico (S25).
-  *Raccomandazione*: in F2 una sessione con te sul portale reale (copia con orari e nomi cambiati, mai committata)
-  da cui la plenaria scrive la fixture sintetica.
-- **Q9 — Regione dei dati** (solo con A). *Raccomandazione*: `europe-west8` (Milano).
-- **Q10 — Sessioni** (solo con A). *Raccomandazione*: passphrase chiesta di nuovo solo dopo *Disconnetti*.
-- **Q11 — F1 Design.** *Raccomandazione*: F1 leggera senza strumento esterno, `docs/design/pages-and-widgets.md`
-  approvato da te (deroga al flusso F1 da registrare).
-- **Q12 — "Ora di levarsi" nel portale.** *Raccomandazione*: toglierla in outatime 1.0 (calcoli errati, D9).
+### Per F2 — timbratura manuale con le regole di outatime ([regole-outatime.md](architecture/regole-outatime.md))
+- **Q18 — Pausa minima.** outatime conta almeno 60 min di pausa pranzo; krumiro2.0 oggi 30.
+  *Raccomandazione*: 60 come nuovo valore predefinito (resta modificabile in Impostazioni). Con questo solo
+  cambio krumiro2.0 dà la stessa uscita di outatime in tutti i casi misurati.
+- **Q19 — Fascia pranzo.** outatime usa 12:30–14:30 per riconoscere la pausa e 13:00–14:30 per normalizzarla;
+  krumiro2.0 oggi 12:00–14:30. Qual è la regola aziendale?
+  *Raccomandazione*: se non c'è una regola scritta, 12:30–14:30 (la finestra con cui outatime riconosce la pausa).
+- **Q20 — Entrata dopo le 09:30.** outatime non calcola l'uscita; krumiro2.0 la calcola come sempre. Cosa prevede
+  l'azienda per chi entra dopo la fascia flessibile?
+  *Raccomandazione*: nuova impostazione "Fine fascia di ingresso" (09:30); se l'entrata la supera krumiro2.0
+  calcola comunque l'uscita e mostra l'avviso "Entrata dopo la fascia flessibile (09:30): verifica se serve un
+  permesso". Alternativa: il tempo tra 09:30 e l'entrata diventa automaticamente permesso a inizio giornata.
+- **Q21 — Smart working.** outatime riconosce "Entrata/Uscita per SMART WORKING" con lo stesso calcolo.
+  *Raccomandazione*: in krumiro2.0 una giornata può essere segnata "Smart working" (interruttore nella giornata),
+  visibile nella timeline, nello storico e nel CSV, senza effetto sul calcolo; servirà anche per i dati del
+  portale (campo `smart` del contratto).
+- **Q22 — Totali ed etichette.** outatime mostra "Ora di levarsi 👋", ⏱️ Official Timing e 🐫 Effective timing.
+  *Raccomandazione*: etichetta "Ora di levarsi 👋" al posto di "Uscita prevista" nella schermata Oggi; nei
+  dettagli della giornata, accanto alle ore lavorate (= Official), una riga "Effettive" con il tempo reale tra le
+  timbrature (senza minimo delle 08:30 e senza pausa minima). Alternativa: solo l'etichetta.
+
+### Processo
+- **Q11 — F1 Design.** *Raccomandazione*: nessuna F1 separata (deroga registrata): F2 e F3 aggiungono campi e un
+  dialogo nello stile esistente, descritti per esteso nei task; le schermate del QR (outatime e lettore) si
+  progettano nel P di F4 in `docs/design/pages-and-widgets.md`, approvato da te.
+- **Q14 — Effort degli esecutori.** *Raccomandazione*: `medium/high` (calcolo, classificazione, unione,
+  cifratura sono `high`).
 - **Q13 — rubadab.** *Raccomandazione*: hook e `.mcp.json` li aggiungi tu dove gira il servizio; fino ad allora
   `Applied lessons: none (rubadab non disponibile)`.
-- **Q14 — Effort degli esecutori.** *Raccomandazione*: `medium/high`.
-- **Q15 — Distribuzione dell'estensione.** Hai confermato che puoi installarla non pubblicata.
-  *Raccomandazione*: caricata non pacchettizzata (nessuna pubblicazione sul Web Store).
+- **Q2 — Dove vive il piano.** *Raccomandazione*: documentazione unica in krumiro2.0, outatime rimanda qui (D16).
+
+### Per fasi successive (si chiudono nel loro P)
+- **Q7 — Struttura del cartellino** (F4): descrizione anonimizzata dell'HTML con tutte le diciture.
+- **Q12 — "Ora di levarsi" nella pagina del portale** (F4): tenerla in outatime 1.0 o lasciarla solo a krumiro2.0.
+- **Q15 — Distribuzione dell'estensione** (F4): *raccomandazione* caricata non pacchettizzata.
+- **Q17 — Telefono** (F5): iPhone o Android, per la lettura del QR.
+- **Q23 — Chiave del QR** (F4): passphrase scritta su PC e telefono, oppure chiave casuale passata una volta con un
+  QR di abbinamento (più robusta, nessuna password da ricordare). *Raccomandazione*: QR di abbinamento.
 
 ## Domande chiuse
 
@@ -77,3 +88,6 @@ In ordine di priorità. Ognuna ha la raccomandazione della plenaria; decide l'ut
 - **Q5 — Manuali vs portale** → 2026-10-03: raccomandazione approvata → D15.
 - **Q6 — Classificazione** → 2026-10-03: raccomandazione approvata → D15.
 - **Q8 — Notifiche** → 2026-10-03: nessuna notifica → D18 (D10 scartata).
+- **Q16 — Conflitto con le regole aziendali** → 2026-10-03: opzione B, trasferimento offline con QR → D19; D8
+  scartata. Ordine delle fasi → D20.
+- **Q9, Q10** (regione dei dati, sessioni) → 2026-10-03: decadute con D19 (nessun server).

@@ -3,7 +3,7 @@
 Metodo adottato il 2026-10-03 (skill `metodo-fasi`). Questo file prevale sui modelli generici della skill; ogni
 modifica è un cambio di processo deciso in plenaria e registrato in [progress.md](progress.md).
 
-Il lavoro attraversa due repository: `gcampa/krumiro2.0` (questa documentazione, PWA, `firebase/`) e
+Il lavoro attraversa due repository: `gcampa/krumiro2.0` (questa documentazione, PWA) e
 `gcampa/outatime` (estensione). Documentazione, roadmap e progress sono **unici, qui** (D16, da confermare: Q2).
 
 ## Ruoli e modelli
@@ -13,16 +13,18 @@ Il lavoro attraversa due repository: `gcampa/krumiro2.0` (questa documentazione,
 | Esecutore | Sonnet 5 · medium/high (proposta, Q14); Haiku 4.5 solo per task `meccanico` | apertura, task, continuazione | decidere, anticipare, ampliare |
 | Revisore | Opus 5.5 · high o superiore + utente | checkpoint 🛑, chiusura di fase | aggiungere funzioni |
 
-## Fasi del progetto (proposta, da approvare con R-F0)
+## Fasi del progetto (ordine approvato il 2026-10-03, D20)
 | Fase | Obiettivo | Criterio di uscita (dall'interfaccia) | File | Checkpoint 🛑 |
 |---|---|---|---|---|
 | — | Funzioni esistenti fino a 1.5.0 | chiusa prima dell'adozione (D5) | `docs/superpowers/` | — |
-| F0 | Pianificazione | documenti approvati, Domande aperte chiuse | — | R-F0 |
-| F1 | Design leggero (Q11) | `docs/design/pages-and-widgets.md` approvato | — | R-F1 |
-| F2 | Fondamenta | regole Firestore testate sull'emulatore in CI; outatime 1.0 si carica in Chrome; login Google → logout da PWA e popup | `F2-fondamenta.md` | R1 login/logout · chiusura |
-| F3 | outatime scrive | apro il cartellino → popup "N giorni sincronizzati alle HH:MM"; in Firestore solo `iv`/`ct`; riapertura senza novità → 0 scritture | `F3-outatime-scrive.md` | R1 parser+popup · chiusura |
-| F4 | krumiro2.0 legge | krumiro2.0 aperto: apro il portale → entro 10 s timbrature con etichetta "portale" e uscita prevista ricalcolata; Annulla funziona | `F4-krumiro-legge.md` | R1 unione · chiusura |
-| F6 | Consolidamento | revisione di sicurezza superata, Disconnetti/Cancella dati provati, Aiuto e README aggiornati, E2E di F2–F4 | `F6-consolidamento.md` | chiusura |
+| F0 | Pianificazione | documenti approvati, domande di F2 chiuse | — | R-F0 |
+| F2 | Timbratura manuale con le regole di outatime | Entrata 08:45, pausa 13:00–13:40 → "Ora di levarsi" 17:45; app su `gcampa.github.io/krumiro2.0` | `F2-regole-outatime.md` | da fissare nel P · chiusura |
+| F3 | Inserimento manuale dal portale | timbrature del cartellino scritte a mano → giornata aggiornata, annotazioni manuali conservate, Annulla | `F3-inserimento-portale.md` | da fissare nel P · chiusura |
+| F4 | outatime 1.0 con QR | cartellino aperto → QR visibile; nessuna richiesta di rete esterna | `F4-outatime-qr.md` | da fissare nel P · chiusura |
+| F5 | krumiro2.0 legge il QR | QR inquadrato → giornate aggiornate; QR estraneo rifiutato | `F5-leggi-qr.md` | da fissare nel P · chiusura |
+| F6 | Consolidamento | revisione di sicurezza S1–S17 superata, Aiuto e README aggiornati, E2E di F2–F5 | `F6-consolidamento.md` | chiusura |
+
+F1 (design) non è prevista: deroga proposta in Q11.
 
 Stato corrente: vedi [roadmap.md](roadmap.md) e [progress.md](progress.md).
 
@@ -40,18 +42,16 @@ Stato corrente: vedi [roadmap.md](roadmap.md) e [progress.md](progress.md).
    apre F<n+1>.
 
 ## Regole di processo
-- Checkpoint solo su gruppi provabili dall'interfaccia (PWA nel browser, popup dell'estensione, console Firebase
-  in sola lettura); massimo 4 task per sessione; sessione nuova per ogni prompt.
+- Checkpoint solo su gruppi provabili dall'interfaccia (PWA nel browser, pagina del cartellino con outatime);
+  massimo 4 task per sessione; sessione nuova per ogni prompt.
 - Dubbi: l'esecutore li scrive in progress.md → "Dubbi per la plenaria" e si ferma; la plenaria li risolve e
   registra l'esito (decisions.md, file di fase o README).
-- **Sicurezza**: ogni task che tocca autenticazione, regole, cifratura o messaggi cita i controlli S<n> di
+- **Sicurezza**: ogni task che tocca cifratura, QR, permessi dell'estensione o dati importati cita i controlli S<n> di
   [sicurezza.md](../architecture/sicurezza.md) che implementa; la chiusura di fase verifica quei controlli.
-- **Dati reali**: mai nel repository; l'HTML del portale si usa solo in forma sintetica (S25); la configurazione
-  Firebase reale e l'UID del proprietario li inserisce l'utente.
+- **Dati reali**: mai nel repository; l'HTML del portale si usa solo in forma sintetica (S15).
 - rubadab: hook in `.claude/settings.json` (progetto `krumiro2.0`) da aggiungere dove il servizio gira (Q13);
   `Applied lessons:` a ogni task.
-- Dati locali e credenziali: localStorage del browser di prova, progetto Firebase, passphrase e login Google li
-  prepara e gestisce l'utente.
+- Dati locali e credenziali: localStorage del browser di prova e chiavi del QR li prepara e gestisce l'utente.
 
 ## Git
 | Momento | Azione |
@@ -79,4 +79,5 @@ Correzioni dalle revisioni · Verifiche automatiche · **Test da eseguire** (che
 | `f<n>-sessioni.md` | sessioni della fase in corso (temporaneo) |
 | [decisions.md](../architecture/decisions.md) | registro decisioni |
 | [integrazione-outatime.md](../architecture/integrazione-outatime.md) | architettura e contratto dati |
-| [sicurezza.md](../architecture/sicurezza.md) | controlli S1–S26 |
+| [sicurezza.md](../architecture/sicurezza.md) | controlli S1–S17 |
+| [regole-outatime.md](../architecture/regole-outatime.md) | regole di calcolo di outatime e confronto |
