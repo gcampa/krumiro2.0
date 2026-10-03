@@ -299,11 +299,13 @@ sigaretta della 1.5.0.
 **Decisione**: la pausa sigaretta o birra è la pausa che spetta ogni 2 ore di lavoro; parte manualmente con un
 pulsante e **serve solo a misurare il tempo** al caffè. Non registra timbrature, non crea permessi, non cambia ore,
 saldo o ora di levarsi. "Fine pausa" mostra solo la durata, senza lasciare traccia. krumiro2.0 non calcola quando la
-pausa spetta. Durate configurabili: sigaretta 11 min, birra 15 min. Le pause sigaretta salvate con la 1.5.0 restano
-normali uscite/rientri in permesso (senza blocchi da 30 min).
+pausa spetta. Durate configurabili: sigaretta 11 min, birra 15 min. Le pause sigaretta salvate con la 1.5.0 **non
+incidono sugli orari di timbratura**: la migrazione v3 toglie l'uscita marcata sigaretta e il rientro che la chiude
+(anche all'import di un CSV della 1.5.0).
 **Motivo**: "Non diventa permesso, non fare assunzioni … serve solo come misuratore del tempo d'aria al caffè"
 (utente).
-**Conseguenze**: F3 toglie dal calcolo e dai dati il permesso a blocchi della sigaretta (T3.05, T3.06).
+**Conseguenze**: F3 toglie dal calcolo il permesso a blocchi della sigaretta (T3.05) e dai dati le vecchie pause,
+con lo schema v3 (T3.06).
 
 ## D32 — Pausa pranzo massima con avviso
 **Stato**: approvata il 2026-10-03 (domanda a scelta multipla).

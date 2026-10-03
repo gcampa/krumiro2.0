@@ -70,6 +70,9 @@ precache 16 voci (98.96 KiB), Node 22.22.0. outatime @ `f655344`, versione 0.1, 
 - [x] Plenaria 2026-10-03 (10): la pausa sigaretta/birra è solo un cronometro della pausa caffè (D31): F3 riscritta
   (7 task, toglie il permesso a blocchi della 1.5.0); pausa pranzo massima con avviso (D32) aggiunta a F2
   Applied lessons: none (rubadab non disponibile)
+- [x] Plenaria 2026-10-03 (11): "la pausa non incide sugli orari di timbratura" → le pause sigaretta salvate dalla
+  1.5.0 si tolgono dai dati (migrazione v3, anche all'import CSV): T3.06 riscritto, D31 aggiornata
+  Applied lessons: none (rubadab non disponibile)
 - [ ] Merge di gcampa/outatime#3 (utente, "Create a merge commit") e pulizia dei rami (D22)
 - [ ] Decisioni proposte D7, D9, D14 approvate o sostituite in R-F0
 - [ ] Hook rubadab attivati in locale (D25)
@@ -103,6 +106,6 @@ precache 16 voci (98.96 KiB), Node 22.22.0. outatime @ `f655344`, versione 0.1, 
 - [ ] T3.03 Cronometro senza timbrature
 - [ ] T3.04 Schermata: il boccale che si svuota
 - [ ] T3.05 Calcolo: la sigaretta non è più un permesso a blocchi
-- [ ] T3.06 Dati: via il flag sigaretta dalle timbrature
+- [ ] T3.06 Dati: via le vecchie pause sigaretta (schema v3)
 - [ ] **R1 — pausa caffè dall'interfaccia**: da fare
 - [ ] T3.07 Aiuto e README
