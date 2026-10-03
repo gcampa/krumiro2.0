@@ -6,7 +6,8 @@ Sicurezza in [sicurezza.md](sicurezza.md); regole di calcolo in [regole-outatime
 
 ## 1. Obiettivo
 
-1. **Subito (F2)**: timbro a mano in krumiro2.0 con gli orari, le configurazioni e le convenzioni di outatime.
+1. **Subito (F2)**: krumiro2.0 adotta la **gestione oraria di outatime** (Presenza, FILM, Smart working), con orari
+   configurabili; timbro a mano.
 2. **Poi (F3)**: inserisco a mano le timbrature come le mostra il portale (Entrata/Uscita) e krumiro2.0 le
    classifica e le unisce a quelle che ho toccato.
 3. **Infine (F4–F5)**: apro il portale come sempre, outatime mostra un QR cifrato con le timbrature recenti,
@@ -14,25 +15,23 @@ Sicurezza in [sicurezza.md](sicurezza.md); regole di calcolo in [regole-outatime
 
 ## 2. Stato attuale (inventario del 2026-10-03)
 
-### outatime (`gcampa/outatime`, commit `f655344`)
+### outatime (`gcampa/outatime`, versione in uso **v0.2.3**, branch `firefox-support`)
 
-| Aspetto | Stato |
+Il branch predefinito `main` è fermo alla 0.1 (`f655344`, un solo `background.js`): la versione in uso è il tag
+`v0.2.3` sul branch `firefox-support` (Q29). Regole di calcolo in [regole-outatime.md](regole-outatime.md).
+
+| Aspetto | Stato v0.2.3 |
 |---|---|
-| Tipo | Estensione Chrome Manifest V3, versione `0.1`, un solo file `background.js` (~350 righe), nessuna build, nessun test |
-| Attivazione | **solo al clic** sull'icona (`chrome.action.onClicked` → `chrome.scripting.executeScript`); nessun content script automatico |
-| Portale | `http://172.16.0.32/*` (HTTP in chiaro, rete interna); `https` solo come permesso opzionale |
-| Lettura | elementi `[data-giorno]` (valore `gg/mm/aaaa`) con figlio `.cartellino-portale-timb`; regex `((2[0-3]|[01][0-9]):[0-5][0-9])|([A-Z])\w+` sul testo; scarta le parole `SMART` e `WORKING` |
-| Calcoli | ore "ufficiali" e "effettive", pausa pranzo minima 1h, "Ora di levarsi" (8:30–9:30 → 17:30 + ritardo) iniettati nella pagina |
-| Uscita dati | `report` (array `{date, details}`) stampato con `console.log`; **non esce dal browser** |
+| Tipo | estensione MV3 per Chrome e Firefox; TypeScript, build esbuild (`build.mjs`), test Jest (`test/lib.spec.ts`, `test/content.spec.ts` con jsdom), CI e release con zip su GitHub |
+| Attivazione | **content script automatico** su `*://172.16.0.32/*` e `*://polyedro.terranovasoftware.eu/*` (portale Polyedro di Terranova), `all_frames: true` |
+| Lettura | `table.cartellino-portale-timb` dentro `[data-giorno]` (`gg/mm/aaaa`); orari da `tbody td span.default`, descrizione nella cella successiva ("Entrata", "Uscita", "… per SMART WORKING"); ore pagate dalla tabella riepilogo (`ORE ORDINARIE`, `BANCA ORE LUN - VEN MATURATA`, `STRAORDINARI AUT`, `SMART WORKING`); matricola e nome da `#matricola` |
+| Calcoli | uscita minima (Presenza, FILM, Smart working), effettivi, volontariato, straordinari, iniettati nella pagina con classe `outatime-data` |
+| Popup | una casella "Abilita FILM" (`chrome.storage.local.filmEnabled`) |
+| Uscita dati | report per giorno in `localStorage` del portale (chiave `outatime\|<data>\|<matricola>\|<nome>`) e `console.log` del JSON; `tools/timetable-viewer.html` lo visualizza incollandolo a mano |
 | Permessi | `activeTab`, `scripting`, `storage` |
 
-Difetti rilevati (non da "correggere" in outatime 0.1: la nuova versione non riusa questi calcoli, vedi D9):
-- `new Date(year, month, day)` usa il mese non decrementato (mese successivo): le durate tornano, le date no.
-- `mergeData` confronta `Date(w.date) == Date(e.date)` (stringa dell'ora corrente): sempre vero.
-- `searchLunch` riscrive l'orario senza zeri iniziali (`"9:5"`), poi letto con `substr` → orari errati.
-- Coppie `[orario, parola]` costruite a passo 2: una parola in più o in meno (es. `Nessuna timbratura`, una
-  dicitura nuova) sfasa tutta la giornata.
-- `document.head.innerHTML += …` a ogni clic: riscrive l'head della pagina del portale.
+Note di sicurezza su v0.2.3 da trattare in F4: il report in `localStorage` del portale e nella console contiene
+matricola e nome (S10); `innerHTML` usato per iniettare righe con valori calcolati (S9).
 
 ### krumiro2.0 (`gcampa/krumiro2.0`, branch base `main` @ `1440056`, versione `1.5.0`)
 
@@ -56,7 +55,7 @@ dati inseriti a mano (§ 7).
 flowchart LR
     subgraph PC["PC aziendale (Chrome)"]
         P["Portale timbrature<br/>http://172.16.0.32"]
-        CS["outatime 1.0<br/>legge il cartellino"]
+        CS["outatime (da v0.2.3)<br/>legge il cartellino"]
         Q["QR cifrato<br/>sullo schermo"]
         P -- DOM --> CS -- "GiornataPortale[] cifrate" --> Q
     end
@@ -107,6 +106,8 @@ interface GiornataPortale {
   data: string;
   /** In ordine di orario, come compaiono nel cartellino. Massimo 20. */
   timbrature: { minuti: number; verso: 'E' | 'U'; smart: boolean }[];
+  /** Ore pagate lette dal riepilogo del portale (somma delle voci di § 3 di regole-outatime.md); null se assenti. */
+  pagatiMinuti: number | null;
   /** Istante della lettura, ISO 8601 UTC. */
   lettoIl: string;
 }
@@ -115,6 +116,7 @@ interface GiornataPortale {
 - `verso`: `E` = "Entrata…", `U` = "Uscita…"; `smart` = la dicitura contiene "SMART WORKING".
 - Giorni senza timbrature ("Nessuna timbratura"): `timbrature: []` — il giorno si scrive comunque, così una
   correzione sul portale che toglie timbrature arriva a krumiro2.0.
+- `pagatiMinuti` serve al "volontariato" di outatime (effettivi − pagati).
 - Niente nome, matricola, URL del portale, HTML, cookie.
 
 ### 5.2 Contenuto del QR (proposta, si fissa nel P di F4)
@@ -163,9 +165,9 @@ Per ogni giornata ricevuta (da inserimento manuale in F3 o da QR in F5), `unisci
 
 | Repository | Cartella | Contenuto | Fase |
 |---|---|---|---|
-| `gcampa/krumiro2.0` | `src/core/calcolo.ts`, `src/core/tipi.ts`, `src/ui/impostazioni.ts` | regole di outatime | F2 |
+| `gcampa/krumiro2.0` | `src/core/calcolo.ts`, `src/core/tipi.ts`, `src/storage/migrazioni.ts`, `src/ui/impostazioni.ts`, `src/ui/giorno.ts` | gestione oraria di outatime (D21) | F2 |
 | `gcampa/krumiro2.0` | `src/core/portale.ts`, `src/ui/portale.ts` | classificazione, unione, inserimento manuale | F3 |
-| `gcampa/outatime` | `src/` | estensione MV3 in TypeScript, build Vite, test Vitest, parser, cifratura, QR | F4 |
+| `gcampa/outatime` | `src/` (da v0.2.3) | aggiunta di cifratura e QR all'estensione esistente (esbuild, Jest) | F4 |
 | `gcampa/krumiro2.0` | `src/core/cifratura.ts`, `src/ui/leggiQr.ts` | decifratura, lettura QR | F5 |
 | `gcampa/krumiro2.0` | `docs/` | documentazione unica (D16) | tutte |
 

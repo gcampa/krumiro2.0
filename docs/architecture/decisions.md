@@ -28,7 +28,7 @@ conservato e validato in `normalizza` (precedente: `Evento.sigaretta`).
 **Stato**: rilevata all'adozione.
 **Decisione**: testi dell'interfaccia, nomi di funzioni e variabili, commenti e documenti in italiano.
 **Motivo**: convenzione di tutto il codice esistente.
-**Conseguenze**: vale anche per outatime 1.0 (D11).
+**Conseguenze**: vale anche per le parti nuove di outatime (F4); il codice esistente di outatime v0.2.3 ha nomi in inglese e resta com'è.
 
 ## D4 — Deploy
 **Stato**: rilevata all'adozione.
@@ -91,7 +91,8 @@ oggi, invia una Web Push generica ai token di `utenti/{uid}/dispositivi`.
 (iOS 16.4+) e permesso concesso.
 
 ## D11 — outatime 1.0 riscritta
-**Stato**: proposta; parte di rete e popup di accesso aggiornate da D19 (outatime mostra un QR, non scrive in rete).
+**Stato**: ~~proposta~~ superata il 2026-10-03: outatime v0.2.3 è già TypeScript con build, test e CI; F4 la estende
+(cifratura e QR) invece di riscriverla. Restano esbuild e Jest in outatime.
 **Decisione**: TypeScript, build Vite, test Vitest, CI GitHub Actions, content script automatico sulla pagina del
 cartellino, service worker per autenticazione e scrittura, popup per accesso, passphrase e stato.
 **Motivo**: MV3 vieta codice remoto (l'SDK va impacchettato); serve un parser testato.
@@ -115,7 +116,8 @@ senza uso.
 **Stato**: proposta.
 **Decisione**: tipo `GiornataPortale` e modulo di cifratura esistono in entrambi i repository, identici; un file
 di vettori di prova (testo in chiaro, passphrase, sale, iv, ct attesi) è copiato in entrambi e testato in entrambi.
-**Motivo**: evita un pacchetto npm privato e il suo ciclo di rilascio per ~150 righe.
+**Motivo**: evita un pacchetto npm privato e il suo ciclo di rilascio per ~150 righe. I vettori sono JSON, quindi
+li leggono sia Vitest (krumiro2.0) sia Jest (outatime).
 **Conseguenze**: ogni modifica del contratto è un task in entrambi i repository nella stessa fase.
 
 ## D15 — Classificazione e unione
@@ -176,3 +178,17 @@ consolidamento (F6).
 dipendere dall'estensione.
 **Conseguenze**: roadmap e gestione-fasi riscritte; confronto delle regole in
 [regole-outatime.md](regole-outatime.md).
+
+## D21 — Gestione oraria a configurazioni (Presenza, FILM, Smart working)
+**Stato**: proposta (Q24).
+**Decisione**: krumiro2.0 calcola l'uscita con la formula unica di
+[regole-outatime.md § 2](regole-outatime.md#2-una-sola-formula-per-le-tre-configurazioni-proposta-d21) e tre
+configurazioni con i valori predefiniti di outatime v0.2.3, tutti modificabili in Impostazioni: ingresso minimo,
+pausa minima, finestra della pausa minima (facoltativa), uscita minima, ore dovute. FILM è una scelta globale
+(come il popup di outatime); smart working si sceglie per giornata. Le regole di krumiro2.0 che outatime non ha
+(permessi, sigaretta, uscita anticipata, giornate passate) restano.
+**Motivo**: richiesta dell'utente ("portare in krumiro2.0 la gestione oraria di outatime", orari configurabili,
+FILM); la formula riproduce i 17 casi di test di outatime.
+**Conseguenze**: cambia la forma di `Impostazioni` → `VERSIONE_CORRENTE` 2 con migrazione v1→v2 (eccezione a D2,
+che vale per i soli campi opzionali); `Giornata.smart` nuovo; test di krumiro2.0 con i 17 casi di outatime come
+casi di riferimento.

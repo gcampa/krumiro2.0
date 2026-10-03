@@ -18,9 +18,9 @@ Il lavoro attraversa due repository: `gcampa/krumiro2.0` (questa documentazione,
 |---|---|---|---|---|
 | — | Funzioni esistenti fino a 1.5.0 | chiusa prima dell'adozione (D5) | `docs/superpowers/` | — |
 | F0 | Pianificazione | documenti approvati, domande di F2 chiuse | — | R-F0 |
-| F2 | Timbratura manuale con le regole di outatime | Entrata 08:45, pausa 13:00–13:40 → "Ora di levarsi" 17:45; app su `gcampa.github.io/krumiro2.0` | `F2-regole-outatime.md` | da fissare nel P · chiusura |
+| F2 | Gestione oraria di outatime (Presenza, FILM, Smart working) | i 17 casi di outatime v0.2.3 danno dal browser la stessa "Ora di levarsi"; app su `gcampa.github.io/krumiro2.0` | `F2-gestione-oraria.md` | da fissare nel P · chiusura |
 | F3 | Inserimento manuale dal portale | timbrature del cartellino scritte a mano → giornata aggiornata, annotazioni manuali conservate, Annulla | `F3-inserimento-portale.md` | da fissare nel P · chiusura |
-| F4 | outatime 1.0 con QR | cartellino aperto → QR visibile; nessuna richiesta di rete esterna | `F4-outatime-qr.md` | da fissare nel P · chiusura |
+| F4 | outatime con QR (da v0.2.3) | cartellino aperto → QR visibile; nessuna richiesta di rete esterna | `F4-outatime-qr.md` | da fissare nel P · chiusura |
 | F5 | krumiro2.0 legge il QR | QR inquadrato → giornate aggiornate; QR estraneo rifiutato | `F5-leggi-qr.md` | da fissare nel P · chiusura |
 | F6 | Consolidamento | revisione di sicurezza S1–S17 superata, Aiuto e README aggiornati, E2E di F2–F5 | `F6-consolidamento.md` | chiusura |
 
@@ -80,4 +80,4 @@ Correzioni dalle revisioni · Verifiche automatiche · **Test da eseguire** (che
 | [decisions.md](../architecture/decisions.md) | registro decisioni |
 | [integrazione-outatime.md](../architecture/integrazione-outatime.md) | architettura e contratto dati |
 | [sicurezza.md](../architecture/sicurezza.md) | controlli S1–S17 |
-| [regole-outatime.md](../architecture/regole-outatime.md) | regole di calcolo di outatime e confronto |
+| [regole-outatime.md](../architecture/regole-outatime.md) | gestione oraria di outatime, formula unica, confronto |

@@ -28,8 +28,13 @@ precache 16 voci (98.96 KiB), Node 22.22.0. outatime @ `f655344`, versione 0.1, 
   ordine delle fasi F2 regole outatime → F3 inserimento manuale → F4 QR → F5 lettura → F6 (D20); confronto
   misurato delle regole in `regole-outatime.md`; architettura e sicurezza riscritte per il QR
   Applied lessons: none (rubadab non disponibile)
-- [ ] Q18–Q22 (regole di F2), Q11, Q13, Q14, Q2 chiuse con l'utente
+- [x] Plenaria 2026-10-03 (3): l'utente chiede orari configurabili, configurazione FILM e la gestione oraria di
+  outatime in krumiro2.0. Scoperto che la versione in uso di outatime è v0.2.3 (`firefox-support`), non `main` 0.1:
+  `regole-outatime.md` rifatto; formula unica verificata sui 17 casi di test di outatime (krumiro2.0 oggi ne
+  sbaglia 8); D21 proposta; D11 superata; Q18–Q22 superate da Q24–Q29
+  Applied lessons: none (rubadab non disponibile)
+- [ ] Q24–Q29 (gestione oraria di F2), Q11, Q13, Q14, Q2 chiuse con l'utente
 - [ ] Decisioni proposte (D7, D9, D11, D14, D16) approvate o sostituite
-- [ ] `docs/implementation/README.md` (esecutore), `prompts.md`, `F2-regole-outatime.md`, `f2-sessioni.md`
+- [ ] `docs/implementation/README.md` (esecutore), `prompts.md`, `F2-gestione-oraria.md`, `f2-sessioni.md`
 - [ ] `.claude/settings.json` e `.mcp.json` di rubadab (Q13)
 - [ ] **R-F0 — pianificazione**: da fare

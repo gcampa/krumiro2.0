@@ -7,16 +7,16 @@ mostrato da outatime sul PC e letto dal telefono, senza servizi esterni).
 
 Metodo: skill `metodo-fasi`, adattato in [implementation/gestione-fasi.md](implementation/gestione-fasi.md).
 Stato: **F0 in corso — architettura QR approvata (D19), ordine delle fasi approvato (D20); da chiudere le domande
-di F2 (Q18–Q22).**
+di F2 (Q24–Q29).**
 
 ## Indice
 
 | Documento | Contenuto |
 |---|---|
-| [architecture/regole-outatime.md](architecture/regole-outatime.md) | regole di calcolo di outatime, confronto misurato con krumiro2.0 |
+| [architecture/regole-outatime.md](architecture/regole-outatime.md) | gestione oraria di outatime v0.2.3 (Presenza, FILM, Smart working), formula unica, confronto sui 17 casi di test |
 | [architecture/integrazione-outatime.md](architecture/integrazione-outatime.md) | inventario dei due repository, architettura QR, flusso, contratto dati, classificazione e unione |
 | [architecture/sicurezza.md](architecture/sicurezza.md) | modello delle minacce, controlli S1–S17, rischi residui |
-| [architecture/decisions.md](architecture/decisions.md) | registro decisioni D1–D20 |
+| [architecture/decisions.md](architecture/decisions.md) | registro decisioni D1–D21 |
 | [implementation/gestione-fasi.md](implementation/gestione-fasi.md) | metodo adattato al progetto |
 | [implementation/roadmap.md](implementation/roadmap.md) | fasi F0, F2–F6 e milestone |
 | [implementation/progress.md](implementation/progress.md) | avanzamento, Dubbi, Blocchi |
@@ -26,7 +26,7 @@ di F2 (Q18–Q22).**
 
 | Requisito dell'utente | Dove |
 |---|---|
-| Timbrare a mano con orari, configurazioni e convenzioni di outatime | regole-outatime, F2 |
+| Gestione oraria di outatime in krumiro2.0, orari configurabili, FILM | regole-outatime, D21, F2 |
 | Inserimento manuale delle timbrature del portale | integrazione § 6–7, D15, F3 |
 | Accedo al portale normalmente, i dati arrivano a krumiro2.0 | D19, integrazione § 4, F4–F5 |
 | Rispetto delle regole aziendali (nessun servizio personale) | D19, sicurezza S1–S2 |
@@ -37,26 +37,40 @@ di F2 (Q18–Q22).**
 
 Ognuna ha la raccomandazione della plenaria; decide l'utente. Le prime cinque bloccano la pianificazione di F2.
 
-### Per F2 — timbratura manuale con le regole di outatime ([regole-outatime.md](architecture/regole-outatime.md))
-- **Q18 — Pausa minima.** outatime conta almeno 60 min di pausa pranzo; krumiro2.0 oggi 30.
-  *Raccomandazione*: 60 come nuovo valore predefinito (resta modificabile in Impostazioni). Con questo solo
-  cambio krumiro2.0 dà la stessa uscita di outatime in tutti i casi misurati.
-- **Q19 — Fascia pranzo.** outatime usa 12:30–14:30 per riconoscere la pausa e 13:00–14:30 per normalizzarla;
-  krumiro2.0 oggi 12:00–14:30. Qual è la regola aziendale?
-  *Raccomandazione*: se non c'è una regola scritta, 12:30–14:30 (la finestra con cui outatime riconosce la pausa).
-- **Q20 — Entrata dopo le 09:30.** outatime non calcola l'uscita; krumiro2.0 la calcola come sempre. Cosa prevede
-  l'azienda per chi entra dopo la fascia flessibile?
-  *Raccomandazione*: nuova impostazione "Fine fascia di ingresso" (09:30); se l'entrata la supera krumiro2.0
-  calcola comunque l'uscita e mostra l'avviso "Entrata dopo la fascia flessibile (09:30): verifica se serve un
-  permesso". Alternativa: il tempo tra 09:30 e l'entrata diventa automaticamente permesso a inizio giornata.
-- **Q21 — Smart working.** outatime riconosce "Entrata/Uscita per SMART WORKING" con lo stesso calcolo.
-  *Raccomandazione*: in krumiro2.0 una giornata può essere segnata "Smart working" (interruttore nella giornata),
-  visibile nella timeline, nello storico e nel CSV, senza effetto sul calcolo; servirà anche per i dati del
-  portale (campo `smart` del contratto).
-- **Q22 — Totali ed etichette.** outatime mostra "Ora di levarsi 👋", ⏱️ Official Timing e 🐫 Effective timing.
-  *Raccomandazione*: etichetta "Ora di levarsi 👋" al posto di "Uscita prevista" nella schermata Oggi; nei
-  dettagli della giornata, accanto alle ore lavorate (= Official), una riga "Effettive" con il tempo reale tra le
-  timbrature (senza minimo delle 08:30 e senza pausa minima). Alternativa: solo l'etichetta.
+### Per F2 — gestione oraria di outatime ([regole-outatime.md](architecture/regole-outatime.md))
+- **Q24 — Modello a configurazioni.** krumiro2.0 adotta le tre configurazioni di outatime v0.2.3 con un'unica
+  formula (verificata sui 17 casi di test di outatime):
+
+  | | Presenza | Presenza FILM | Smart working |
+  |---|---|---|---|
+  | Ingresso minimo | 08:30 | 08:30 | 07:00 |
+  | Pausa minima | 60 min | 30 min | 30 min |
+  | Finestra della pausa minima | — | 13:00–15:00 | — |
+  | Uscita minima | 17:30 | 17:00 | 17:30 |
+  | Ore dovute | 8:00 | 8:00 | 8:00 |
+
+  *Raccomandazione*: tutti i valori modificabili in *Impostazioni → Orari*; **FILM** è un interruttore globale
+  (come il popup di outatime) che sceglie quale configurazione vale per i giorni in presenza; **Smart working** si
+  sceglie per giornata (interruttore nella schermata del giorno). Le ore dovute per giorno della settimana
+  (sab–dom 0) restano come oggi. Un backup v1 importato porta giornate e tolleranza sigaretta; le regole orarie
+  partono dai valori di outatime (D21).
+- **Q25 — FILM, pausa dopo le 15:00.** outatime conta solo i minuti di pausa prima delle 13:00 e quelli oltre i 30
+  dentro 13:00–15:00: una pausa 14:30–15:30 dà uscita 17:00 come una di 30 minuti. È la regola o una svista?
+  *Raccomandazione*: svista; anche i minuti dopo le 15:00 ritardano l'uscita (pausa 14:30–15:30 → 17:30).
+- **Q26 — Esempio dell'issue #2.** "Entrata 09:00, pausa 13:01–13:42, uscita 17:11" non torna con la regola
+  (17:41); il test di outatime usa entrata 08:30. *Raccomandazione*: l'esempio ha un refuso; vale 17:41 con
+  entrata 09:00 e 17:11 con 08:30.
+- **Q27 — Fasce obbligatorie in smart working.** L'issue #2 cita 10:00–12:30 e 15:00–17:30 obbligatorie, non
+  implementate in outatime. *Raccomandazione*: due fasce configurabili nella configurazione Smart working; se una
+  timbratura le lascia scoperte, la giornata mostra l'avviso "Fascia obbligatoria 10:00–12:30 non coperta", senza
+  cambiare il calcolo.
+- **Q28 — Etichette e totali.** *Raccomandazione*: "**Ora di levarsi 👋**" al posto di "Uscita prevista"; nei
+  dettagli della giornata e nello storico **🐫 Effettivi** (somma reale delle coppie entrata/uscita) e
+  **Straordinari** (effettivi − ore dovute, se positivi). Il 💸 **Volontariato** (effettivi − ore pagate dal
+  portale) arriva in F3, quando si inseriscono le ore pagate.
+- **Q29 — Riferimento di outatime.** `main` di outatime è fermo alla 0.1; la versione in uso è `v0.2.3` sul branch
+  `firefox-support`. *Raccomandazione*: il piano usa `v0.2.3` come riferimento; portare `firefox-support` in
+  `main` è un'azione tua su outatime, fuori da questo piano (da fare prima di F4).
 
 ### Processo
 - **Q11 — F1 Design.** *Raccomandazione*: nessuna F1 separata (deroga registrata): F2 e F3 aggiungono campi e un
@@ -69,9 +83,13 @@ Ognuna ha la raccomandazione della plenaria; decide l'utente. Le prime cinque bl
 - **Q2 — Dove vive il piano.** *Raccomandazione*: documentazione unica in krumiro2.0, outatime rimanda qui (D16).
 
 ### Per fasi successive (si chiudono nel loro P)
-- **Q7 — Struttura del cartellino** (F4): descrizione anonimizzata dell'HTML con tutte le diciture.
-- **Q12 — "Ora di levarsi" nella pagina del portale** (F4): tenerla in outatime 1.0 o lasciarla solo a krumiro2.0.
-- **Q15 — Distribuzione dell'estensione** (F4): *raccomandazione* caricata non pacchettizzata.
+- **Q7 — Struttura del cartellino** (F4): la struttura è già descritta dalla fixture sintetica di
+  `test/content.spec.ts` di outatime v0.2.3; resta da sapere se esistono diciture oltre a Entrata/Uscita/SMART
+  WORKING (ferie, giustificativi, timbrature corrette).
+- **Q12 — "Ora di levarsi" nella pagina del portale** (F4): *raccomandazione* tenerla (è la funzione principale di
+  outatime) e allinearla alle risposte Q25–Q26.
+- **Q15 — Distribuzione dell'estensione** (F4): *raccomandazione* lo zip Chrome delle release di outatime, caricato
+  non pacchettizzato (come oggi).
 - **Q17 — Telefono** (F5): iPhone o Android, per la lettura del QR.
 - **Q23 — Chiave del QR** (F4): passphrase scritta su PC e telefono, oppure chiave casuale passata una volta con un
   QR di abbinamento (più robusta, nessuna password da ricordare). *Raccomandazione*: QR di abbinamento.
@@ -91,3 +109,6 @@ Ognuna ha la raccomandazione della plenaria; decide l'utente. Le prime cinque bl
 - **Q16 — Conflitto con le regole aziendali** → 2026-10-03: opzione B, trasferimento offline con QR → D19; D8
   scartata. Ordine delle fasi → D20.
 - **Q9, Q10** (regione dei dati, sessioni) → 2026-10-03: decadute con D19 (nessun server).
+- **Q18–Q22** (pausa minima, fascia pranzo, entrata dopo le 09:30, smart working, etichette) → 2026-10-03:
+  superate. Erano basate su outatime 0.1; l'utente ha chiarito: orari configurabili, configurazione FILM, portare
+  in krumiro2.0 la gestione oraria di outatime → sostituite da Q24–Q29 su outatime v0.2.3.

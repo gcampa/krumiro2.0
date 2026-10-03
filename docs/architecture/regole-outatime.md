@@ -1,57 +1,101 @@
-# Regole di outatime e regole di krumiro2.0 — confronto
+# Gestione oraria di outatime → krumiro2.0
 
-Stato: **F0, analisi del 2026-10-03.** Base della fase F2 ("Timbratura manuale con le regole di outatime").
-Le domande aperte citate (Q18–Q22) sono in [../README.md](../README.md#domande-aperte).
+Stato: **F0, analisi del 2026-10-03 (rifatta su outatime v0.2.3).** Obiettivo dell'utente: portare in krumiro2.0
+la gestione oraria di outatime, con **orari configurabili** e la configurazione **FILM**. Base della fase F2.
+Domande aperte citate (Q24–Q29) in [../README.md](../README.md#domande-aperte).
 
-Fonte outatime: `gcampa/outatime@f655344`, `background.js` (funzioni `timeToExit`, `getPausaPranzo`,
-`searchLunch`, `normalizeLunch`, `injectWorkingTime`, `injectEffectiveTime`).
-Fonte krumiro2.0: `src/core/calcolo.ts` (`calcolaGiornata`), `src/core/tipi.ts` (`IMPOSTAZIONI_PREDEFINITE`).
+> La prima analisi (commit `447ba9b`) leggeva `main` di outatime, fermo alla 0.1. La versione in uso è
+> **v0.2.3** (branch `firefox-support`, tag `v0.2.3`): TypeScript, esbuild, Jest, CI e release, popup FILM.
+> Questo documento la sostituisce.
 
-## 1. Le regole di outatime, scritte per esteso
+Fonti: `gcampa/outatime@v0.2.3` — `src/lib.ts` (`getMinimumAfternoonEnd`, `getMinimumPresenceExit`,
+`getUnpaidMinutes`), `src/content.ts`, `public/popup.html`, `test/lib.spec.ts`; issue
+[gcampa/outatime#2](https://github.com/gcampa/outatime/issues/2) (regole FILM e smart working).
+krumiro2.0: `src/core/calcolo.ts` (`calcolaGiornata`), `src/core/tipi.ts` (`IMPOSTAZIONI_PREDEFINITE`).
 
-| # | Regola | Dove |
+## 1. Le tre configurazioni di outatime
+
+outatime sceglie la regola per la giornata così: se la prima timbratura è "Entrata per SMART WORKING" →
+**Smart working**; altrimenti, se nel popup è attivo "Abilita FILM" (`chrome.storage.local.filmEnabled`) →
+**Presenza FILM**; altrimenti → **Presenza**. L'uscita si calcola solo per oggi e solo con almeno 3 timbrature
+(entrata, inizio pausa, fine pausa).
+
+| Parametro | Presenza | Presenza FILM | Smart working |
+|---|---|---|---|
+| Ore dovute | 8:00 | 8:00 | 8:00 |
+| Ingresso minimo (prima conta come quest'ora) | 08:30 | 08:30 | 07:00 |
+| Pausa minima | 60 min | 30 min | 30 min |
+| Finestra in cui vale la pausa minima | tutta la giornata | **13:00–15:00** | tutta la giornata |
+| Uscita minima | 17:30 | 17:00 | 17:30 |
+| Funzione | `getMinimumAfternoonEnd(…, false)` | `getMinimumPresenceExit` | `getMinimumAfternoonEnd(…, true)` |
+
+Regola FILM (issue #2): "pausa minimo 30 min conteggiata dalle 13:00 alle 15:00; entrata dalle 08:30, uscita minima
+alle 17:00; la flessibilità conteggia 30 min minimo e il rimanente va al minuto". I minuti di pausa prima delle
+13:00 e quelli oltre i 30 dentro la finestra ritardano l'uscita 1:1.
+
+## 2. Una sola formula per le tre configurazioni (proposta D21)
+
+```
+ingresso   = max(prima entrata, ingresso minimo)
+pausa      = (minuti di pausa fuori finestra) + max(pausa minima, minuti di pausa dentro la finestra)
+uscita     = max(uscita minima, ingresso + pausa + ore dovute)
+```
+Senza finestra (Presenza, Smart working) la "finestra" è tutta la giornata, quindi `pausa = max(pausa minima,
+pausa fatta)`. Con la finestra FILM 13:00–15:00 e pausa minima 30, uscita minima 17:00 = 08:30 + 0:30 + 8:00.
+
+**Verifica: la formula riproduce tutti i 17 casi di `test/lib.spec.ts` di outatime v0.2.3.** Accanto, cosa dà
+krumiro2.0 oggi con le impostazioni predefinite (misura del 2026-10-03, script temporaneo non versionato;
+eventi registrati come Entrata / Inizio pausa / Fine pausa, ora corrente = fine pausa + 1 min).
+
+| Config. | Entrata · pausa | outatime = formula | krumiro2.0 oggi |
+|---|---|---|---|
+| Presenza | 8:25 · 13:00–14:00 | 17:30 | 17:30 |
+| Presenza | 8:00 · 13:30–13:40 | 17:30 | **17:00** |
+| Presenza | 9:45 · 13:30–13:40 | 18:45 | **18:15** |
+| Presenza | 9:45 · 12:30–15:00 | 20:15 | 20:15 |
+| Presenza | 8:00 · 12:30–15:00 | 19:00 | 19:00 |
+| Presenza | 9:25 · 13:10–14:05 | 18:25 | **18:20** |
+| Smart working | 9:00 · 13:10–13:30 | 17:30 | 17:30 |
+| Smart working | 8:25 · 13:00–14:00 | 17:30 | 17:30 |
+| Smart working | 7:15 · 12:30–14:30 | 17:30 | **18:30** |
+| Smart working | 7:15 · 12:30–15:00 | 17:45 | **19:00** |
+| Smart working | 7:00 · 12:30–15:00 | 17:30 | **19:00** |
+| Smart working | 10:00 · 12:30–15:00 | 20:30 | 20:30 |
+| FILM | 09:00 · 13:00–13:30 | 17:30 | 17:30 |
+| FILM | 08:20 · 13:00–13:30 | 17:00 | 17:00 |
+| FILM | 08:30 · 12:55–13:10 | 17:05 | **17:00** |
+| FILM | 08:30 · 13:01–13:42 | 17:11 | 17:11 |
+| FILM | 08:30 · 12:30–13:00 | 17:30 | **17:00** |
+
+krumiro2.0 sbaglia 8 casi su 17: ha **un solo** insieme di regole (ingresso minimo 08:30, pausa minima 30, nessuna
+uscita minima, nessuna finestra della pausa). Ingresso minimo e pausa minima esistono già come impostazioni
+(`orarioMinimoConteggio`, `pausaMinima`); mancano **uscita minima**, **finestra della pausa minima**, le **tre
+configurazioni** e la scelta della configurazione per giornata.
+
+## 3. Cosa mostra outatime oltre all'uscita
+
+| Dato | Regola outatime | In krumiro2.0 |
 |---|---|---|
-| O1 | Orario di riferimento 08:30–17:30: 8 h di lavoro + 1 h di pausa pranzo | `timeToExit` (`ottoemezza`, `cinqueemezza`) |
-| O2 | Entrata **prima delle 08:30** → l'uscita è comunque 17:30 (+ eccedenza pausa) | `timeToExit` |
-| O3 | Entrata **tra 08:30 e 09:30** (fascia flessibile) → uscita = 17:30 + ritardo rispetto alle 08:30 + eccedenza pausa | `timeToExit` |
-| O4 | Entrata **dalle 09:30 in poi** → nessuna ora di uscita calcolata | `timeToExit` (`exitTime` resta 0) |
-| O5 | Pausa pranzo **minima 60 min**: una pausa più breve conta 60 min | `lunchMinTime`, `getPausaPranzo` |
-| O6 | Pausa non ancora timbrata → si assumono 60 min | `getPausaPranzo` (meno di 3 timbrature) |
-| O7 | La pausa è il rientro che cade tra **12:30 e 14:30** (orario del rientro meno timbratura precedente) | `getPausaPranzo` |
-| O8 | Nel totale "Official Timing" una pausa **interamente tra 13:00 e 14:30** più breve di 60 min conta 60 min | `searchLunch`, `normalizeLunch` |
-| O9 | "Entrata per SMART WORKING" / "Uscita per SMART WORKING" valgono come Entrata/Uscita | `createBadgeDictionary` |
-| O10 | Due totali: **Official Timing** (con pausa normalizzata, ⏱️) ed **Effective timing** (orari reali, 🐫) | `injectWorkingTime`, `injectEffectiveTime` |
-| O11 | Etichetta dell'uscita: **"Ora di levarsi: HH:MM 👋"**, solo per oggi | `timeToExit` |
-| O12 | Permessi (uscite/rientri a metà mattina o pomeriggio) **non** considerati | assenza di codice |
+| 👋 "Ora di levarsi: H:MM" | uscita minima di oggi (§ 2) | oggi "Uscita prevista" (Q28) |
+| 🐫 EFFETTIVI | somma delle coppie entrata/uscita complete, minuti reali | non c'è (Q28) |
+| Straordinari | effettivi − 8:00, se positivo | non c'è; c'è il saldo (Q28) |
+| 💸 VOLONTARIATO / "ore non riconosciute" | effettivi − ore pagate lette dal portale (`ORE ORDINARIE`, `BANCA ORE LUN - VEN MATURATA`, `STRAORDINARI AUT`, `SMART WORKING`) | richiede le ore pagate dal portale: F3 (inserimento) e contratto del QR |
 
-Difetti di outatime da **non** riprodurre (si rispettano le regole, non gli errori): mese non decrementato nelle
-date; `mergeData` sempre vero; orari senza zeri iniziali dopo `searchLunch`; con un rientro dopo le 14:30 la
-"pausa" diventa l'intervallo dall'entrata del mattino (es. uscita 14:00, rientro 14:45 → uscita prevista 21:45).
+## 4. Dove krumiro2.0 resta più completo (si tiene)
 
-## 2. Confronto misurato
+- **Permessi, uscite e rientri multipli**: outatime usa solo le prime 3 timbrature; krumiro2.0 gestisce tutta la
+  sequenza (permessi coperti, permesso che copre il pranzo, sigaretta, uscita anticipata).
+- **Uscita prevista prima della pausa**: outatime non la calcola con meno di 3 timbrature; krumiro2.0 la stima
+  aggiungendo la pausa minima.
+- **Giornate passate**: saldo, storico, CSV.
 
-Uscita prevista calcolata con `calcolaGiornata` di krumiro2.0 (impostazioni predefinite, eventi registrati come
-pausa) e uscita di outatime ricavata da O1–O7. Misura del 2026-10-03, script temporaneo non versionato.
+## 5. Punti da decidere
 
-| Caso | outatime | krumiro2.0 oggi (pausa minima 30) | krumiro2.0 con pausa minima 60 |
-|---|---|---|---|
-| 1 · Entrata 08:10, pausa 13:00–14:00 | 17:30 | 17:30 | 17:30 |
-| 2 · Entrata 08:45, pausa 13:00–13:40 | 17:45 | **17:25** | 17:45 |
-| 3 · Entrata 08:45, pausa 12:40–13:30 | 17:45 | **17:35** | 17:45 |
-| 4 · Entrata 09:45, pausa non ancora fatta | — (O4) | 18:45 | 18:45 |
-| 5 · Entrata 08:45, pausa 13:00–14:20 | 18:05 | 18:05 | 18:05 |
-| 6 · Entrata 08:45, pausa non ancora fatta | 17:45 | 17:45 | 17:45 |
-| 7 · Entrata 08:45, permesso 10:00–11:00, pausa 13:00–14:00 | 17:45 (O12) | 17:45 (permesso coperto) | 17:45 |
-
-**Risultato**: con la sola pausa minima a 60 min krumiro2.0 dà la stessa uscita di outatime in tutti i casi
-definiti. Restano da decidere i casi che outatime non definisce o definisce in modo diverso:
-
-| Differenza | outatime | krumiro2.0 oggi | Domanda |
-|---|---|---|---|
-| Pausa minima | 60 min (O5) | 30 min | Q18 |
-| Fascia pranzo | 12:30–14:30 (O7), 13:00–14:30 (O8) | 12:00–14:30 | Q19 |
-| Entrata dopo le 09:30 | nessun calcolo (O4) | calcolo normale, nessun avviso | Q20 |
-| Smart working | riconosciuto, stesso calcolo (O9) | non esiste | Q21 |
-| Totali ed etichette | Official + Effective, "Ora di levarsi 👋" (O10, O11) | lavorate, "Uscita prevista" | Q22 |
-| Timbrature prima delle 08:30 | contano 08:30 solo per l'uscita | contano 08:30 in tutti i calcoli | nessuna: krumiro2.0 è coerente, si tiene |
-| Permessi | ignorati (O12) | coperti | nessuna: krumiro2.0 è più completo, si tiene |
+| Punto | Domanda |
+|---|---|
+| Modello a configurazioni, valori predefiniti di outatime, tutto modificabile, FILM come scelta globale, smart working per giornata | Q24 |
+| FILM: minuti di pausa **dopo le 15:00** — outatime li ignora (pausa 14:30–15:30 → uscita 17:00) | Q25 |
+| Issue #2: "Entrata 09:00, pausa 13:01–13:42, uscita 17:11" contraddice la regola (17:41); il test usa 08:30 | Q26 |
+| Smart working: issue #2 cita fasce obbligatorie 10:00–12:30 e 15:00–17:30, non implementate in outatime | Q27 |
+| Etichette e totali di outatime in krumiro2.0 | Q28 |
+| Branch di riferimento di outatime (`main` è fermo alla 0.1) | Q29 |
