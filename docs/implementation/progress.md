@@ -48,6 +48,11 @@ precache 16 voci (98.96 KiB), Node 22.22.0. outatime @ `f655344`, versione 0.1, 
 - [x] Piano di F2 (`F2-gestione-oraria.md`, 17 task) con "Allineamento al codice", `f2-sessioni.md` (7 sessioni,
   R1 dopo T2.12), README per l'esecutore, `prompts.md`, modello hook rubadab — 2026-10-03
   Applied lessons: none (rubadab non disponibile)
+- [x] Plenaria 2026-10-03 (6): l'utente rifiuta due regole dedotte e fissa il principio "la tabella oraria di
+  outatime è la fonte di verità" (D27): FILM salvato sul giorno, uscita minima sempre tranne nei giorni liberi,
+  Effettivi solo da coppie complete; piano F2 aggiornato (T2.01, T2.02, T2.05, T2.06, T2.09, T2.11, T2.13–T2.15,
+  T2.17, checklist R1), regola B9 per l'esecutore
+  Applied lessons: none (rubadab non disponibile)
 - [ ] Merge di gcampa/outatime#3 (utente, "Create a merge commit") e pulizia dei rami (D22)
 - [ ] Decisioni proposte D7, D9, D14 approvate o sostituite in R-F0
 - [ ] Hook rubadab attivati in locale (D25)

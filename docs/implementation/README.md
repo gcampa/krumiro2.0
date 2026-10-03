@@ -87,6 +87,9 @@ Nessuna dipendenza nuova in F2 (B6). `npm ci` usa `package-lock.json`: non aggio
 - **B6 — Nessuna dipendenza nuova** senza decisione in decisions.md.
 - **B7 — Test per ogni regola nuova** in `tests/*.test.ts` (Vitest), con i dati del task.
 - **B8 — Log**: niente `console.log` di dati dell'utente.
+- **B9 — Fonte di verità** (D27): per gli orari vale la tabella oraria di outatime
+  ([regole-outatime.md](../architecture/regole-outatime.md) § 1–3). Se un calcolo dà un risultato diverso da quello
+  di outatime, non cambiare il valore atteso: è un Dubbio per la plenaria.
 
 ## Regole dell'interfaccia (W)
 - **W1 — Helper `el()`** di `src/ui/dom.ts`; niente `innerHTML` con dati.

@@ -213,10 +213,12 @@ dedotti dalla plenaria per rendere eseguibili i task, l'utente può sostituirli 
 - **FILM** (Q25, Q26): pausa minima 30 sui minuti di pausa dentro 13:00–15:00, calcolata sulla giornata intera; i
   minuti prima delle 13:00 contano come pausa; **i minuti dopo le 15:00 non riducono il lavoro** (come outatime).
   Con entrata 09:00 e pausa 13:01–13:42 l'uscita è 17:41 (sempre 8 ore di lavoro).
-- **FILM vale per tutti i giorni in presenza**, anche quelli passati, finché è attivo *(plenaria)*: è la modalità
-  contrattuale dell'utente, cambia di rado.
-- **Uscita minima** solo nei giorni con le ore dovute predefinite *(plenaria)*: un giorno ridotto (es. venerdì 6h)
-  non viene portato a 17:30.
+- ~~FILM vale per tutti i giorni in presenza, anche quelli passati~~ → sostituito il 2026-10-03: **FILM salvato sul
+  giorno**. Ogni giornata registra `film` quando viene salvata la prima volta; l'interruttore in Impostazioni vale
+  da oggi in poi (aggiorna anche la giornata di oggi); le giornate già salvate prima della 2.0.0 restano Presenza;
+  ogni giornata ha un pulsante FILM per correggerla.
+- ~~Uscita minima solo nei giorni con le ore dovute predefinite~~ → sostituito il 2026-10-03: **uscita minima
+  sempre**, come outatime (D27), anche nei giorni con ore ridotte; non vale solo nei giorni liberi (0 ore dovute).
 - **Pausa prevista** separata dalla pausa minima *(plenaria)*: serve a non cambiare i risultati dei 92 test storici;
   i predefiniti coincidono con la pausa minima (60/30/30).
 - **Durante la pausa** l'ora di levarsi si stima simulando il rientro *(plenaria)*: tiene conto di FILM e uscita
@@ -224,7 +226,8 @@ dedotti dalla plenaria per rendere eseguibili i task, l'utente può sostituirli 
 - **Fasce obbligatorie per configurazione**, solo avviso, valutate quando la fascia è conclusa; coprono lavoro,
   permessi, permesso a inizio giornata e uscita anticipata. Predefinite: Presenza e Smart working 10:00–12:30 e
   15:00–17:30; FILM 10:00–12:30 e 15:00–17:00.
-- **Effettivi** = minuti reali tra entrate e uscite; **Straordinari** = effettivi − ore dovute del giorno (Q28);
+- **Effettivi** = minuti reali delle sole coppie entrata/uscita complete, come EFFETTIVI di outatime (D27; il tratto
+  ancora aperto non conta); **Straordinari** = effettivi − ore dovute del giorno (Q28; con 8h coincide con outatime);
   "Ora di levarsi 👋" al posto di "Uscita prevista"; 💸 Volontariato in F3.
 **Motivo**: risposte dell'utente del 2026-10-03; i 17 casi di outatime e i 92 test storici restano veri.
 **Conseguenze**: task T2.01–T2.17; schema v2.
@@ -251,3 +254,14 @@ copia in `.claude/settings.json` e crea `.mcp.json` sulla macchina dove gira rub
 schermate del QR si progettano nel P di F4.
 **Motivo**: interfaccia nuova piccola, nello stile già definito.
 **Conseguenze**: deroga allo scheletro (F1 "solo se c'è UI") registrata in progress.md.
+
+## D27 — La tabella oraria di outatime è la fonte di verità
+**Stato**: approvata il 2026-10-03 (indicazione dell'utente).
+**Decisione**: per orari e calcoli che outatime definisce (ingresso minimo, pausa minima, finestra FILM, uscita
+minima, ora di levarsi, effettivi) vale outatime v0.2.3: [regole-outatime.md](regole-outatime.md) § 1–3 e i casi di
+`test/lib.spec.ts` di outatime. krumiro2.0 aggiunge solo ciò che outatime non definisce (permessi, sigaretta,
+giornate passate, stima prima della pausa, fasce obbligatorie) senza contraddirlo.
+**Motivo**: richiesta esplicita dell'utente.
+**Conseguenze**: un risultato di krumiro2.0 diverso da outatime è un difetto o un Dubbio per la plenaria, mai un
+valore atteso da adattare (regola B9 del README dell'esecutore); sostituite le due regole dedotte in D23 (FILM su
+tutti i giorni, uscita minima solo nei giorni normali) e allineati gli Effettivi.

@@ -8,6 +8,9 @@ Decisioni in § 5.
 > **v0.2.3** (branch `firefox-support`, tag `v0.2.3`): TypeScript, esbuild, Jest, CI e release, popup FILM.
 > Questo documento la sostituisce.
 
+**Questa tabella oraria è la fonte di verità (D27)**: dove krumiro2.0 e outatime divergono su ciò che outatime
+definisce, ha ragione outatime.
+
 Fonti: `gcampa/outatime@v0.2.3` — `src/lib.ts` (`getMinimumAfternoonEnd`, `getMinimumPresenceExit`,
 `getUnpaidMinutes`), `src/content.ts`, `public/popup.html`, `test/lib.spec.ts`; issue
 [gcampa/outatime#2](https://github.com/gcampa/outatime/issues/2) (regole FILM e smart working).
@@ -94,4 +97,6 @@ configurazioni** e la scelta della configurazione per giornata.
 Tutti i punti aperti sono chiusi in [D21](decisions.md#d21--gestione-oraria-a-configurazioni-presenza-film-smart-working)
 e [D23](decisions.md#d23--dettagli-del-calcolo-della-gestione-oraria): FILM globale, smart working per giornata, minuti
 di pausa FILM dopo le 15:00 come outatime, 09:00 + 13:01–13:42 → 17:41, fasce obbligatorie per configurazione
-(solo avviso), "Ora di levarsi 👋", Effettivi, Straordinari; outatime `main` allineato a 0.2.3 (D22).
+(solo avviso), "Ora di levarsi 👋", Effettivi (solo coppie complete, come outatime), Straordinari; uscita minima
+sempre tranne nei giorni liberi; FILM salvato su ogni giornata; outatime `main` allineato a 0.2.3 (D22); la tabella
+oraria di outatime è la fonte di verità (D27).

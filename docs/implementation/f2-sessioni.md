@@ -119,8 +119,8 @@ timbrature future l'ora di levarsi non ha senso). `npm run dev`; nel browser Imp
   13:10 → 17:05; il sottotitolo finisce con "· Presenza FILM".
 - [ ] *(T2.05, T2.09)* "Presenza FILM" → Uscita minima 18:00 → Oggi 18:00 con nota "uscita minima della
   configurazione".
-- [ ] *(T2.09)* Ripristina valori predefiniti → FILM spento; la stessa giornata (Entrata 08:30, pausa 12:55–13:10)
-  in Presenza dà **17:30** (pausa minima 60).
+- [ ] *(T2.09, T2.11)* Ripristina valori predefiniti → "Abilita FILM" spento, ma Oggi resta "· Presenza FILM" e
+  17:05 (FILM salvato sul giorno); tocca il pulsante "FILM" della giornata → "· Presenza" e **17:30** (pausa minima 60).
 - [ ] *(T2.11, T2.05)* FILM spento; tocca "🏠 Smart working"; Oggi con Entrata 07:15, Inizio pausa 12:30, Fine
   pausa 15:00 → 17:45; sottotitolo "· Smart working"; ricaricando la pagina resta attivo.
 - [ ] *(T2.06, T2.07, T2.12)* Storico → + Giornata dimenticata (giorno feriale passato): Entrata 08:00, Uscita
