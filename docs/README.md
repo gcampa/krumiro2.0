@@ -16,10 +16,11 @@ di F2 (Q24–Q29).**
 | [architecture/regole-outatime.md](architecture/regole-outatime.md) | gestione oraria di outatime v0.2.3 (Presenza, FILM, Smart working), formula unica, confronto sui 17 casi di test |
 | [architecture/integrazione-outatime.md](architecture/integrazione-outatime.md) | inventario dei due repository, architettura QR, flusso, contratto dati, classificazione e unione |
 | [architecture/sicurezza.md](architecture/sicurezza.md) | modello delle minacce, controlli S1–S17, rischi residui |
-| [architecture/decisions.md](architecture/decisions.md) | registro decisioni D1–D21 |
+| [architecture/decisions.md](architecture/decisions.md) | registro decisioni D1–D22 |
 | [implementation/gestione-fasi.md](implementation/gestione-fasi.md) | metodo adattato al progetto |
 | [implementation/roadmap.md](implementation/roadmap.md) | fasi F0, F2–F6 e milestone |
 | [implementation/progress.md](implementation/progress.md) | avanzamento, Dubbi, Blocchi |
+| [implementation/outatime-unione-main.md](implementation/outatime-unione-main.md) | valutazione e procedura per riunire outatime in `main` (D22) |
 | [superpowers/](superpowers/) | archivio dei piani precedenti all'adozione (D5) |
 
 ## Mappa requisiti → documenti
@@ -68,9 +69,11 @@ Ognuna ha la raccomandazione della plenaria; decide l'utente. Le prime cinque bl
   dettagli della giornata e nello storico **🐫 Effettivi** (somma reale delle coppie entrata/uscita) e
   **Straordinari** (effettivi − ore dovute, se positivi). Il 💸 **Volontariato** (effettivi − ore pagate dal
   portale) arriva in F3, quando si inseriscono le ore pagate.
-- **Q29 — Riferimento di outatime.** `main` di outatime è fermo alla 0.1; la versione in uso è `v0.2.3` sul branch
-  `firefox-support`. *Raccomandazione*: il piano usa `v0.2.3` come riferimento; portare `firefox-support` in
-  `main` è un'azione tua su outatime, fuori da questo piano (da fare prima di F4).
+- **Q29 — outatime: riunire tutto in `main`.** `main` è fermo alla 0.1; la release 0.2.3 sta su
+  `firefox-support`; i due rami divergono (1 solo commit di `main` fuori, banale: `.npmrc` e `.gitignore`).
+  *Raccomandazione*: opzione A di [outatime-unione-main.md](implementation/outatime-unione-main.md) — branch
+  `chore/unione-main` con merge, PR verso `main` in bozza aperta da Claude, merge fatto da te con commit di merge;
+  poi eliminare `firefox-support` e `feature/bun-firefox` (D22). Nessuna nuova release.
 
 ### Processo
 - **Q11 — F1 Design.** *Raccomandazione*: nessuna F1 separata (deroga registrata): F2 e F3 aggiungono campi e un

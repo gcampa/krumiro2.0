@@ -192,3 +192,12 @@ FILM); la formula riproduce i 17 casi di test di outatime.
 **Conseguenze**: cambia la forma di `Impostazioni` → `VERSIONE_CORRENTE` 2 con migrazione v1→v2 (eccezione a D2,
 che vale per i soli campi opzionali); `Giornata.smart` nuovo; test di krumiro2.0 con i 17 casi di outatime come
 casi di riferimento.
+
+## D22 — outatime: `main` allineato alla release 0.2.3
+**Stato**: proposta (Q29).
+**Decisione**: si porta `firefox-support` in `main` di outatime con una PR e un commit di merge (opzione A di
+[outatime-unione-main.md](../implementation/outatime-unione-main.md)); poi si eliminano `firefox-support` e
+`feature/bun-firefox` e si lavora solo da `main`.
+**Motivo**: richiesta dell'utente di rispettare quanto rilasciato nell'ultima versione; oggi il ramo predefinito
+mostra la 0.1. Il merge conserva la storia e lascia i tag `v0.2.0`–`v0.2.3` raggiungibili da `main`.
+**Conseguenze**: nessun cambio di codice né nuova release (`main` = `v0.2.3` + `.npmrc`); F4 parte da `main`.

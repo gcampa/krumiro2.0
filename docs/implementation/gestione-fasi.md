@@ -80,4 +80,5 @@ Correzioni dalle revisioni · Verifiche automatiche · **Test da eseguire** (che
 | [decisions.md](../architecture/decisions.md) | registro decisioni |
 | [integrazione-outatime.md](../architecture/integrazione-outatime.md) | architettura e contratto dati |
 | [sicurezza.md](../architecture/sicurezza.md) | controlli S1–S17 |
+| [outatime-unione-main.md](outatime-unione-main.md) | unione dei rami di outatime in `main` (fuori fase, D22) |
 | [regole-outatime.md](../architecture/regole-outatime.md) | gestione oraria di outatime, formula unica, confronto |

@@ -33,7 +33,12 @@ precache 16 voci (98.96 KiB), Node 22.22.0. outatime @ `f655344`, versione 0.1, 
   `regole-outatime.md` rifatto; formula unica verificata sui 17 casi di test di outatime (krumiro2.0 oggi ne
   sbaglia 8); D21 proposta; D11 superata; Q18–Q22 superate da Q24–Q29
   Applied lessons: none (rubadab non disponibile)
-- [ ] Q24–Q29 (gestione oraria di F2), Q11, Q13, Q14, Q2 chiuse con l'utente
+- [x] Plenaria 2026-10-03 (4): valutata l'unione di outatime in `main`: rami divergenti, 1 conflitto (`.gitignore`),
+  v0.2.3 verificata su copia pulita (typecheck ok, 41/41 test, build ok, 0 vulnerabilità); opzione A raccomandata
+  in `outatime-unione-main.md`, D22 proposta
+  Applied lessons: none (rubadab non disponibile)
+- [ ] Q29 / D22: conferma dell'utente per branch `chore/unione-main` e PR in bozza su outatime; merge dell'utente
+- [ ] Q24–Q28 (gestione oraria di F2), Q11, Q13, Q14, Q2 chiuse con l'utente
 - [ ] Decisioni proposte (D7, D9, D11, D14, D16) approvate o sostituite
 - [ ] `docs/implementation/README.md` (esecutore), `prompts.md`, `F2-gestione-oraria.md`, `f2-sessioni.md`
 - [ ] `.claude/settings.json` e `.mcp.json` di rubadab (Q13)
