@@ -52,7 +52,7 @@ Nessuno lavora su `main`.
 | File | Contenuto |
 |---|---|
 | [F2-gestione-oraria.md](F2-gestione-oraria.md) | gestione oraria di outatime in krumiro2.0 (17 task) |
-| [F3-pausa-birra.md](F3-pausa-birra.md) | pausa birra nel profilo (6 task) |
+| [F3-pausa-caffe.md](F3-pausa-caffe.md) | pausa caffè: cronometro sigaretta o birra (7 task) |
 | `F4-inserimento-portale.md` | da scrivere nel P di F4 |
 | `F5-outatime-qr.md`, `F6-leggi-qr.md`, `F7-consolidamento.md` | da scrivere nei rispettivi P |
 

@@ -46,7 +46,7 @@ matricola e nome (S10); `innerHTML` usato per iniettare righe con valori calcola
 | Baseline | 8 file di test, **92/92 verdi**; build ok, precache 16 voci (98.96 KiB) |
 
 Conseguenza principale: il portale conosce solo **Entrata/Uscita** (più "per SMART WORKING"); krumiro2.0 distingue
-pausa, permesso, sigaretta, uscita anticipata. Serve una **classificazione** (§ 6) e una regola di **unione** con i
+pausa, permesso, uscita anticipata. Serve una **classificazione** (§ 6) e una regola di **unione** con i
 dati inseriti a mano (§ 7).
 
 ## 3. Architettura
@@ -155,8 +155,8 @@ Per ogni giornata ricevuta (da inserimento manuale in F4 o da QR in F6), `unisci
 1. Gli eventi locali con `origine: 'portale'` si tolgono (verranno ricreati: l'import è idempotente).
 2. Ogni evento manuale si abbina all'evento del portale con lo stesso **verso** (E/U) più vicino entro
    **10 minuti**. Abbinato → resta l'orario del portale, ma si conservano **tipo e annotazioni** manuali
-   (`sigaretta`, `pausaConfermata`, `USCITA_ANTICIPATA`): così "Pausa sigaretta" toccata alle 10:15 e timbrata
-   alle 10:16 resta una sigaretta.
+   (`pausaConfermata`, `USCITA_ANTICIPATA`): così un'uscita anticipata toccata alle 16:00 e timbrata alle 16:01 resta
+   un'uscita anticipata. (La pausa caffè non entra: è solo un cronometro, D31.)
 3. Gli eventi manuali non abbinati **si tolgono** e si contano in `sostituiti`; la giornata precedente si salva
    in `timbrature-portale-annulla` (localStorage, una sola giornata) e un toast offre **Annulla** per 10 s.
 4. `permessoInizioMinuti` (permesso a inizio giornata) resta quello locale.

@@ -126,6 +126,9 @@ timbrature future l'ora di levarsi non ha senso). `npm run dev`; nel browser Imp
   pausa 15:00 → 17:45; sottotitolo "· Smart working"; ricaricando la pagina resta attivo.
 - [ ] *(T2.06, T2.07, T2.12)* Storico → + Giornata dimenticata (giorno feriale passato): Entrata 08:00, Uscita
   17:00 → Effettivi 9h, Straordinari 1h, avviso "Fascia obbligatoria 15:00–17:30 non coperta".
+- [ ] *(T2.07, T2.12)* Storico → + Giornata dimenticata (giorno feriale passato, Presenza): Entrata 08:30, Inizio
+  pausa 13:00, Fine pausa 14:45, Uscita 18:15 → avviso "Pausa pranzo di 1h45: oltre il massimo di 1h30"; con Fine
+  pausa 14:30 l'avviso sparisce.
 - [ ] *(T2.10)* Smart working → Rimuovi la fascia 2 → la giornata del punto precedente, se in smart working, non
   segnala più 15:00–17:30; fascia con inizio 16:00 e fine 15:00 → toast "L'inizio deve precedere la fine".
 - [ ] *(T2.08)* `npm test` verde, `tests/outatime.test.ts` con 19 casi.

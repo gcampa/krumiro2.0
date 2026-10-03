@@ -124,7 +124,7 @@ li leggono sia Vitest (krumiro2.0) sia Jest (outatime).
 **Stato**: approvata il 2026-10-03 (Q5, Q6).
 **Decisione**: regole di [integrazione-outatime.md § 6–7](integrazione-outatime.md#6-classificazione-entratauscita--eventi-krumiro20-proposta-vedi-domanda-q6);
 `Evento.origine?: 'portale'`.
-**Motivo**: il portale conosce solo Entrata/Uscita; le annotazioni manuali (sigaretta, uscita anticipata, pausa
+**Motivo**: il portale conosce solo Entrata/Uscita; le annotazioni manuali (uscita anticipata, pausa
 confermata) non devono perdersi.
 **Conseguenze**: logica di dominio `high`, con test dedicati in `tests/portale.test.ts`.
 
@@ -186,7 +186,7 @@ dipendere dall'estensione.
 configurazioni con i valori predefiniti di outatime v0.2.3, tutti modificabili in Impostazioni: ingresso minimo,
 pausa minima, finestra della pausa minima (facoltativa), uscita minima, ore dovute. FILM è una scelta globale
 (come il popup di outatime); smart working si sceglie per giornata. Le regole di krumiro2.0 che outatime non ha
-(permessi, sigaretta, uscita anticipata, giornate passate) restano.
+(permessi, uscita anticipata, giornate passate) restano; la pausa caffè è un cronometro (D31).
 **Motivo**: richiesta dell'utente ("portare in krumiro2.0 la gestione oraria di outatime", orari configurabili,
 FILM); la formula riproduce i 17 casi di test di outatime.
 **Conseguenze**: cambia la forma di `Impostazioni` → `VERSIONE_CORRENTE` 2 con migrazione v1→v2 (eccezione a D2,
@@ -259,7 +259,7 @@ schermate del QR si progettano nel P di F5.
 **Stato**: approvata il 2026-10-03 (indicazione dell'utente).
 **Decisione**: per orari e calcoli che outatime definisce (ingresso minimo, pausa minima, finestra FILM, uscita
 minima, ora di levarsi, effettivi) vale outatime v0.2.3: [regole-outatime.md](regole-outatime.md) § 1–3 e i casi di
-`test/lib.spec.ts` di outatime. krumiro2.0 aggiunge solo ciò che outatime non definisce (permessi, sigaretta,
+`test/lib.spec.ts` di outatime. krumiro2.0 aggiunge solo ciò che outatime non definisce (permessi, cronometro della pausa caffè,
 giornate passate, stima prima della pausa, fasce obbligatorie) senza contraddirlo.
 **Motivo**: richiesta esplicita dell'utente.
 **Conseguenze**: un risultato di krumiro2.0 diverso da outatime è un difetto o un Dubbio per la plenaria, mai un
@@ -277,16 +277,13 @@ dal CSV. "Ripristina valori predefiniti" non tocca il profilo. Lo smart working 
 **Conseguenze**: T2.01, T2.02, T2.09, T2.11, T2.14, T2.15, T2.17 e la checklist R1 aggiornati.
 
 ## D29 — Pausa birra, scelta nel profilo
-**Stato**: approvata il 2026-10-03 (domande a scelta multipla).
-**Decisione**: la pausa breve è una configurazione del profilo, `Impostazioni.pausaBreve: 'sigaretta' | 'birra'`
-(predefinita sigaretta). Con "birra": bottone "🍺 Pausa birra", schermata con un **boccale** che si svuota (schiuma
-che cala, bollicine), **durata della birra configurabile, predefinita 15 min** (`tolleranzaBirra`, 0–60, etichetta
-"Durata della birra"): il boccale si svuota in quel tempo e un rientro entro quel tempo non conta. Le regole di permesso
-sono quelle della pausa sigaretta (blocchi da 30 min); i dati non cambiano (evento `USCITA_PERMESSO` con
-`sigaretta: true`, suffisso CSV `(sigaretta)`): il nome mostrato segue il profilo.
-**Motivo**: richiesta dell'utente; outatime non ha pause brevi, quindi è un'estensione di krumiro2.0 che non
-contraddice D27.
-**Conseguenze**: fase F3 ([F3-pausa-birra.md](../implementation/F3-pausa-birra.md)), 6 task; nessun cambio di schema.
+**Stato**: approvata il 2026-10-03 per la parte "scelta nel profilo, boccale, durata 15 min configurabile"; la parte
+sulle regole di permesso è **ritirata** e sostituita da D31.
+**Decisione**: la pausa caffè ha un aspetto scelto nel profilo, `Impostazioni.pausaBreve: 'sigaretta' | 'birra'`
+(predefinita sigaretta). Con "birra": bottone "🍺 Pausa birra" e un **boccale** che si svuota (schiuma che cala,
+bollicine) nella **durata della birra, configurabile, predefinita 15 min** (`tolleranzaBirra`, 0–60).
+**Motivo**: richiesta dell'utente.
+**Conseguenze**: fase F3 ([F3-pausa-caffe.md](../implementation/F3-pausa-caffe.md)).
 
 ## D30 — Ordine delle fasi con la pausa birra
 **Stato**: approvata il 2026-10-03; aggiorna D20.
@@ -295,3 +292,24 @@ F6 lettura del QR → F7 consolidamento. I riferimenti alle fasi nei documenti (
 registro) sono stati rinumerati il 2026-10-03; le righe storiche di progress.md restano con i numeri di allora.
 **Motivo**: la pausa birra è piccola e indipendente da outatime; si fa subito dopo F2.
 **Conseguenze**: milestone M1 = F2–F3, M2 = F4–F6, M3 = F7.
+
+## D31 — La pausa caffè è solo un cronometro
+**Stato**: approvata il 2026-10-03 (indicazione dell'utente); sostituisce la parte di D29 sul permesso e la pausa
+sigaretta della 1.5.0.
+**Decisione**: la pausa sigaretta o birra è la pausa che spetta ogni 2 ore di lavoro; parte manualmente con un
+pulsante e **serve solo a misurare il tempo** al caffè. Non registra timbrature, non crea permessi, non cambia ore,
+saldo o ora di levarsi. "Fine pausa" mostra solo la durata, senza lasciare traccia. krumiro2.0 non calcola quando la
+pausa spetta. Durate configurabili: sigaretta 11 min, birra 15 min. Le pause sigaretta salvate con la 1.5.0 restano
+normali uscite/rientri in permesso (senza blocchi da 30 min).
+**Motivo**: "Non diventa permesso, non fare assunzioni … serve solo come misuratore del tempo d'aria al caffè"
+(utente).
+**Conseguenze**: F3 toglie dal calcolo e dai dati il permesso a blocchi della sigaretta (T3.05, T3.06).
+
+## D32 — Pausa pranzo massima con avviso
+**Stato**: approvata il 2026-10-03 (domanda a scelta multipla).
+**Decisione**: la pausa pranzo va da 1h a 1h30 in presenza e da 30 min a 1h30 in FILM (utente). Ogni configurazione
+ha `pausaMassima` (minuti, 0 = nessun avviso): Presenza 90, FILM 90; Smart working 0 perché l'utente non ha indicato
+un massimo. Oltre il massimo la giornata mostra l'avviso "Pausa pranzo di …: oltre il massimo di …"; il calcolo resta
+quello di outatime (D27), che non ha un massimo.
+**Motivo**: regola indicata dall'utente; solo avviso per non contraddire outatime.
+**Conseguenze**: T2.01, T2.02, T2.03, T2.07, T2.09, T2.12 e checklist R1 di F2.

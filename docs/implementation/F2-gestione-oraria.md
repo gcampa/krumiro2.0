@@ -41,11 +41,12 @@ Valori predefiniti (D21, D23; minuti dalla mezzanotte tra parentesi):
 | `fasciaPranzo` | 12:00–14:30 (720–870) | 13:00–15:00 (780–900) | 12:00–14:30 (720–870) |
 | `pausaDaScalare` | 60 | 30 | 30 |
 | `uscitaMinima` | 17:30 (1050) | 17:00 (1020) | 17:30 (1050) |
+| `pausaMassima` | 90 (1h30) | 90 (1h30) | 0 = nessun avviso (non indicata dall'utente) |
 | `fasceObbligatorie` | 10:00–12:30, 15:00–17:30 (600–750, 900–1050) | 10:00–12:30, 15:00–17:00 (600–750, 900–1020) | 10:00–12:30, 15:00–17:30 (600–750, 900–1050) |
 
 Configurazione "legacy" dei test (riproduce 1.5.0): `ingressoMinimo` 510, `pausaMinima` 30,
 `pausaMinimaSoloInFascia` false, `fasciaPranzo` 720–870, `pausaDaScalare` 60, `uscitaMinima` 0,
-`fasceObbligatorie` [].
+`fasceObbligatorie` [], `pausaMassima` 0.
 
 ---
 
@@ -77,6 +78,8 @@ Riferimenti: regole-outatime.md § 1–2; D21; D23.
      pausaDaScalare: number;
      /** L'ora di levarsi non è mai prima di questa (0 = nessuna). */
      uscitaMinima: number;
+     /** Pausa pranzo massima in minuti: oltre, la giornata mostra un avviso (0 = nessun avviso). */
+     pausaMassima: number;
      /** Fasce da coprire con lavoro o permesso; al massimo 4. */
      fasceObbligatorie: Fascia[];
    }
@@ -119,7 +122,7 @@ Riferimenti: D2, D21; `src/storage/migrazioni.ts`.
    `isObj(v.configurazioni) && isObj(v.configurazioni[id])` normalizzare con la nuova
    `normalizzaConfigurazione(grezzo, predefinita): ConfigurazioneOraria`:
    - `ingressoMinimo`: `intIn(…, 0, 1439)`; `pausaMinima`: `intIn(…, 0, 240)`; `pausaDaScalare`: `intIn(…, 0, 240)`;
-     `uscitaMinima`: `intIn(…, 0, 1439)`; `pausaMinimaSoloInFascia`: `=== true`;
+     `uscitaMinima`: `intIn(…, 0, 1439)`; `pausaMassima`: `intIn(…, 0, 480)`; `pausaMinimaSoloInFascia`: `=== true`;
      `fasciaPranzo`: valida se `inizio` 0–1439, `fine` 0–1440, `fine > inizio`;
      `fasceObbligatorie`: array, al massimo i primi 4 elementi validi come `fasciaPranzo`, gli altri scartati.
    - ogni valore non valido → quello di `predefinita` (clonata).
@@ -147,6 +150,7 @@ Riferimenti: regole-outatime.md § 2; `src/core/calcolo.ts`.
    export const CONFIGURAZIONE_LEGACY: ConfigurazioneOraria = {
      ingressoMinimo: 510, pausaMinima: 30, pausaMinimaSoloInFascia: false,
      fasciaPranzo: { inizio: 720, fine: 870 }, pausaDaScalare: 60, uscitaMinima: 0, fasceObbligatorie: [],
+     pausaMassima: 0,
    };
    export function impostazioni(modifiche: Partial<Impostazioni> = {}, presenza: Partial<ConfigurazioneOraria> = {}): Impostazioni {
      const base = clonaImpostazioni(IMPOSTAZIONI_PREDEFINITE);
@@ -273,8 +277,8 @@ Riferimenti: regole-outatime.md § 3.
 **Verifica**: `npm test` tutti verdi · `npm run typecheck`.
 **Fuori scope**: interfaccia, riepilogo mensile.
 
-## T2.07 — Calcolo: fasce obbligatorie scoperte                        Effort: medium
-Riferimenti: D23 (fasce per configurazione, solo avviso).
+## T2.07 — Calcolo: fasce obbligatorie scoperte e pausa oltre il massimo Effort: medium
+Riferimenti: D23 (fasce per configurazione, solo avviso); D32 (pausa pranzo massima, solo avviso).
 1. **Core** `src/core/tipi.ts`, `RisultatoGiornata`: `/** Fasce obbligatorie concluse e non coperte. */ fasceScoperte: Fascia[];`.
 2. **Core** nuovo `src/core/fasce.ts`:
    ```ts
@@ -290,6 +294,10 @@ Riferimenti: D23 (fasce per configurazione, solo avviso).
    - `fasceScoperte`: considera solo le fasce con `adesso === null || fascia.fine <= adesso`; una fascia è scoperta
      se la somma delle sovrapposizioni con i tratti è minore di `fine − inizio`.
    In `calcolaGiornata`: `fasceScoperte = dovuti > 0 && analisi.eventiValidi.length > 0 ? fasceScoperte(cfg.fasceObbligatorie, trattiCoperti(giornata, analisi.eventiValidi, adesso), adesso) : []`.
+   Pausa oltre il massimo, in `src/core/tipi.ts`:
+   `/** Pausa pranzo registrata oltre il massimo della configurazione, o null. */ pausaOltreMassimo: { durata: number; massimo: number } | null;`
+   e in `calcolaGiornata`: `const totalePause = intervalli.filter((i) => i.tipo === 'pausa' && !i.aperto).reduce((s, i) => s + (i.a - i.da), 0);`
+   `pausaOltreMassimo = cfg.pausaMassima > 0 && totalePause > cfg.pausaMassima ? { durata: totalePause, massimo: cfg.pausaMassima } : null`.
 3. **Test** nuovo `tests/fasce.test.ts` con le fasce 600–750 e 900–1050:
    - giornata passata Entrata 08:00, Uscita 17:00 → scoperta solo `{ 900, 1050 }`.
    - Entrata 09:00, Inizio pausa 13:00, Fine pausa 14:00, Uscita 17:30 → nessuna.
@@ -298,6 +306,9 @@ Riferimenti: D23 (fasce per configurazione, solo avviso).
    - oggi, adesso 12:00, Entrata 10:30 → nessuna (la fascia 10:00–12:30 non è conclusa).
    - oggi, adesso 13:00, Entrata 10:30 → scoperta `{ 600, 750 }`.
    - permesso a inizio giornata 120, Entrata 10:30, Uscita 17:30 → nessuna.
+   In `tests/calcolo.test.ts`, con `impostazioniOutatime()`: pausa 13:00–14:45 → `pausaOltreMassimo`
+   `{ durata: 105, massimo: 90 }`; pausa 13:00–14:30 → `null`; giornata `smart: true` (pausaMassima 0) con pausa
+   13:00–15:00 → `null`; legacy (`impostazioni()`) → sempre `null`.
 **Verifica**: `npm test` tutti verdi · `npm run typecheck`.
 **Fuori scope**: interfaccia.
 
@@ -333,6 +344,7 @@ Riferimenti: D21, D23, D28; `src/ui/impostazioni.ts`. Regole W1–W4.
      | `Inizio fascia pranzo` / `Fine fascia pranzo` | `inputHHMM` | — (stessi controlli e toast di oggi: `L'inizio deve precedere la fine`, `La fine deve seguire l'inizio`) |
      | `Pausa prevista (min)` | `inputMinuti(…, 240, 5)` | `si aggiunge all'uscita se la pausa non è ancora fatta` |
      | `Uscita minima` | `inputHHMM` | `00:00 = nessuna; non vale nei giorni liberi (0 ore dovute)` |
+     | `Pausa massima (min)` | `inputMinuti(…, 480, 5)` | `oltre questa durata la giornata mostra un avviso; 0 = nessun avviso` |
    - pulsante `Ripristina valori predefiniti` con conferma: titolo `Ripristinare le impostazioni?`, testo
      `Tornano i valori di outatime (Presenza 08:30–17:30 con 60 min di pausa, FILM 17:00 con 30 min tra 13:00 e 15:00, Smart working dalle 07:00), 8h lun–ven e tolleranza sigaretta 11 min. Il profilo (FILM) e le timbrature non vengono toccati.`
      e l'azione `store.modificaImpostazioni((i) => { const film = i.film; Object.assign(i, clonaImpostazioni(IMPOSTAZIONI_PREDEFINITE)); i.film = film; })`.
@@ -387,11 +399,13 @@ Riferimenti: Q28; `src/ui/giorno.ts`.
      `uscitaPrevistaConPausa`, `passata`.
    - in `dl.statistiche` dopo `Permesso`: `stat('🐫 Effettivi', formattaDurata(r.effettivi))` e
      `stat('Straordinari', formattaDurata(r.straordinari))`.
-2. **UI** nuova funzione `boxFasce(fasce: Fascia[]): HTMLElement` (stessa struttura di `boxProblemi`, classe
-   `scheda avviso-problemi`, `role: 'status'`): etichetta `⚠︎ Fasce obbligatorie`, un `li` per fascia
-   `` `Fascia obbligatoria ${formattaOra(f.inizio)}–${formattaOra(f.fine)} non coperta` ``, nota
-   `Copri la fascia con lavoro o permesso, oppure cambia le fasce in Impostazioni → Orari.`. In `vistaGiorno`
-   dopo `boxProblemi`: `r.fasceScoperte.length > 0 ? boxFasce(r.fasceScoperte) : null`.
+2. **UI** nuova funzione `boxAvvisi(r: RisultatoGiornata): HTMLElement | null` (stessa struttura di `boxProblemi`,
+   classe `scheda avviso-problemi`, `role: 'status'`; `null` se non c'è nessun avviso): etichetta `⚠︎ Avvisi`, un `li`
+   per fascia `` `Fascia obbligatoria ${formattaOra(f.inizio)}–${formattaOra(f.fine)} non coperta` `` e, se
+   `r.pausaOltreMassimo`, un `li`
+   `` `Pausa pranzo di ${formattaDurata(p.durata)}: oltre il massimo di ${formattaDurata(p.massimo)}` ``; nota
+   `Gli avvisi non cambiano il calcolo; fasce e pausa massima si cambiano in Impostazioni → Orari.`. In
+   `vistaGiorno` dopo `boxProblemi`: `boxAvvisi(r)`.
 **Verifica**: `npm run build` · `npm test` · nel browser: Oggi con Entrata 08:30 → la scheda dice "Ora di levarsi 👋";
 giornata passata (Storico → + Giornata dimenticata) con Entrata 08:00, Uscita 17:00 → Effettivi 9h, Straordinari 1h,
 avviso "Fascia obbligatoria 15:00–17:30 non coperta".

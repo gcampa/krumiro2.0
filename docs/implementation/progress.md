@@ -65,7 +65,10 @@ precache 16 voci (98.96 KiB), Node 22.22.0. outatime @ `f655344`, versione 0.1, 
   krumiro2.0, non una regola di outatime
   Applied lessons: none (rubadab non disponibile)
 - [x] Plenaria 2026-10-03 (9): pausa birra pianificata come F3 (D29: scelta nel profilo, tolleranza 15 min, boccale);
-  fasi rinumerate F4–F7 (D30); `F3-pausa-birra.md` con 6 task
+  fasi rinumerate F4–F7 (D30); `F3-pausa-caffe.md` con 6 task
+  Applied lessons: none (rubadab non disponibile)
+- [x] Plenaria 2026-10-03 (10): la pausa sigaretta/birra è solo un cronometro della pausa caffè (D31): F3 riscritta
+  (7 task, toglie il permesso a blocchi della 1.5.0); pausa pranzo massima con avviso (D32) aggiunta a F2
   Applied lessons: none (rubadab non disponibile)
 - [ ] Merge di gcampa/outatime#3 (utente, "Create a merge commit") e pulizia dei rami (D22)
 - [ ] Decisioni proposte D7, D9, D14 approvate o sostituite in R-F0
@@ -80,7 +83,7 @@ precache 16 voci (98.96 KiB), Node 22.22.0. outatime @ `f655344`, versione 0.1, 
 - [ ] T2.04 Calcolo: pausa minima FILM
 - [ ] T2.05 Calcolo: uscita minima e stima durante la pausa
 - [ ] T2.06 Calcolo: effettivi e straordinari
-- [ ] T2.07 Calcolo: fasce obbligatorie scoperte
+- [ ] T2.07 Calcolo: fasce obbligatorie scoperte e pausa oltre il massimo
 - [ ] T2.08 Casi di riferimento di outatime
 - [ ] T2.09 Impostazioni: Profilo (FILM) e Orari (configurazioni)
 - [ ] T2.10 Impostazioni → Orari: fasce obbligatorie
@@ -93,12 +96,13 @@ precache 16 voci (98.96 KiB), Node 22.22.0. outatime @ `f655344`, versione 0.1, 
 - [ ] T2.16 Pulizia dei campi vecchi delle impostazioni
 - [ ] T2.17 Pubblicazione su gcampa e versione 2.0.0
 
-## F3 — Pausa birra
+## F3 — Pausa caffè
 **Baseline (S1, <data>)**: da scrivere in S1.
-- [ ] T3.01 Profilo: tipo di pausa breve e tolleranza birra
-- [ ] T3.02 Impostazioni: scelta della pausa breve e tolleranze
-- [ ] T3.03 Giornata: bottone e timeline con la pausa del profilo
-- [ ] T3.04 Schermata: tolleranza e testi della pausa del profilo
-- [ ] T3.05 Schermata: il boccale che si svuota
-- [ ] **R1 — pausa birra dall'interfaccia**: da fare
-- [ ] T3.06 Aiuto e README
+- [ ] T3.01 Profilo: tipo di pausa caffè e durate
+- [ ] T3.02 Impostazioni: scelta della pausa e durate
+- [ ] T3.03 Cronometro senza timbrature
+- [ ] T3.04 Schermata: il boccale che si svuota
+- [ ] T3.05 Calcolo: la sigaretta non è più un permesso a blocchi
+- [ ] T3.06 Dati: via il flag sigaretta dalle timbrature
+- [ ] **R1 — pausa caffè dall'interfaccia**: da fare
+- [ ] T3.07 Aiuto e README

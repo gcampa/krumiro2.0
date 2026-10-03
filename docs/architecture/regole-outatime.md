@@ -87,7 +87,7 @@ configurazioni** e la scelta della configurazione per giornata.
 ## 4. Dove krumiro2.0 resta più completo (si tiene)
 
 - **Permessi, uscite e rientri multipli**: outatime usa solo le prime 3 timbrature; krumiro2.0 gestisce tutta la
-  sequenza (permessi coperti, permesso che copre il pranzo, sigaretta, uscita anticipata).
+  sequenza (permessi coperti, permesso che copre il pranzo, uscita anticipata).
 - **Uscita prevista prima della pausa**: outatime non la calcola con meno di 3 timbrature; krumiro2.0 la stima
   aggiungendo la pausa minima.
 - **Giornate passate**: saldo, storico, CSV.

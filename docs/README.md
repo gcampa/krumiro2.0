@@ -19,13 +19,13 @@ Stato: **F0 completa, in attesa di R-F0** — domande di F2 chiuse (D21–D26), 
 | [architecture/regole-outatime.md](architecture/regole-outatime.md) | gestione oraria di outatime v0.2.3 (Presenza, FILM, Smart working), formula unica, confronto sui 17 casi di test |
 | [architecture/integrazione-outatime.md](architecture/integrazione-outatime.md) | inventario dei due repository, architettura QR, flusso, contratto dati, classificazione e unione |
 | [architecture/sicurezza.md](architecture/sicurezza.md) | modello delle minacce, controlli S1–S17, rischi residui |
-| [architecture/decisions.md](architecture/decisions.md) | registro decisioni D1–D30 |
+| [architecture/decisions.md](architecture/decisions.md) | registro decisioni D1–D32 |
 | [implementation/gestione-fasi.md](implementation/gestione-fasi.md) | metodo adattato al progetto |
 | [implementation/README.md](implementation/README.md) | istruzioni per l'esecutore, regole B/W, comandi, DoD |
 | [implementation/prompts.md](implementation/prompts.md) | prompt del progetto |
 | [implementation/F2-gestione-oraria.md](implementation/F2-gestione-oraria.md) | piano di F2: 17 task |
 | [implementation/f2-sessioni.md](implementation/f2-sessioni.md) | sessioni, prompt e checklist di F2 |
-| [implementation/F3-pausa-birra.md](implementation/F3-pausa-birra.md) | piano di F3: pausa birra (6 task) |
+| [implementation/F3-pausa-caffe.md](implementation/F3-pausa-caffe.md) | piano di F3: pausa caffè, cronometro sigaretta o birra (7 task) |
 | [implementation/roadmap.md](implementation/roadmap.md) | fasi F0, F2–F7 e milestone |
 | [implementation/progress.md](implementation/progress.md) | avanzamento, Dubbi, Blocchi |
 | [implementation/outatime-unione-main.md](implementation/outatime-unione-main.md) | valutazione e procedura per riunire outatime in `main` (D22) |
@@ -41,7 +41,8 @@ Stato: **F0 completa, in attesa di R-F0** — domande di F2 chiuse (D21–D26), 
 | Rispetto delle regole aziendali (nessun servizio personale) | D19, sicurezza S1–S2 |
 | Assolutamente sicuro | sicurezza (tutto), D6 |
 | Solo per me, pubblicata da `gcampa` | D17 |
-| Pausa birra alternativa alla sigaretta, con un boccale che si consuma | D29, F3 |
+| Pausa caffè (ogni 2h di lavoro) come cronometro: sigaretta o birra, durata configurabile | D29, D31, F3 |
+| Pausa pranzo 1h–1h30 (FILM 30 min–1h30): avviso oltre il massimo | D32, F2 |
 
 ## Domande aperte
 
