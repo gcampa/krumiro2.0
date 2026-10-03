@@ -27,7 +27,7 @@ Firebase è nella storia git (commit `069c21e`). Ogni controllo ha un codice S<n
 
 ### Nessun canale di rete
 - **S1 — outatime senza rete esterna**: `host_permissions` solo sull'host del portale; nessuna `fetch` verso altri
-  host; nessun SDK di terze parti con telemetria. Verifica in F6: nessuna richiesta di rete di outatime (scheda
+  host; nessun SDK di terze parti con telemetria. Verifica in F7: nessuna richiesta di rete di outatime (scheda
   Network del service worker).
 - **S2 — krumiro2.0 non invia dati**: la lettura del QR avviene nel browser; nessuna chiamata di rete nuova.
 
@@ -36,11 +36,11 @@ Firebase è nella storia git (commit `069c21e`). Ogni controllo ha un codice S<n
   Chi fotografa il QR non legge nulla; un QR modificato o prodotto da altri non si decifra e viene rifiutato.
 - **S4 — Chiave mai in chiaro**: `CryptoKey` con `extractable: false` in IndexedDB, su PC e telefono. Origine della
   chiave (passphrase PBKDF2-SHA256 600 000 iterazioni, oppure chiave casuale a 256 bit passata una volta con un QR
-  di abbinamento) da decidere nel P di F4 (Q23).
+  di abbinamento) da decidere nel P di F5 (Q23).
 - **S5 — QR vecchi rifiutati**: `lettoIl` non più vecchio dell'ultimo importato per la stessa data; avviso se il QR
   ha più di 12 ore.
 - **S6 — QR visibile solo quando serve**: si mostra su richiesta e si nasconde dopo 60 s (modalità esatta nel P di
-  F4).
+  F5).
 
 ### Estensione outatime
 - **S7 — Permessi minimi** (MV3): content script solo su `http://172.16.0.32/*`, nessun `externally_connectable`;
@@ -62,7 +62,7 @@ Firebase è nella storia git (commit `069c21e`). Ogni controllo ha un codice S<n
 ### Processo
 - **S15 — Nessun dato reale nel repository**: HTML del portale solo sintetico.
 - **S16 — `npm audit --omit=dev` pulito** alla chiusura di ogni fase; versioni esatte.
-- **S17 — Revisione di sicurezza** in F6 con questa lista come checklist.
+- **S17 — Revisione di sicurezza** in F7 con questa lista come checklist.
 
 ## 4. Matrice minacce → controlli
 

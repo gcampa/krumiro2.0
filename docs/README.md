@@ -19,13 +19,14 @@ Stato: **F0 completa, in attesa di R-F0** — domande di F2 chiuse (D21–D26), 
 | [architecture/regole-outatime.md](architecture/regole-outatime.md) | gestione oraria di outatime v0.2.3 (Presenza, FILM, Smart working), formula unica, confronto sui 17 casi di test |
 | [architecture/integrazione-outatime.md](architecture/integrazione-outatime.md) | inventario dei due repository, architettura QR, flusso, contratto dati, classificazione e unione |
 | [architecture/sicurezza.md](architecture/sicurezza.md) | modello delle minacce, controlli S1–S17, rischi residui |
-| [architecture/decisions.md](architecture/decisions.md) | registro decisioni D1–D28 |
+| [architecture/decisions.md](architecture/decisions.md) | registro decisioni D1–D30 |
 | [implementation/gestione-fasi.md](implementation/gestione-fasi.md) | metodo adattato al progetto |
 | [implementation/README.md](implementation/README.md) | istruzioni per l'esecutore, regole B/W, comandi, DoD |
 | [implementation/prompts.md](implementation/prompts.md) | prompt del progetto |
 | [implementation/F2-gestione-oraria.md](implementation/F2-gestione-oraria.md) | piano di F2: 17 task |
 | [implementation/f2-sessioni.md](implementation/f2-sessioni.md) | sessioni, prompt e checklist di F2 |
-| [implementation/roadmap.md](implementation/roadmap.md) | fasi F0, F2–F6 e milestone |
+| [implementation/F3-pausa-birra.md](implementation/F3-pausa-birra.md) | piano di F3: pausa birra (6 task) |
+| [implementation/roadmap.md](implementation/roadmap.md) | fasi F0, F2–F7 e milestone |
 | [implementation/progress.md](implementation/progress.md) | avanzamento, Dubbi, Blocchi |
 | [implementation/outatime-unione-main.md](implementation/outatime-unione-main.md) | valutazione e procedura per riunire outatime in `main` (D22) |
 | [superpowers/](superpowers/) | archivio dei piani precedenti all'adozione (D5) |
@@ -35,24 +36,25 @@ Stato: **F0 completa, in attesa di R-F0** — domande di F2 chiuse (D21–D26), 
 | Requisito dell'utente | Dove |
 |---|---|
 | Gestione oraria di outatime in krumiro2.0, orari configurabili, FILM | regole-outatime, D21, F2 |
-| Inserimento manuale delle timbrature del portale | integrazione § 6–7, D15, F3 |
-| Accedo al portale normalmente, i dati arrivano a krumiro2.0 | D19, integrazione § 4, F4–F5 |
+| Inserimento manuale delle timbrature del portale | integrazione § 6–7, D15, F4 |
+| Accedo al portale normalmente, i dati arrivano a krumiro2.0 | D19, integrazione § 4, F5–F6 |
 | Rispetto delle regole aziendali (nessun servizio personale) | D19, sicurezza S1–S2 |
 | Assolutamente sicuro | sicurezza (tutto), D6 |
 | Solo per me, pubblicata da `gcampa` | D17 |
+| Pausa birra alternativa alla sigaretta, con un boccale che si consuma | D29, F3 |
 
 ## Domande aperte
 
 Nessuna blocca F2. Restano quelle delle fasi successive, da chiudere nel loro P (a scelta multipla).
 
-- **Q7 — Struttura del cartellino** (F3/F4): la fixture sintetica di `test/content.spec.ts` di outatime descrive la
+- **Q7 — Struttura del cartellino** (F4/F5): la fixture sintetica di `test/content.spec.ts` di outatime descrive la
   struttura; resta da sapere se esistono diciture oltre a Entrata/Uscita/SMART WORKING (ferie, giustificativi,
   timbrature corrette).
-- **Q12 — "Ora di levarsi" nella pagina del portale** (F4): *raccomandazione* tenerla e allinearla a D23.
-- **Q15 — Distribuzione dell'estensione** (F4): *raccomandazione* zip Chrome delle release, caricato non
+- **Q12 — "Ora di levarsi" nella pagina del portale** (F5): *raccomandazione* tenerla e allinearla a D23.
+- **Q15 — Distribuzione dell'estensione** (F5): *raccomandazione* zip Chrome delle release, caricato non
   pacchettizzato.
-- **Q17 — Telefono** (F5): iPhone o Android, per la lettura del QR.
-- **Q23 — Chiave del QR** (F4): passphrase oppure QR di abbinamento. *Raccomandazione*: QR di abbinamento.
+- **Q17 — Telefono** (F6): iPhone o Android, per la lettura del QR.
+- **Q23 — Chiave del QR** (F5): passphrase oppure QR di abbinamento. *Raccomandazione*: QR di abbinamento.
 
 ## Domande chiuse
 
@@ -74,7 +76,7 @@ Nessuna blocca F2. Restano quelle delle fasi successive, da chiudere nel loro P 
 - **Q26 — Esempio issue #2** → 2026-10-03: FILM = 30 min di pausa e sempre 8 ore di lavoro; 09:00 + 13:01–13:42 →
   17:41 → D23.
 - **Q27 — Fasce obbligatorie** → 2026-10-03: per configurazione, solo avviso; FILM fino alle 17:00 → D23.
-- **Q28 — Etichette e totali** → 2026-10-03: Ora di levarsi 👋, Effettivi, Straordinari; Volontariato in F3 → D23.
+- **Q28 — Etichette e totali** → 2026-10-03: Ora di levarsi 👋, Effettivi, Straordinari; Volontariato in F4 → D23.
 - **Q29 — outatime in `main`** → 2026-10-03: sì → D22, PR gcampa/outatime#3.
 - **Q2 — Documentazione** → 2026-10-03: tutto in krumiro2.0 → D16.
 - **Q11 — F1** → 2026-10-03: nessuna fase di design → D26.

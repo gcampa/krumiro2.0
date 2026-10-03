@@ -28,7 +28,7 @@ conservato e validato in `normalizza` (precedente: `Evento.sigaretta`).
 **Stato**: rilevata all'adozione.
 **Decisione**: testi dell'interfaccia, nomi di funzioni e variabili, commenti e documenti in italiano.
 **Motivo**: convenzione di tutto il codice esistente.
-**Conseguenze**: vale anche per le parti nuove di outatime (F4); il codice esistente di outatime v0.2.3 ha nomi in inglese e resta com'è.
+**Conseguenze**: vale anche per le parti nuove di outatime (F5); il codice esistente di outatime v0.2.3 ha nomi in inglese e resta com'è.
 
 ## D4 — Deploy
 **Stato**: rilevata all'adozione.
@@ -73,7 +73,7 @@ un servizio personale (Q1 → Q16); sostituita da D19.
 dedicato del proprietario, regione UE (Q9).
 **Motivo**: richiesta esplicita; un unico fornitore per login, dati in tempo reale e notifiche.
 **Conseguenze**: krumiro2.0 non è più "senza backend" quando la sincronizzazione è attiva: README e Aiuto da
-aggiornare (F6).
+aggiornare (F7).
 
 ## D9 — outatime trasmette timbrature grezze
 **Stato**: proposta.
@@ -91,7 +91,7 @@ oggi, invia una Web Push generica ai token di `utenti/{uid}/dispositivi`.
 (iOS 16.4+) e permesso concesso.
 
 ## D11 — outatime 1.0 riscritta
-**Stato**: ~~proposta~~ superata il 2026-10-03: outatime v0.2.3 è già TypeScript con build, test e CI; F4 la estende
+**Stato**: ~~proposta~~ superata il 2026-10-03: outatime v0.2.3 è già TypeScript con build, test e CI; F5 la estende
 (cifratura e QR) invece di riscriverla. Restano esbuild e Jest in outatime.
 **Decisione**: TypeScript, build Vite, test Vitest, CI GitHub Actions, content script automatico sulla pagina del
 cartellino, service worker per autenticazione e scrittura, popup per accesso, passphrase e stato.
@@ -156,7 +156,7 @@ backup JSON* → *Importa* (passo nella checklist). Con Firebase (Q16-A) l'allow
 **Decisione**: nessuna notifica push; krumiro2.0 si aggiorna quando riceve i dati (apertura dell'app con Q16-A,
 lettura del QR con Q16-B).
 **Motivo**: scelta dell'utente.
-**Conseguenze**: niente Cloud Function, niente FCM, niente piano Blaze (S19–S21, S23 decadono); la fase F5
+**Conseguenze**: niente Cloud Function, niente FCM, niente piano Blaze (S19–S21, S23 decadono); la fase F6
 Notifiche esce dalla roadmap.
 
 ## D19 — Trasferimento offline con QR
@@ -172,9 +172,9 @@ riscritto ([sicurezza.md](sicurezza.md)); formato del QR in [integrazione-outati
 ## D20 — Ordine delle fasi
 **Stato**: approvata il 2026-10-03.
 **Decisione**: prima la timbratura manuale in krumiro2.0 con le regole di outatime (F2), poi l'acquisizione:
-inserimento manuale delle timbrature del portale (F3), outatime con QR (F4), lettura del QR in krumiro2.0 (F5),
-consolidamento (F6).
-**Motivo**: richiesta dell'utente; ogni fase dà qualcosa di usabile; F3 costruisce classificazione e unione senza
+inserimento manuale delle timbrature del portale (F4), outatime con QR (F5), lettura del QR in krumiro2.0 (F6),
+consolidamento (F7).
+**Motivo**: richiesta dell'utente; ogni fase dà qualcosa di usabile; F4 costruisce classificazione e unione senza
 dipendere dall'estensione.
 **Conseguenze**: roadmap e gestione-fasi riscritte; confronto delle regole in
 [regole-outatime.md](regole-outatime.md).
@@ -201,7 +201,7 @@ aperta da Claude, merge dell'utente.
 `feature/bun-firefox` e si lavora solo da `main`.
 **Motivo**: richiesta dell'utente di rispettare quanto rilasciato nell'ultima versione; oggi il ramo predefinito
 mostra la 0.1. Il merge conserva la storia e lascia i tag `v0.2.0`–`v0.2.3` raggiungibili da `main`.
-**Conseguenze**: nessun cambio di codice né nuova release (`main` = `v0.2.3` + `.npmrc`); F4 parte da `main`.
+**Conseguenze**: nessun cambio di codice né nuova release (`main` = `v0.2.3` + `.npmrc`); F5 parte da `main`.
 
 ## D23 — Dettagli del calcolo della gestione oraria
 **Stato**: approvata il 2026-10-03 (Q25–Q28, fasce per configurazione); i punti marcati *(plenaria)* sono
@@ -228,7 +228,7 @@ dedotti dalla plenaria per rendere eseguibili i task, l'utente può sostituirli 
   15:00–17:30; FILM 10:00–12:30 e 15:00–17:00.
 - **Effettivi** = minuti reali delle sole coppie entrata/uscita complete, come EFFETTIVI di outatime (D27; il tratto
   ancora aperto non conta); **Straordinari** = effettivi − ore dovute del giorno (Q28; con 8h coincide con outatime);
-  "Ora di levarsi 👋" al posto di "Uscita prevista"; 💸 Volontariato in F3.
+  "Ora di levarsi 👋" al posto di "Uscita prevista"; 💸 Volontariato in F4.
 **Motivo**: risposte dell'utente del 2026-10-03; i 17 casi di outatime e i 92 test storici restano veri.
 **Conseguenze**: task T2.01–T2.17; schema v2.
 
@@ -250,8 +250,8 @@ copia in `.claude/settings.json` e crea `.mcp.json` sulla macchina dove gira rub
 
 ## D26 — Nessuna fase F1 di design
 **Stato**: approvata il 2026-10-03 (Q11).
-**Decisione**: niente F1 separata; F2 e F3 descrivono i controlli nuovi nei task, nello stile esistente; le
-schermate del QR si progettano nel P di F4.
+**Decisione**: niente F1 separata; F2 e F4 descrivono i controlli nuovi nei task, nello stile esistente; le
+schermate del QR si progettano nel P di F5.
 **Motivo**: interfaccia nuova piccola, nello stile già definito.
 **Conseguenze**: deroga allo scheletro (F1 "solo se c'è UI") registrata in progress.md.
 
@@ -275,3 +275,22 @@ dal CSV. "Ripristina valori predefiniti" non tocca il profilo. Lo smart working 
 **Motivo**: "La modalità FILM è una configurazione di profilo, è legata all'utenza" (utente); coerente con outatime
 (D27).
 **Conseguenze**: T2.01, T2.02, T2.09, T2.11, T2.14, T2.15, T2.17 e la checklist R1 aggiornati.
+
+## D29 — Pausa birra, scelta nel profilo
+**Stato**: approvata il 2026-10-03 (domande a scelta multipla).
+**Decisione**: la pausa breve è una configurazione del profilo, `Impostazioni.pausaBreve: 'sigaretta' | 'birra'`
+(predefinita sigaretta). Con "birra": bottone "🍺 Pausa birra", schermata con un **boccale** che si svuota (schiuma
+che cala, bollicine), tolleranza propria `tolleranzaBirra` **15 min**, modificabile 0–60. Le regole di permesso
+sono quelle della pausa sigaretta (blocchi da 30 min); i dati non cambiano (evento `USCITA_PERMESSO` con
+`sigaretta: true`, suffisso CSV `(sigaretta)`): il nome mostrato segue il profilo.
+**Motivo**: richiesta dell'utente; outatime non ha pause brevi, quindi è un'estensione di krumiro2.0 che non
+contraddice D27.
+**Conseguenze**: fase F3 ([F3-pausa-birra.md](../implementation/F3-pausa-birra.md)), 6 task; nessun cambio di schema.
+
+## D30 — Ordine delle fasi con la pausa birra
+**Stato**: approvata il 2026-10-03; aggiorna D20.
+**Decisione**: F2 gestione oraria → **F3 pausa birra** → F4 inserimento manuale dal portale → F5 outatime con QR →
+F6 lettura del QR → F7 consolidamento. I riferimenti alle fasi nei documenti (anche nelle voci precedenti di questo
+registro) sono stati rinumerati il 2026-10-03; le righe storiche di progress.md restano con i numeri di allora.
+**Motivo**: la pausa birra è piccola e indipendente da outatime; si fa subito dopo F2.
+**Conseguenze**: milestone M1 = F2–F3, M2 = F4–F6, M3 = F7.

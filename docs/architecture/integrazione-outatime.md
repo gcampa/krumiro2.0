@@ -8,9 +8,9 @@ Sicurezza in [sicurezza.md](sicurezza.md); regole di calcolo in [regole-outatime
 
 1. **Subito (F2)**: krumiro2.0 adotta la **gestione oraria di outatime** (Presenza, FILM, Smart working), con orari
    configurabili; timbro a mano.
-2. **Poi (F3)**: inserisco a mano le timbrature come le mostra il portale (Entrata/Uscita) e krumiro2.0 le
+2. **Poi (F4)**: inserisco a mano le timbrature come le mostra il portale (Entrata/Uscita) e krumiro2.0 le
    classifica e le unisce a quelle che ho toccato.
-3. **Infine (F4–F5)**: apro il portale come sempre, outatime mostra un QR cifrato con le timbrature recenti,
+3. **Infine (F5–F6)**: apro il portale come sempre, outatime mostra un QR cifrato con le timbrature recenti,
    lo inquadro con krumiro2.0 e la giornata si aggiorna.
 
 ## 2. Stato attuale (inventario del 2026-10-03)
@@ -30,7 +30,7 @@ Il branch predefinito `main` è fermo alla 0.1 (`f655344`, un solo `background.j
 | Uscita dati | report per giorno in `localStorage` del portale (chiave `outatime\|<data>\|<matricola>\|<nome>`) e `console.log` del JSON; `tools/timetable-viewer.html` lo visualizza incollandolo a mano |
 | Permessi | `activeTab`, `scripting`, `storage` |
 
-Note di sicurezza su v0.2.3 da trattare in F4: il report in `localStorage` del portale e nella console contiene
+Note di sicurezza su v0.2.3 da trattare in F5: il report in `localStorage` del portale e nella console contiene
 matricola e nome (S10); `innerHTML` usato per iniettare righe con valori calcolati (S9).
 
 ### krumiro2.0 (`gcampa/krumiro2.0`, branch base `main` @ `1440056`, versione `1.5.0`)
@@ -63,7 +63,7 @@ flowchart LR
         K["krumiro2.0 PWA<br/>fotocamera → decifra → classifica → unisce"]
     end
     Q -. "inquadratura (nessuna rete)" .-> K
-    M["Inserimento manuale<br/>(F3)"] --> K
+    M["Inserimento manuale<br/>(F4)"] --> K
 ```
 
 Principi:
@@ -73,10 +73,10 @@ Principi:
 3. **Cifratura end-to-end** (D6): chi fotografa lo schermo non legge nulla; krumiro2.0 accetta solo QR prodotti
    dalla tua outatime (cifratura autenticata).
 4. **outatime trasmette timbrature grezze** (D9): i calcoli restano in krumiro2.0.
-5. **Classificazione e unione sono le stesse** per l'inserimento manuale (F3) e per il QR (F5): una sola
+5. **Classificazione e unione sono le stesse** per l'inserimento manuale (F4) e per il QR (F6): una sola
    funzione pura, `unisciPortale`.
 
-## 4. Flusso (F4–F5)
+## 4. Flusso (F5–F6)
 
 ```mermaid
 sequenceDiagram
@@ -88,7 +88,7 @@ sequenceDiagram
     P-->>O: DOM caricato
     O->>O: leggiCartellino → GiornataPortale[] (ultimi 7 giorni)
     O->>O: cifra AES-256-GCM → testo `KR1.…` → QR
-    O-->>U: QR visibile (modalità decisa nel P di F4)
+    O-->>U: QR visibile (modalità decisa nel P di F5)
     U->>K: Oggi → "Leggi QR dal portale"
     K->>K: fotocamera → testo → decifra → verifica lettoIl
     K->>K: per ogni giorno: classificaPortale → unisciPortale → salva
@@ -119,12 +119,12 @@ interface GiornataPortale {
 - `pagatiMinuti` serve al "volontariato" di outatime (effettivi − pagati).
 - Niente nome, matricola, URL del portale, HTML, cookie.
 
-### 5.2 Contenuto del QR (proposta, si fissa nel P di F4)
+### 5.2 Contenuto del QR (proposta, si fissa nel P di F5)
 
 Testo `KR1.<iv base64url>.<ct base64url>`: `ct` = AES-256-GCM di `JSON.stringify({ v: 1, giornate:
 GiornataPortale[] })`, al più 7 giornate (le ultime, oggi compreso). Stima: ~7 × 120 byte di JSON → ~1,2 KB di
 testo, QR versione ≤ 25 con correzione d'errore M. Se non entra, si riducono i giorni, mai la cifratura.
-La chiave (passphrase o QR di abbinamento) si decide nel P di F4 (Q23).
+La chiave (passphrase o QR di abbinamento) si decide nel P di F5 (Q23).
 
 Regole di accettazione in krumiro2.0: prefisso e versione noti; decifratura riuscita (altrimenti "QR non
 riconosciuto: non è della tua outatime o la chiave è cambiata"); ogni giornata valida come in
@@ -150,7 +150,7 @@ come fu per `sigaretta`).
 
 ## 7. Unione con i dati inseriti a mano (approvata: D15)
 
-Per ogni giornata ricevuta (da inserimento manuale in F3 o da QR in F5), `unisciPortale(giornataLocale, eventiPortale) → { giornata, sostituiti }`
+Per ogni giornata ricevuta (da inserimento manuale in F4 o da QR in F6), `unisciPortale(giornataLocale, eventiPortale) → { giornata, sostituiti }`
 (`src/core/portale.ts`), funzione pura:
 1. Gli eventi locali con `origine: 'portale'` si tolgono (verranno ricreati: l'import è idempotente).
 2. Ogni evento manuale si abbina all'evento del portale con lo stesso **verso** (E/U) più vicino entro
@@ -166,9 +166,9 @@ Per ogni giornata ricevuta (da inserimento manuale in F3 o da QR in F5), `unisci
 | Repository | Cartella | Contenuto | Fase |
 |---|---|---|---|
 | `gcampa/krumiro2.0` | `src/core/calcolo.ts`, `src/core/tipi.ts`, `src/storage/migrazioni.ts`, `src/ui/impostazioni.ts`, `src/ui/giorno.ts` | gestione oraria di outatime (D21) | F2 |
-| `gcampa/krumiro2.0` | `src/core/portale.ts`, `src/ui/portale.ts` | classificazione, unione, inserimento manuale | F3 |
-| `gcampa/outatime` | `src/` (da v0.2.3) | aggiunta di cifratura e QR all'estensione esistente (esbuild, Jest) | F4 |
-| `gcampa/krumiro2.0` | `src/core/cifratura.ts`, `src/ui/leggiQr.ts` | decifratura, lettura QR | F5 |
+| `gcampa/krumiro2.0` | `src/core/portale.ts`, `src/ui/portale.ts` | classificazione, unione, inserimento manuale | F4 |
+| `gcampa/outatime` | `src/` (da v0.2.3) | aggiunta di cifratura e QR all'estensione esistente (esbuild, Jest) | F5 |
+| `gcampa/krumiro2.0` | `src/core/cifratura.ts`, `src/ui/leggiQr.ts` | decifratura, lettura QR | F6 |
 | `gcampa/krumiro2.0` | `docs/` | documentazione unica (D16) | tutte |
 
 Tipo `GiornataPortale` e cifratura esistono identici nei due repository con vettori di prova comuni (D14).

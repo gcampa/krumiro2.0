@@ -19,10 +19,11 @@ Il lavoro attraversa due repository: `gcampa/krumiro2.0` (questa documentazione,
 | — | Funzioni esistenti fino a 1.5.0 | chiusa prima dell'adozione (D5) | `docs/superpowers/` | — |
 | F0 | Pianificazione | documenti approvati, domande di F2 chiuse | — | R-F0 |
 | F2 | Gestione oraria di outatime (Presenza, FILM, Smart working) | i 17 casi di outatime v0.2.3 danno dal browser la stessa "Ora di levarsi"; app su `gcampa.github.io/krumiro2.0` | [F2-gestione-oraria.md](F2-gestione-oraria.md) | R1 dopo T2.12 · chiusura |
-| F3 | Inserimento manuale dal portale | timbrature del cartellino scritte a mano → giornata aggiornata, annotazioni manuali conservate, Annulla | `F3-inserimento-portale.md` | da fissare nel P · chiusura |
-| F4 | outatime con QR (da v0.2.3) | cartellino aperto → QR visibile; nessuna richiesta di rete esterna | `F4-outatime-qr.md` | da fissare nel P · chiusura |
-| F5 | krumiro2.0 legge il QR | QR inquadrato → giornate aggiornate; QR estraneo rifiutato | `F5-leggi-qr.md` | da fissare nel P · chiusura |
-| F6 | Consolidamento | revisione di sicurezza S1–S17 superata, Aiuto e README aggiornati, E2E di F2–F5 | `F6-consolidamento.md` | chiusura |
+| F3 | Pausa birra | Profilo → Birra: "🍺 Pausa birra" apre il boccale con timer 15:00; rientro entro 15 min non conteggiato | [F3-pausa-birra.md](F3-pausa-birra.md) | da fissare nel P · chiusura |
+| F4 | Inserimento manuale dal portale | timbrature del cartellino scritte a mano → giornata aggiornata, annotazioni manuali conservate, Annulla | `F4-inserimento-portale.md` | da fissare nel P · chiusura |
+| F5 | outatime con QR (da v0.2.3) | cartellino aperto → QR visibile; nessuna richiesta di rete esterna | `F5-outatime-qr.md` | da fissare nel P · chiusura |
+| F6 | krumiro2.0 legge il QR | QR inquadrato → giornate aggiornate; QR estraneo rifiutato | `F6-leggi-qr.md` | da fissare nel P · chiusura |
+| F7 | Consolidamento | revisione di sicurezza S1–S17 superata, Aiuto e README aggiornati, E2E di F2–F6 | `F7-consolidamento.md` | chiusura |
 
 F1 (design) non è prevista (D26).
 

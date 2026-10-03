@@ -52,16 +52,17 @@ Nessuno lavora su `main`.
 | File | Contenuto |
 |---|---|
 | [F2-gestione-oraria.md](F2-gestione-oraria.md) | gestione oraria di outatime in krumiro2.0 (17 task) |
-| `F3-inserimento-portale.md` | da scrivere nel P di F3 |
-| `F4-outatime-qr.md`, `F5-leggi-qr.md`, `F6-consolidamento.md` | da scrivere nei rispettivi P |
+| [F3-pausa-birra.md](F3-pausa-birra.md) | pausa birra nel profilo (6 task) |
+| `F4-inserimento-portale.md` | da scrivere nel P di F4 |
+| `F5-outatime-qr.md`, `F6-leggi-qr.md`, `F7-consolidamento.md` | da scrivere nei rispettivi P |
 
 ## Documenti di riferimento
 | Documento | Per cosa |
 |---|---|
 | [regole-outatime.md](../architecture/regole-outatime.md) | configurazioni, formula, i 17 casi di riferimento |
 | [decisions.md](../architecture/decisions.md) | D21 (configurazioni), D23 (dettagli di calcolo), D24 (effort) |
-| [integrazione-outatime.md](../architecture/integrazione-outatime.md) | contratto dati e QR (F3–F5) |
-| [sicurezza.md](../architecture/sicurezza.md) | controlli S1–S17 (F4–F6) |
+| [integrazione-outatime.md](../architecture/integrazione-outatime.md) | contratto dati e QR (F4–F6) |
+| [sicurezza.md](../architecture/sicurezza.md) | controlli S1–S17 (F5–F7) |
 
 ## Versioni
 | Pacchetto | Versione installata | Progetto |

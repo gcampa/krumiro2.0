@@ -82,7 +82,7 @@ configurazioni** e la scelta della configurazione per giornata.
 | 👋 "Ora di levarsi: H:MM" | uscita minima di oggi (§ 2) | oggi "Uscita prevista" (Q28) |
 | 🐫 EFFETTIVI | somma delle coppie entrata/uscita complete, minuti reali | non c'è (Q28) |
 | Straordinari | effettivi − 8:00, se positivo | non c'è; c'è il saldo (Q28) |
-| 💸 VOLONTARIATO / "ore non riconosciute" | effettivi − ore pagate lette dal portale (`ORE ORDINARIE`, `BANCA ORE LUN - VEN MATURATA`, `STRAORDINARI AUT`, `SMART WORKING`) | richiede le ore pagate dal portale: F3 (inserimento) e contratto del QR |
+| 💸 VOLONTARIATO / "ore non riconosciute" | effettivi − ore pagate lette dal portale (`ORE ORDINARIE`, `BANCA ORE LUN - VEN MATURATA`, `STRAORDINARI AUT`, `SMART WORKING`) | richiede le ore pagate dal portale: F4 (inserimento) e contratto del QR |
 
 ## 4. Dove krumiro2.0 resta più completo (si tiene)
 

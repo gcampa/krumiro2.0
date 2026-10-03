@@ -3,6 +3,9 @@
 Spuntare `[x]` a fine task con data e nota breve: `- [x] T2.01 … — 2026-01-15, ok (…conteggi test…)`.
 Sotto ogni task la riga `Applied lessons: [<id>, …]` oppure `Applied lessons: none`.
 
+Cambio di processo — 2026-10-03: nuova F3 "Pausa birra" (D29); le fasi successive sono rinumerate F4–F7 (D30). Le
+righe storiche qui sotto citano i numeri di allora (F3 inserimento … F6 consolidamento).
+
 Cambio di processo — 2026-10-03: nessuna F1 (D26); effort degli esecutori solo medium (D24); prompt di S1 crea il
 branch della fase perché il piano è fuori da `main` (gestione-fasi.md § Ciclo).
 
@@ -61,6 +64,9 @@ precache 16 voci (98.96 KiB), Node 22.22.0. outatime @ `f655344`, versione 0.1, 
   8:00); D23 e regole-outatime § 4 chiariscono che le ore dovute per giorno sono un'impostazione esistente di
   krumiro2.0, non una regola di outatime
   Applied lessons: none (rubadab non disponibile)
+- [x] Plenaria 2026-10-03 (9): pausa birra pianificata come F3 (D29: scelta nel profilo, tolleranza 15 min, boccale);
+  fasi rinumerate F4–F7 (D30); `F3-pausa-birra.md` con 6 task
+  Applied lessons: none (rubadab non disponibile)
 - [ ] Merge di gcampa/outatime#3 (utente, "Create a merge commit") e pulizia dei rami (D22)
 - [ ] Decisioni proposte D7, D9, D14 approvate o sostituite in R-F0
 - [ ] Hook rubadab attivati in locale (D25)
@@ -86,3 +92,13 @@ precache 16 voci (98.96 KiB), Node 22.22.0. outatime @ `f655344`, versione 0.1, 
 - [ ] T2.15 Aiuto: testi della gestione oraria
 - [ ] T2.16 Pulizia dei campi vecchi delle impostazioni
 - [ ] T2.17 Pubblicazione su gcampa e versione 2.0.0
+
+## F3 — Pausa birra
+**Baseline (S1, <data>)**: da scrivere in S1.
+- [ ] T3.01 Profilo: tipo di pausa breve e tolleranza birra
+- [ ] T3.02 Impostazioni: scelta della pausa breve e tolleranze
+- [ ] T3.03 Giornata: bottone e timeline con la pausa del profilo
+- [ ] T3.04 Schermata: tolleranza e testi della pausa del profilo
+- [ ] T3.05 Schermata: il boccale che si svuota
+- [ ] **R1 — pausa birra dall'interfaccia**: da fare
+- [ ] T3.06 Aiuto e README
