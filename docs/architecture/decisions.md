@@ -280,7 +280,8 @@ dal CSV. "Ripristina valori predefiniti" non tocca il profilo. Lo smart working 
 **Stato**: approvata il 2026-10-03 (domande a scelta multipla).
 **Decisione**: la pausa breve è una configurazione del profilo, `Impostazioni.pausaBreve: 'sigaretta' | 'birra'`
 (predefinita sigaretta). Con "birra": bottone "🍺 Pausa birra", schermata con un **boccale** che si svuota (schiuma
-che cala, bollicine), tolleranza propria `tolleranzaBirra` **15 min**, modificabile 0–60. Le regole di permesso
+che cala, bollicine), **durata della birra configurabile, predefinita 15 min** (`tolleranzaBirra`, 0–60, etichetta
+"Durata della birra"): il boccale si svuota in quel tempo e un rientro entro quel tempo non conta. Le regole di permesso
 sono quelle della pausa sigaretta (blocchi da 30 min); i dati non cambiano (evento `USCITA_PERMESSO` con
 `sigaretta: true`, suffisso CSV `(sigaretta)`): il nome mostrato segue il profilo.
 **Motivo**: richiesta dell'utente; outatime non ha pause brevi, quindi è un'estensione di krumiro2.0 che non

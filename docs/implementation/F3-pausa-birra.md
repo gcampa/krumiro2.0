@@ -1,7 +1,8 @@
 # F3 — Pausa birra
 
 Obiettivo: la pausa breve diventa una scelta del profilo, "Sigaretta" oppure "Birra". Con "Birra" il bottone, i
-testi e la schermata mostrano un boccale che si svuota, con la sua tolleranza (15 min, modificabile); le regole di
+testi e la schermata mostrano un boccale che si svuota, con la sua durata configurabile (predefinita 15 min): il boccale si svuota in quel tempo e, se rientri entro, la
+pausa non conta; le regole di
 permesso restano quelle della pausa sigaretta (blocchi da 30 min).
 
 Uscita (dall'interfaccia, `npm run dev`, giorno feriale, giornata con Entrata registrata):
@@ -9,7 +10,7 @@ Uscita (dall'interfaccia, `npm run dev`, giorno feriale, giornata con Entrata re
 2. Tocco "🍺 Pausa birra" → schermata scura con il boccale pieno, titolo "Pausa birra", timer che parte da 15:00 e
    nota "Rientra entro le HH:MM per non segnare nulla" (HH:MM = uscita + 15 min).
 3. Rientro entro 15 min → toast "Pausa birra di N min: non conteggiata" e nessuna timbratura in più.
-4. Una pausa birra oltre i 15 min (Impostazioni → Tolleranza birra 1 min, attesa di 2 min) → boccale vuoto con un velo
+4. Una pausa birra oltre la durata (Impostazioni → Durata della birra 1 min, attesa di 2 min) → boccale vuoto con un velo
    di schiuma, timer "+…", al rientro "30 min di permesso".
 5. Impostazioni → Profilo → Pausa breve: **Sigaretta** → tutto torna come in 1.5.0 (🚬, 11 min).
 
@@ -63,10 +64,12 @@ Riferimenti: D29; `src/ui/impostazioni.ts`. Regole W1–W4.
    `aria-label` "Pausa breve"): `🚬 Sigaretta` e `🍺 Birra`, `aria-pressed` sul valore corrente; al tocco
    `store.modificaImpostazioni((i) => void (i.pausaBreve = valore)); salvato();`.
 2. Scheda "Pausa sigaretta": titolo → `Pausa breve`; la riga esistente diventa `Tolleranza sigaretta (min)` (stesso
-   controllo); nuova riga `Tolleranza birra (min)` con `inputMinuti(imp.tolleranzaBirra, …, 'Tolleranza della pausa birra in minuti', 60, 1)`,
-   nota `entro questo tempo la pausa non viene conteggiata`; il link d'aiuto resta.
+   controllo); nuova riga `Durata della birra (min)` con `inputMinuti(imp.tolleranzaBirra, …, 'Durata della pausa birra in minuti', 60, 1)`,
+   nota `il boccale si svuota in questo tempo; entro questo tempo la pausa non viene conteggiata`; il link d'aiuto
+   resta. Predefinito 15 (T3.01), modificabile 0–60.
 **Verifica**: `npm run build` · `npm test` · nel browser: Impostazioni → Profilo → tocco "🍺 Birra" → resta premuto
-dopo il ricaricamento; "Tolleranza birra (min)" mostra 15; scrivo 61 → torna al valore precedente.
+dopo il ricaricamento; "Durata della birra (min)" mostra 15; scrivo 20 → dopo il ricaricamento resta 20; scrivo 61 →
+torna al valore precedente.
 **Fuori scope**: giornata e schermata.
 
 ## T3.03 — Giornata: bottone e timeline con la pausa del profilo        Effort: medium
@@ -157,7 +160,7 @@ Riferimenti: D29; `src/ui/sigaretta.ts`, `src/style.css`.
    ```
    Con `prefers-reduced-motion` le bollicine sono ferme: la regola globale di `src/style.css`
    (`@media (prefers-reduced-motion: reduce) { * { animation: none !important; … } }`) vale anche per queste.
-**Verifica**: `npm run build` · `npm test` · nel browser con Birra e Tolleranza birra 2 min: il boccale parte pieno,
+**Verifica**: `npm run build` · `npm test` · nel browser con Birra e Durata della birra 2 min: il boccale parte pieno,
 dopo 1 min è a metà, dopo 2 min è vuoto con la schiuma sul fondo e senza bollicine; con Sigaretta il disegno è la
 sigaretta di sempre.
 **Fuori scope**: suoni, vibrazione, altri disegni.
