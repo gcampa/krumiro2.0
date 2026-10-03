@@ -8,7 +8,7 @@ riga del prompt.
 | S1 | Apertura | Sonnet 5 · medium | — | riepilogo baseline e incoerenze |
 | S2 | Tipi, schema, configurazione nel calcolo | Sonnet 5 · medium | T2.01–T2.03 | riepilogo |
 | S3 | FILM, uscita minima, effettivi | Sonnet 5 · medium | T2.04–T2.06 | riepilogo |
-| S4 | Fasce, casi outatime, Impostazioni → Orari | Sonnet 5 · medium | T2.07–T2.09 | riepilogo |
+| S4 | Fasce, casi outatime, Impostazioni → Profilo e Orari | Sonnet 5 · medium | T2.07–T2.09 | riepilogo |
 | S5 | Fasce in Impostazioni, giornata | Sonnet 5 · medium | T2.10–T2.12 | 🛑 R1 — revisione obbligatoria: gestione oraria dall'interfaccia |
 | S6 | Storico, CSV, aiuto, pulizia | Sonnet 5 · medium | T2.13–T2.16 | riepilogo |
 | S7 | Pubblicazione | Sonnet 5 · medium | T2.17 | riepilogo |
@@ -88,7 +88,7 @@ incluso) e la sezione R1 di docs/implementation/f2-sessioni.md.
 Stato (già fatto, non rifarlo):
 T2.01–T2.09 — configurazioni Presenza/FILM/Smart working nel calcolo (FILM, uscita minima, stima in pausa,
 effettivi, straordinari, fasce scoperte), 19 casi di riferimento outatime in tests/outatime.test.ts,
-Impostazioni → Orari con FILM e campi delle configurazioni.
+Impostazioni → Profilo (FILM) e Orari (configurazioni).
 
 Esegui i task da T2.10 a T2.12 inclusi, uno alla volta. Per ciascuno: sua sezione, esecuzione, Verifica con
 output reale (browser reale per le voci UI), progress.md, commit `F2/T2.<xx>: …`. Passa al successivo solo con
@@ -111,16 +111,17 @@ Preparazione (utente): da eseguire **dopo le 15:01** (gli orari della checklist 
 timbrature future l'ora di levarsi non ha senso). `npm run dev`; nel browser Impostazioni → Esporta backup completo
 (JSON); poi dati del sito cancellati. Se oggi è sabato o domenica: Impostazioni → Ore dovute di quel giorno, togli
 "predefinito", 08:00.
-- [ ] *(T2.09)* Impostazioni → Orari: "Abilita FILM" spento; tre gruppi "Presenza", "Presenza FILM", "Smart
+- [ ] *(T2.09)* Impostazioni → Profilo: "Abilita FILM" spento; Impostazioni → Orari: tre gruppi "Presenza", "Presenza FILM", "Smart
   working" con i valori della tabella in testa a F2-gestione-oraria.md.
 - [ ] *(T2.03, T2.12)* Oggi: + Aggiungi timbratura Entrata 08:25, Inizio pausa 13:00, Fine pausa 14:00 →
   "Ora di levarsi 👋" 17:30.
-- [ ] *(T2.04, T2.09)* Abilita FILM; Oggi: modifica le timbrature in Entrata 08:30, Inizio pausa 12:55, Fine pausa
+- [ ] *(T2.04, T2.09)* Impostazioni → Profilo → Abilita FILM; Oggi: modifica le timbrature in Entrata 08:30, Inizio pausa 12:55, Fine pausa
   13:10 → 17:05; il sottotitolo finisce con "· Presenza FILM".
 - [ ] *(T2.05, T2.09)* "Presenza FILM" → Uscita minima 18:00 → Oggi 18:00 con nota "uscita minima della
   configurazione".
-- [ ] *(T2.09, T2.11)* Ripristina valori predefiniti → "Abilita FILM" spento, ma Oggi resta "· Presenza FILM" e
-  17:05 (FILM salvato sul giorno); tocca il pulsante "FILM" della giornata → "· Presenza" e **17:30** (pausa minima 60).
+- [ ] *(T2.09)* Ripristina valori predefiniti → "Abilita FILM" resta attivo (è del profilo) e Oggi resta 17:05;
+  Impostazioni → Profilo → spengo "Abilita FILM" → Oggi "· Presenza" e **17:30** (pausa minima 60), anche le
+  giornate passate in presenza passano a Presenza.
 - [ ] *(T2.11, T2.05)* FILM spento; tocca "🏠 Smart working"; Oggi con Entrata 07:15, Inizio pausa 12:30, Fine
   pausa 15:00 → 17:45; sottotitolo "· Smart working"; ricaricando la pagina resta attivo.
 - [ ] *(T2.06, T2.07, T2.12)* Storico → + Giornata dimenticata (giorno feriale passato): Entrata 08:00, Uscita

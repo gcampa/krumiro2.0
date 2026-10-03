@@ -213,10 +213,8 @@ dedotti dalla plenaria per rendere eseguibili i task, l'utente può sostituirli 
 - **FILM** (Q25, Q26): pausa minima 30 sui minuti di pausa dentro 13:00–15:00, calcolata sulla giornata intera; i
   minuti prima delle 13:00 contano come pausa; **i minuti dopo le 15:00 non riducono il lavoro** (come outatime).
   Con entrata 09:00 e pausa 13:01–13:42 l'uscita è 17:41 (sempre 8 ore di lavoro).
-- ~~FILM vale per tutti i giorni in presenza, anche quelli passati~~ → sostituito il 2026-10-03: **FILM salvato sul
-  giorno**. Ogni giornata registra `film` quando viene salvata la prima volta; l'interruttore in Impostazioni vale
-  da oggi in poi (aggiorna anche la giornata di oggi); le giornate già salvate prima della 2.0.0 restano Presenza;
-  ogni giornata ha un pulsante FILM per correggerla.
+- FILM: vedi D28 (configurazione del profilo dell'utente). La regola intermedia "FILM salvato sul giorno" del
+  2026-10-03 è ritirata dall'utente prima di essere implementata.
 - ~~Uscita minima solo nei giorni con le ore dovute predefinite~~ → sostituito il 2026-10-03: **uscita minima
   sempre**, come outatime (D27), anche nei giorni con ore ridotte; non vale solo nei giorni liberi (0 ore dovute).
 - **Pausa prevista** separata dalla pausa minima *(plenaria)*: serve a non cambiare i risultati dei 92 test storici;
@@ -265,3 +263,13 @@ giornate passate, stima prima della pausa, fasce obbligatorie) senza contraddirl
 **Conseguenze**: un risultato di krumiro2.0 diverso da outatime è un difetto o un Dubbio per la plenaria, mai un
 valore atteso da adattare (regola B9 del README dell'esecutore); sostituite le due regole dedotte in D23 (FILM su
 tutti i giorni, uscita minima solo nei giorni normali) e allineati gli Effettivi.
+
+## D28 — FILM è una configurazione del profilo dell'utente
+**Stato**: approvata il 2026-10-03 (indicazione dell'utente); sostituisce "FILM salvato sul giorno" (D23, ritirata).
+**Decisione**: FILM è una proprietà dell'utente, come `filmEnabled` nel `chrome.storage.local` di outatime: un solo
+valore `Impostazioni.film` in *Impostazioni → Profilo*, che vale per tutti i giorni in presenza (anche quelli
+passati); nessun campo `film` sulle giornate, nessun pulsante FILM nella giornata, nessuna colonna che lo reimporti
+dal CSV. "Ripristina valori predefiniti" non tocca il profilo. Lo smart working resta una scelta per giornata.
+**Motivo**: "La modalità FILM è una configurazione di profilo, è legata all'utenza" (utente); coerente con outatime
+(D27).
+**Conseguenze**: T2.01, T2.02, T2.09, T2.11, T2.14, T2.15, T2.17 e la checklist R1 aggiornati.

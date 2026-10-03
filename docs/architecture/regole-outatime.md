@@ -98,5 +98,5 @@ Tutti i punti aperti sono chiusi in [D21](decisions.md#d21--gestione-oraria-a-co
 e [D23](decisions.md#d23--dettagli-del-calcolo-della-gestione-oraria): FILM globale, smart working per giornata, minuti
 di pausa FILM dopo le 15:00 come outatime, 09:00 + 13:01–13:42 → 17:41, fasce obbligatorie per configurazione
 (solo avviso), "Ora di levarsi 👋", Effettivi (solo coppie complete, come outatime), Straordinari; uscita minima
-sempre tranne nei giorni liberi; FILM salvato su ogni giornata; outatime `main` allineato a 0.2.3 (D22); la tabella
+sempre tranne nei giorni liberi; FILM configurazione del profilo dell'utente (D28); outatime `main` allineato a 0.2.3 (D22); la tabella
 oraria di outatime è la fonte di verità (D27).

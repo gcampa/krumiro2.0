@@ -53,6 +53,10 @@ precache 16 voci (98.96 KiB), Node 22.22.0. outatime @ `f655344`, versione 0.1, 
   Effettivi solo da coppie complete; piano F2 aggiornato (T2.01, T2.02, T2.05, T2.06, T2.09, T2.11, T2.13–T2.15,
   T2.17, checklist R1), regola B9 per l'esecutore
   Applied lessons: none (rubadab non disponibile)
+- [x] Plenaria 2026-10-03 (7): FILM è una configurazione del profilo dell'utente (D28), non della giornata: ritirata
+  la regola "FILM salvato sul giorno"; piano F2 (T2.01, T2.02, T2.09, T2.11, T2.14, T2.15, T2.17) e checklist R1
+  aggiornati
+  Applied lessons: none (rubadab non disponibile)
 - [ ] Merge di gcampa/outatime#3 (utente, "Create a merge commit") e pulizia dei rami (D22)
 - [ ] Decisioni proposte D7, D9, D14 approvate o sostituite in R-F0
 - [ ] Hook rubadab attivati in locale (D25)
@@ -68,7 +72,7 @@ precache 16 voci (98.96 KiB), Node 22.22.0. outatime @ `f655344`, versione 0.1, 
 - [ ] T2.06 Calcolo: effettivi e straordinari
 - [ ] T2.07 Calcolo: fasce obbligatorie scoperte
 - [ ] T2.08 Casi di riferimento di outatime
-- [ ] T2.09 Impostazioni → Orari: FILM e configurazioni
+- [ ] T2.09 Impostazioni: Profilo (FILM) e Orari (configurazioni)
 - [ ] T2.10 Impostazioni → Orari: fasce obbligatorie
 - [ ] T2.11 Giornata: smart working e configurazione
 - [ ] T2.12 Giornata: "Ora di levarsi 👋", effettivi, straordinari, fasce

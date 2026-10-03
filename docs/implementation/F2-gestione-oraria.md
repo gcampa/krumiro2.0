@@ -5,7 +5,7 @@ FILM, Smart working), con tutti gli orari modificabili, e mostra "Ora di levarsi
 fasce obbligatorie scoperte. Pubblicazione su `https://gcampa.github.io/krumiro2.0/`.
 
 Uscita (dall'interfaccia, `npm run dev`, `http://localhost:5173/krumiro2.0/`, dati puliti, giorno feriale, dopo le 15:01):
-1. Impostazioni → Orari: FILM disattivato. Oggi: Aggiungi timbratura Entrata 08:25, Inizio pausa 13:00,
+1. Impostazioni → Profilo: FILM disattivato. Oggi: Aggiungi timbratura Entrata 08:25, Inizio pausa 13:00,
    Fine pausa 14:00 → "Ora di levarsi 👋" **17:30**.
 2. Attivo FILM; giornata con Entrata 08:30, Inizio pausa 12:55, Fine pausa 13:10 → **17:05**.
 3. Disattivo FILM; giornata in Smart working con Entrata 07:15, Inizio pausa 12:30, Fine pausa 15:00 → **17:45**.
@@ -26,8 +26,9 @@ Effort del progetto: **solo medium** (D24): ogni task tocca un modulo e ha formu
   `tests/helpers.ts` (T2.03), che riproduce le regole di krumiro2.0 1.5.0.
 - Le impostazioni vecchie (`pranzo`, `pausaDaScalare`, `orarioMinimoConteggio`, `pausaMinima`) restano nel tipo
   fino a T2.16, così ogni task compila; da T2.03 il calcolo non le legge più.
-- `store.modificaGiornata` cancella una giornata vuota: da T2.11 una giornata con solo `smart` non è vuota, e una
-  giornata nuova registra `film` dalle impostazioni (FILM salvato sul giorno, D23).
+- `store.modificaGiornata` cancella una giornata vuota: da T2.11 una giornata con solo `smart` non è vuota.
+- **FILM è una configurazione del profilo dell'utente** (D28), come `filmEnabled` di outatime: un solo valore in
+  `Impostazioni.film`, mai salvato sulle giornate.
 - Il CSV si legge per nome di colonna (`importaCsv`): le colonne nuove si aggiungono in fondo.
 
 Valori predefiniti (D21, D23; minuti dalla mezzanotte tra parentesi):
@@ -84,13 +85,13 @@ Riferimenti: regole-outatime.md § 1–2; D21; D23.
    a questo file. In `Impostazioni` aggiungere `film: boolean;` e
    `configurazioni: Record<IdConfigurazione, ConfigurazioneOraria>;` (i campi vecchi restano).
    In `IMPOSTAZIONI_PREDEFINITE`: `film: false`, `configurazioni: CONFIGURAZIONI_PREDEFINITE`.
-   In `Giornata` aggiungere `/** Giornata in smart working. */ smart?: true;` e
-   `/** FILM salvato sul giorno; assente = segue l'impostazione FILM (giornata non ancora salvata). */ film?: boolean;`.
+   In `Giornata` aggiungere `/** Giornata in smart working. */ smart?: true;`. In `Impostazioni` il commento di
+   `film` è `/** Profilo dell'utente: modalità FILM per i giorni in presenza (come filmEnabled di outatime). */`.
 2. **Core** nuovo `src/core/configurazioni.ts`:
    ```ts
    export function configurazioneGiornata(g: Giornata, imp: Impostazioni): IdConfigurazione {
      if (g.smart === true) return 'smart';
-     return (g.film ?? imp.film) ? 'film' : 'presenza';
+     return imp.film ? 'film' : 'presenza';
    }
    export function clonaConfigurazione(c: ConfigurazioneOraria): ConfigurazioneOraria {
      return { ...c, fasciaPranzo: { ...c.fasciaPranzo }, fasceObbligatorie: c.fasceObbligatorie.map((f) => ({ ...f })) };
@@ -100,9 +101,8 @@ Riferimenti: regole-outatime.md § 1–2; D21; D23.
    `configurazioni: { presenza: clonaConfigurazione(i.configurazioni.presenza), film: clonaConfigurazione(i.configurazioni.film), smart: clonaConfigurazione(i.configurazioni.smart) }`.
    `normalizzaImpostazioni` per ora copia `film` e `configurazioni` dai predefiniti (la validazione è T2.02).
 4. **Test** nuovo `tests/configurazioni.test.ts`:
-   - giornata senza `smart` e senza `film`: impostazioni `film: false` → `'presenza'`, `film: true` → `'film'`;
-     giornata `film: false` con impostazioni `film: true` → `'presenza'`; giornata `film: true` con impostazioni
-     `film: false` → `'film'`; giornata `smart: true, film: true` → `'smart'`.
+   - giornata senza `smart`: impostazioni `film: false` → `'presenza'`, `film: true` → `'film'`; giornata
+     `smart: true` con impostazioni `film: true` → `'smart'`.
    - `clonaConfigurazione(CONFIGURAZIONI_PREDEFINITE.film)` modificata (`fasceObbligatorie[0].inizio = 0`) non cambia
      `CONFIGURAZIONI_PREDEFINITE.film.fasceObbligatorie[0].inizio` (resta 600).
    - `CONFIGURAZIONI_PREDEFINITE.film.uscitaMinima === 1020` e `.smart.ingressoMinimo === 420`.
@@ -112,10 +112,9 @@ Riferimenti: regole-outatime.md § 1–2; D21; D23.
 
 ## T2.02 — Schema v2: migrazione e validazione                       Effort: medium
 Riferimenti: D2, D21; `src/storage/migrazioni.ts`.
-1. **Storage** `src/storage/migrazioni.ts`: `VERSIONE_CORRENTE = 2`. `MIGRAZIONI[1]` porta a `version: 2` e mette
-   `film: false` in ogni giornata di `d.giornate` che sia un oggetto (le giornate già salvate restano Presenza, D23);
-   le impostazioni v1 non hanno `film`/`configurazioni`: li riempie `normalizzaImpostazioni` con i predefiniti di
-   outatime. Il passo `0` resta `version: 1`.
+1. **Storage** `src/storage/migrazioni.ts`: `VERSIONE_CORRENTE = 2`. `MIGRAZIONI[1] = (d) => ({ ...d, version: 2 })`
+   (le impostazioni v1 non hanno `film`/`configurazioni`: li riempie `normalizzaImpostazioni` con i predefiniti di
+   outatime, FILM spento). Il passo `0` resta `version: 1`.
 2. `normalizzaImpostazioni`: `imp.film = v.film === true`. Per ogni `id` di `ID_CONFIGURAZIONI`, se
    `isObj(v.configurazioni) && isObj(v.configurazioni[id])` normalizzare con la nuova
    `normalizzaConfigurazione(grezzo, predefinita): ConfigurazioneOraria`:
@@ -124,8 +123,8 @@ Riferimenti: D2, D21; `src/storage/migrazioni.ts`.
      `fasciaPranzo`: valida se `inizio` 0–1439, `fine` 0–1440, `fine > inizio`;
      `fasceObbligatorie`: array, al massimo i primi 4 elementi validi come `fasciaPranzo`, gli altri scartati.
    - ogni valore non valido → quello di `predefinita` (clonata).
-3. `normalizzaGiornata`: se `g.smart === true` la giornata ha `smart: true`, altrimenti il campo non c'è; se
-   `typeof g.film === 'boolean'` la giornata ha `film: g.film`, altrimenti il campo non c'è.
+3. `normalizzaGiornata`: se `g.smart === true` la giornata ha `smart: true`, altrimenti il campo non c'è; un campo
+   `film` sulle giornate non si conserva (FILM è del profilo, D28).
 4. **Test** `tests/migrazioni.test.ts`:
    - "dati senza version" e tutti gli altri test esistenti restano invariati, salvo `version: 1` atteso → ora
      `VERSIONE_CORRENTE` (2).
@@ -134,8 +133,8 @@ Riferimenti: D2, D21; `src/storage/migrazioni.ts`.
    - v2 con `configurazioni.film.pausaMinima: 45` e `configurazioni.smart.uscitaMinima: 2000` → film 45, smart 1050.
    - v2 con 5 fasce valide in `presenza` → ne restano 4; fascia `{ inizio: 900, fine: 800 }` → scartata.
    - giornata con `smart: true` → conservato; con `smart: 'si'` → assente.
-   - v1 con una giornata → dopo la migrazione `film: false`; v2 con giornata `film: true` → conservato; `film: 'si'`
-     → assente.
+   - v2 con `impostazioni.film: true` → `film` true; con `film: 'si'` → false; giornata con `film: true` → il campo
+     non c'è dopo la normalizzazione.
    - `{ version: 3 }` → `ErroreMigrazione`.
 **Verifica**: `npm test` tutti verdi · `npm run typecheck`.
 **Fuori scope**: rimozione dei campi vecchi (T2.16), interfaccia.
@@ -315,15 +314,15 @@ Riferimenti: regole-outatime.md § 2 (tabella dei 17 casi).
 **Verifica**: `npm test` → 19 casi nuovi verdi.
 **Fuori scope**: qualsiasi modifica al codice applicativo.
 
-## T2.09 — Impostazioni → Orari: FILM e configurazioni                 Effort: medium
-Riferimenti: D21, D23; `src/ui/impostazioni.ts`. Regole W1–W4.
-1. **UI** `src/ui/impostazioni.ts`: togliere le schede "Pausa pranzo" e "Conteggio" (tranne il pulsante di
-   ripristino, che si sposta in "Orari"). Aggiungere dopo "Ore dovute" la scheda:
-   - `h2.titolo-sezione` **"Orari"**; riga `'Abilita FILM'` con `input type=checkbox` (`aria-label` "Abilita FILM"),
-     nota `'pausa di 30 min tra 13:00 e 15:00 nei giorni in presenza, da oggi in poi'`; al cambio
-     `store.modificaImpostazioni((i) => void (i.film = check.checked));`, poi, se esiste già la giornata di oggi
-     (`store.giornate[adesso.data]`), `store.modificaGiornata(adesso.data, (g) => void (g.film = check.checked));`,
-     poi `salvato();`. Le giornate passate non cambiano (D23).
+## T2.09 — Impostazioni: Profilo (FILM) e Orari (configurazioni)      Effort: medium
+Riferimenti: D21, D23, D28; `src/ui/impostazioni.ts`. Regole W1–W4.
+1. **UI** `src/ui/impostazioni.ts`: togliere le schede "Pausa pranzo" e "Conteggio" (il pulsante di ripristino si
+   sposta in "Orari"). Aggiungere:
+   - **prima di "Ore dovute"** la scheda con `h2.titolo-sezione` **"Profilo"** e la riga `'Abilita FILM'` con
+     `input type=checkbox` (`aria-label` "Abilita FILM"), nota
+     `'configurazione del tuo profilo: pausa di 30 min tra 13:00 e 15:00 nei giorni in presenza'`; al cambio
+     `store.modificaImpostazioni((i) => void (i.film = check.checked)); salvato();`.
+   - **dopo "Ore dovute"** la scheda con `h2.titolo-sezione` **"Orari"** che contiene le configurazioni:
    - per ogni `id` di `ID_CONFIGURAZIONI` un `details.configurazione` con `summary` =
      `` `${ETICHETTE_CONFIGURAZIONE[id]} · ingresso ${formattaOra(c.ingressoMinimo)} · pausa ${c.pausaMinima} min · uscita ${c.uscitaMinima > 0 ? formattaOra(c.uscitaMinima) : 'libera'}` ``
      e le righe (con `riga(...)`, `inputHHMM`, `inputMinuti` esistenti), ognuna salva con
@@ -337,16 +336,16 @@ Riferimenti: D21, D23; `src/ui/impostazioni.ts`. Regole W1–W4.
      | `Pausa prevista (min)` | `inputMinuti(…, 240, 5)` | `si aggiunge all'uscita se la pausa non è ancora fatta` |
      | `Uscita minima` | `inputHHMM` | `00:00 = nessuna; non vale nei giorni liberi (0 ore dovute)` |
    - pulsante `Ripristina valori predefiniti` con conferma: titolo `Ripristinare le impostazioni?`, testo
-     `Tornano i valori di outatime (Presenza 08:30–17:30 con 60 min di pausa, FILM 17:00 con 30 min tra 13:00 e 15:00, Smart working dalle 07:00), FILM spento, 8h lun–ven e tolleranza sigaretta 11 min. Le timbrature e il FILM salvato sulle giornate non vengono toccati.`
+     `Tornano i valori di outatime (Presenza 08:30–17:30 con 60 min di pausa, FILM 17:00 con 30 min tra 13:00 e 15:00, Smart working dalle 07:00), 8h lun–ven e tolleranza sigaretta 11 min. Il profilo (FILM) e le timbrature non vengono toccati.`
+     e l'azione `store.modificaImpostazioni((i) => { const film = i.film; Object.assign(i, clonaImpostazioni(IMPOSTAZIONI_PREDEFINITE)); i.film = film; })`.
 2. **Stile** `src/style.css`, in coda: `details.configurazione { border-top: 1px solid var(--bordo); padding: 8px 0; }`
    e `details.configurazione > summary { cursor: pointer; font-weight: 600; padding: 8px 0; }` (`--bordo` esiste
    già in `:root` e nel tema scuro).
 3. **Test**: nessun test automatico (vista DOM). 
 **Verifica**: `npm run build` · `npm test` · nel browser (se oggi è sabato o domenica, prima Impostazioni → Ore dovute
-di quel giorno: togli "predefinito" e imposta 08:00): Impostazioni → Orari → attivo "Abilita FILM" → Oggi con
+di quel giorno: togli "predefinito" e imposta 08:00): Impostazioni → Profilo → attivo "Abilita FILM" → Oggi con
 Entrata 08:30, Inizio pausa 12:55, Fine pausa 13:10 mostra 17:05; apro "Presenza FILM", porto "Uscita minima" a 18:00
-→ Oggi mostra 18:00. Ripristina → Oggi torna 17:05 (la giornata di oggi resta FILM: è salvato sul giorno) e
-"Abilita FILM" è spento.
+→ Oggi mostra 18:00. Ripristina → Oggi torna 17:05 e "Abilita FILM" resta attivo (è del profilo).
 **Fuori scope**: fasce obbligatorie (T2.10), etichette della schermata Oggi (T2.12).
 
 ## T2.10 — Impostazioni → Orari: fasce obbligatorie                    Effort: medium
@@ -363,27 +362,21 @@ Riferimenti: D23. Regole W1–W4.
 toast "L'inizio deve precedere la fine" e valore non salvato (ricaricando la pagina resta il precedente).
 **Fuori scope**: avviso nella schermata del giorno (T2.12).
 
-## T2.11 — Giornata: smart working, FILM del giorno e configurazione   Effort: medium
+## T2.11 — Giornata: smart working e configurazione                    Effort: medium
 Riferimenti: D21; `src/ui/giorno.ts`, `src/storage/store.ts`.
-1. **Storage** `src/storage/store.ts`, `modificaGiornata`: `const esisteva = data in this.dati.giornate;` prima della
-   modifica; dopo `modifica(g)`, se `!esisteva && g.film === undefined` → `g.film = this.dati.impostazioni.film`
-   (una giornata nuova registra il FILM del momento). La giornata si cancella solo se
+1. **Storage** `src/storage/store.ts`, `modificaGiornata`: la giornata si cancella solo se
    `g.eventi.length === 0 && g.permessoInizioMinuti === 0 && g.smart !== true`.
 2. **UI** `src/ui/giorno.ts`, `vistaGiorno`: sottotitolo
    `` `${formattaDataLunga(data)} · ${ETICHETTE_CONFIGURAZIONE[r.configurazione]}` ``; sotto il sottotitolo un
    `button.chip` con testo `🏠 Smart working`, `aria-pressed` = `String(giornata.smart === true)`; al tocco
    `store.modificaGiornata(data, (g) => { if (g.smart) delete g.smart; else g.smart = true; })` e
-   `toast(giornata.smart ? 'Smart working tolto' : 'Smart working attivato')`. Accanto, solo se la giornata non è in
-   smart working, un `button.chip` `FILM` con `aria-pressed` = `String(r.configurazione === 'film')`; al tocco
-   `store.modificaGiornata(data, (g) => void (g.film = !(g.film ?? store.impostazioni.film)))` e
-   `toast(r.configurazione === 'film' ? 'FILM tolto per questa giornata' : 'FILM attivato per questa giornata')`.
-   Entrambi i pulsanti valgono per oggi e per le giornate passate.
+   `toast(giornata.smart ? 'Smart working tolto' : 'Smart working attivato')`. Vale per oggi e per le giornate
+   passate. Nessun pulsante FILM nella giornata: FILM è del profilo (D28).
 3. **Test**: nessun test automatico (lo store usa `localStorage` e non ha test); la Verifica nel browser copre la
    regola di cancellazione.
 **Verifica**: `npm run build` · `npm test` · nel browser: Oggi senza timbrature → tocco "🏠 Smart working" → il
 sottotitolo finisce con "· Smart working" e ricaricando resta; tocco di nuovo → "· Presenza" (o "· Presenza FILM"
-con FILM attivo); tocco "FILM" → il sottotitolo passa da "· Presenza" a "· Presenza FILM" e viceversa, solo per
-quella giornata (una giornata passata non cambia).
+con FILM attivo nel profilo).
 **Fuori scope**: CSV (T2.14), etichette dell'uscita (T2.12).
 
 ## T2.12 — Giornata: "Ora di levarsi 👋", effettivi, straordinari, fasce   Effort: medium
@@ -425,13 +418,12 @@ Riferimenti: `src/core/csv.ts`.
 1. **Core** `src/core/csv.ts`: in fondo a `INTESTAZIONE` aggiungere `'Configurazione'`, `'Ore effettive'`,
    `'Straordinari'`; nelle righe `ETICHETTE_CONFIGURAZIONE[r.configurazione]`, `oreDecimali(r.effettivi)`,
    `oreDecimali(r.straordinari)`.
-2. `importaCsv`: `const iConf = intest.indexOf('configurazione')`; valore (trim, minuscolo) `'smart working'` →
-   `smart: true, film: false`; `'presenza film'` → `film: true`; ogni altro valore, o colonna assente → `film: false`.
-   Le colonne "Ore effettive" e "Straordinari" si ignorano in importazione.
+2. `importaCsv`: `const iConf = intest.indexOf('configurazione')`; se `iConf >= 0` e il valore (trim, minuscolo) è
+   `'smart working'` → la giornata importata ha `smart: true`. "Presenza" e "Presenza FILM" non cambiano nulla
+   (FILM è del profilo, D28). Le colonne "Ore effettive" e "Straordinari" si ignorano in importazione.
 3. **Test** `tests/csv.test.ts`: export di una giornata `smart: true` → la riga contiene `Smart working`; import di
-   quel CSV → `smart: true`; giornata `film: true` → riga con `Presenza FILM` → reimportata `film: true`; import di un
-   CSV della 1.5.0 (intestazione senza le colonne nuove, già presente nei test) → nessun errore, nessun `smart`,
-   `film: false`.
+   quel CSV → `smart: true`; con impostazioni `film: true` una giornata in presenza esporta `Presenza FILM`; import di
+   un CSV della 1.5.0 (intestazione senza le colonne nuove, già presente nei test) → nessun errore e nessun `smart`.
 **Verifica**: `npm test` · `npm run typecheck`.
 **Fuori scope**: backup JSON (già completo tramite lo store).
 
@@ -453,7 +445,7 @@ Riferimenti: `src/ui/aiutoTesti.ts`, `tests/aiuto.test.ts`.
    - nuova voce dopo `uscita-prevista`: `id: 'configurazioni'`, `sezione: 'Come si calcola'`,
      `domanda: 'Presenza, FILM e smart working: cosa cambia?'`, `testo`: una riga per configurazione
      `` `${ETICHETTE_CONFIGURAZIONE[id]}: ingresso dalle ${formattaOra(c.ingressoMinimo)}, pausa minima ${formattaDurata(c.pausaMinima)}${c.pausaMinimaSoloInFascia ? ` tra ${formattaOra(c.fasciaPranzo.inizio)} e ${formattaOra(c.fasciaPranzo.fine)}` : ''}, uscita minima ${c.uscitaMinima > 0 ? formattaOra(c.uscitaMinima) : 'nessuna'}.` ``,
-     poi `'FILM si attiva in Impostazioni → Orari e vale da oggi in poi: ogni giornata ricorda se era FILM, e si può cambiare con il pulsante FILM nella giornata. Lo smart working si sceglie giorno per giorno con il pulsante 🏠.'`,
+     poi `'FILM è una configurazione del tuo profilo (Impostazioni → Profilo) e vale per tutti i giorni in presenza; lo smart working si sceglie giorno per giorno con il pulsante 🏠 nella giornata.'`,
      poi `'Se una fascia obbligatoria resta scoperta, la giornata lo segnala: il calcolo non cambia.'`.
 3. **Test** `tests/aiuto.test.ts`: la chiamata con `pranzo`/`pausaDaScalare` diventa
    `impostazioni({}, { fasciaPranzo: { inizio: 750, fine: 840 }, pausaDaScalare: 45 })` (asserzioni invariate);
@@ -478,7 +470,7 @@ Riferimenti: D21.
 Riferimenti: D17.
 1. `README.md`: ogni `https://ricky79.github.io/krumiro2.0/` → `https://gcampa.github.io/krumiro2.0/`; tabella
    "Regole di calcolo": le righe "Uscita prevista", "Timbrature prima delle 08:30", "Pausa più breve di 30 min"
-   diventano: `| Configurazioni | Presenza, Presenza FILM (interruttore in Impostazioni → Orari, salvato su ogni giornata), Smart working (per giornata), con i valori di outatime |`,
+   diventano: `| Configurazioni | Presenza, Presenza FILM (configurazione del profilo in Impostazioni → Profilo), Smart working (per giornata), con i valori di outatime |`,
    `| Ora di levarsi | adesso + (dovute − coperte); se la pausa non è fatta si aggiunge la pausa prevista; mai prima dell'uscita minima (Presenza 17:30, FILM 17:00, Smart working 17:30), salvo nei giorni liberi |`,
    `| Ingresso minimo | le timbrature precedenti contano da 08:30 (Smart working 07:00) |`,
    `| Pausa minima | Presenza 60 min; FILM 30 min contati tra 13:00 e 15:00; Smart working 30 min |`,
