@@ -22,8 +22,7 @@ Il lavoro attraversa due repository: `gcampa/krumiro2.0` (questa documentazione,
 | F2 | Fondamenta | regole Firestore testate sull'emulatore in CI; outatime 1.0 si carica in Chrome; login Google → logout da PWA e popup | `F2-fondamenta.md` | R1 login/logout · chiusura |
 | F3 | outatime scrive | apro il cartellino → popup "N giorni sincronizzati alle HH:MM"; in Firestore solo `iv`/`ct`; riapertura senza novità → 0 scritture | `F3-outatime-scrive.md` | R1 parser+popup · chiusura |
 | F4 | krumiro2.0 legge | krumiro2.0 aperto: apro il portale → entro 10 s timbrature con etichetta "portale" e uscita prevista ricalcolata; Annulla funziona | `F4-krumiro-legge.md` | R1 unione · chiusura |
-| F5 | Notifiche | krumiro2.0 chiuso: apro il portale → notifica entro 60 s → il clic apre "Oggi" aggiornato (Android e iPhone) | `F5-notifiche.md` | R1 Android · chiusura |
-| F6 | Consolidamento | revisione di sicurezza S1–S26 superata, Disconnetti/Cancella dati provati, Aiuto e README aggiornati, E2E di F2–F5 | `F6-consolidamento.md` | chiusura |
+| F6 | Consolidamento | revisione di sicurezza superata, Disconnetti/Cancella dati provati, Aiuto e README aggiornati, E2E di F2–F4 | `F6-consolidamento.md` | chiusura |
 
 Stato corrente: vedi [roadmap.md](roadmap.md) e [progress.md](progress.md).
 

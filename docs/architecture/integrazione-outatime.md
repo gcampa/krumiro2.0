@@ -1,6 +1,7 @@
 # Integrazione outatime → Firebase → krumiro2.0
 
-Stato: **bozza F0 — proposta, da approvare in plenaria.** Le scelte marcate *(D<n>)* sono in
+Stato: **bozza F0 — SOSPESA il 2026-10-03** (Q16: le regole aziendali non permettono il trasferimento a un
+servizio personale). Notifiche scartate (D18): § 4.2 e la Cloud Function non si applicano più. Le scelte marcate *(D<n>)* sono in
 [decisions.md](decisions.md) con stato "proposta"; i punti aperti sono in [../README.md](../README.md#domande-aperte).
 Il modello di sicurezza è in [sicurezza.md](sicurezza.md).
 

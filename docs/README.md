@@ -32,62 +32,48 @@ Stato: **F0 in corso — bozza da discutere in plenaria.**
 
 ## Domande aperte
 
-In ordine di priorità: le prime bloccano l'architettura. Ognuna ha la raccomandazione della plenaria; decide
-l'utente.
+In ordine di priorità. Ognuna ha la raccomandazione della plenaria; decide l'utente.
 
-- **Q1 — Fattibilità sul PC del portale.** Il PC da cui apri il portale è aziendale e gestito? Puoi installare
-  un'estensione non pubblicata (modalità sviluppatore) o solo dal Chrome Web Store? Da quella rete si raggiunge
-  `*.googleapis.com`? Le regole interne permettono di portare i tuoi dati di presenza su un servizio personale?
-  Il cartellino mostra le timbrature di **oggi** subito dopo la timbratura? Qual è il percorso esatto della pagina
-  (es. `http://172.16.0.32/…`)?
-  *Raccomandazione*: verificarlo prima di tutto; se l'estensione non è installabile o la rete blocca Google, il
-  piano cambia (es. lettura da altro dispositivo). **Bloccante.**
-- **Q2 — Dove vive il piano.** *Raccomandazione*: documentazione unica e configurazione Firebase in krumiro2.0,
-  outatime rimanda qui (D16).
-- **Q3 — Utenti e pubblicazione.** La funzione è solo per te o anche per altri utenti di krumiro2.0? Da dove si
-  pubblica la PWA che userai (`ricky79.github.io` del README o un Pages di `gcampa`)? Chi è ricky79 rispetto al
-  progetto?
-  *Raccomandazione*: solo tu, allowlist di un UID (S3); la funzione resta invisibile/inutile per gli altri;
-  pubblicazione dal repository di cui controlli il deploy, perché la PWA riceve la tua sessione Firebase.
-- **Q4 — Cifratura end-to-end.** *Raccomandazione*: sì (D6), passphrase ≥ 12 caratteri inserita una volta per
-  dispositivo. Alternativa: solo regole Firestore (più semplice, ma Google e un errore di configurazione vedono i
-  dati).
-- **Q5 — Timbrature manuali vs portale.** Quando arriva il portale, cosa succede a quelle toccate a mano?
-  *Raccomandazione*: il portale vince sugli orari; tipo e annotazioni manuali abbinati entro 10 min si conservano;
-  i manuali non abbinati si tolgono con **Annulla** per 10 s (integrazione § 7). Alternative: (b) il portale
-  sostituisce tutto il giorno; (c) krumiro2.0 propone le differenze e tu confermi ogni volta.
-- **Q6 — Classificazione.** Una coppia Uscita→Entrata nella fascia pranzo è pausa, le altre permesso, l'ultima
-  Uscita è `USCITA` (anche se prima delle ore dovute: saldo negativo, non uscita anticipata). Va bene?
-  *Raccomandazione*: sì (integrazione § 6); l'uscita anticipata resta un'annotazione manuale che l'unione conserva.
+- **Q16 — Conflitto con le regole aziendali (bloccante, nuova il 2026-10-03).** Alla Q1 hai risposto che le
+  regole interne **non** permettono di portare i dati di presenza su un servizio personale. L'architettura
+  Firebase (D8) fa esattamente questo, da un PC aziendale gestito, con un'estensione non pubblicata: è il rischio
+  più alto del piano (disciplinare, e un controllo DLP/EDR dell'azienda può rilevarlo), più di qualunque attacco
+  tecnico. Il piano Firebase è **sospeso** finché non scegli:
+  - **(A) Autorizzazione scritta** dell'azienda (IT/privacy) a usare l'estensione e il servizio personale. Con
+    l'autorizzazione il piano Firebase resta com'è, senza notifiche (D18).
+  - **(B) Trasferimento offline con QR code** *(raccomandata)*: outatime mostra sul PC un QR cifrato con le
+    timbrature recenti; krumiro2.0 lo legge con la fotocamera del telefono. Nessun dato passa dalla rete
+    aziendale verso un servizio esterno, nessun Firebase, nessun account, nessun costo: equivale a ricopiare a mano
+    il cartellino, che fai già. Costo per te: un'inquadratura dopo aver aperto il portale.
+  La plenaria non pianifica una strada che aggira le regole aziendali.
+- **Q17 — Telefono.** iPhone o Android? Serve per la lettura del QR (B): su Android Chrome c'è `BarcodeDetector`
+  nativo; su iPhone serve una libreria di decodifica dentro la PWA (nuova dipendenza, D1).
+- **Q2 — Dove vive il piano.** *Raccomandazione*: documentazione unica in krumiro2.0, outatime rimanda qui (D16).
 - **Q7 — Struttura del cartellino.** Serve una descrizione **anonimizzata** dell'HTML di una giornata con tutte le
   diciture possibili (Entrata, Uscita, "per SMART WORKING", "Nessuna timbratura", giustificativi, ferie,
-  timbrature corrette a mano…) per scrivere i test del parser con HTML sintetico (S25).
-  *Raccomandazione*: in F2 una sessione con te sul portale reale (copia dell'HTML con orari e nomi cambiati, mai
-  committata) da cui la plenaria scrive la fixture sintetica.
-- **Q8 — Notifiche.** *Raccomandazione*: Cloud Function + FCM (D10), piano Blaze con budget 1 € e avviso; il
-  consumo atteso è nelle quote gratuite. Alternative: (b) Web Push inviata direttamente dall'estensione con chiave
-  VAPID salvata sul PC (niente Blaze, codice non standard, chiave di invio su un PC aziendale); (c) nessuna
-  notifica, aggiornamento solo quando apri krumiro2.0 (M1 lo dà già).
-- **Q9 — Regione dei dati.** *Raccomandazione*: `europe-west8` (Milano) per Firestore e funzione.
-- **Q10 — Sessioni.** Dopo quanto tempo l'estensione e la PWA chiedono di nuovo la passphrase?
-  *Raccomandazione*: mai sul dispositivo finché non fai *Disconnetti* (chiave non esportabile, S8); revoca a
-  distanza con *Cancella dati sul server* + cambio passphrase.
-- **Q11 — F1 Design.** La UI nuova è piccola (sezione Impostazioni, etichetta "portale", toast Annulla, popup
-  dell'estensione). *Raccomandazione*: F1 leggera senza strumento di design esterno: `docs/design/pages-and-widgets.md`
-  con schizzi testuali nello stile esistente, approvata da te (deroga al flusso F1 da registrare).
-- **Q12 — "Ora di levarsi" nel portale.** outatime 0.1 scrive ore e uscita dentro la pagina del portale.
-  *Raccomandazione*: toglierla in 1.0 (calcoli errati, D9; meno codice che modifica la pagina aziendale). Se la
-  vuoi, si rifà in F6 leggendo il calcolo da krumiro2.0.
-- **Q13 — rubadab.** In questa sessione cloud i tool `rubadab_*` non ci sono e il servizio
-  (`http://localhost:8899`) non è raggiungibile. *Raccomandazione*: gli hook in `.claude/settings.json` e
-  `.mcp.json` li aggiungi tu sulla macchina dove gira rubadab; fino ad allora ogni riga di progress.md riporta
+  timbrature corrette a mano…) per i test del parser con HTML sintetico (S25).
+  *Raccomandazione*: in F2 una sessione con te sul portale reale (copia con orari e nomi cambiati, mai committata)
+  da cui la plenaria scrive la fixture sintetica.
+- **Q9 — Regione dei dati** (solo con A). *Raccomandazione*: `europe-west8` (Milano).
+- **Q10 — Sessioni** (solo con A). *Raccomandazione*: passphrase chiesta di nuovo solo dopo *Disconnetti*.
+- **Q11 — F1 Design.** *Raccomandazione*: F1 leggera senza strumento esterno, `docs/design/pages-and-widgets.md`
+  approvato da te (deroga al flusso F1 da registrare).
+- **Q12 — "Ora di levarsi" nel portale.** *Raccomandazione*: toglierla in outatime 1.0 (calcoli errati, D9).
+- **Q13 — rubadab.** *Raccomandazione*: hook e `.mcp.json` li aggiungi tu dove gira il servizio; fino ad allora
   `Applied lessons: none (rubadab non disponibile)`.
-- **Q14 — Effort degli esecutori.** *Raccomandazione*: `medium/high` — cifratura, parser, classificazione e
-  unione sono logica `high`.
-- **Q15 — Distribuzione dell'estensione.** Caricata "non pacchettizzata" sul tuo Chrome o pubblicata sul Chrome
-  Web Store come **non in elenco**? *Raccomandazione*: dipende da Q1; non in elenco dà aggiornamenti automatici
-  e funziona con le policy che vietano la modalità sviluppatore.
+- **Q14 — Effort degli esecutori.** *Raccomandazione*: `medium/high`.
+- **Q15 — Distribuzione dell'estensione.** Hai confermato che puoi installarla non pubblicata.
+  *Raccomandazione*: caricata non pacchettizzata (nessuna pubblicazione sul Web Store).
 
 ## Domande chiuse
 
-Nessuna.
+- **Q1 — Fattibilità sul PC** → 2026-10-03: PC aziendale gestito; estensione non pubblicata installabile;
+  `*.googleapis.com` raggiungibile; regole interne **non** permettono il trasferimento a un servizio personale
+  (→ Q16); il cartellino mostra subito le timbrature di oggi; indirizzo: host `http://172.16.0.32/` del manifest
+  di outatime (il content script verifica la presenza di `[data-giorno]`).
+- **Q3 — Utenti e pubblicazione** → 2026-10-03: solo ed esclusivamente il proprietario; la pubblicazione su
+  `ricky79.github.io` va sostituita → D17.
+- **Q4 — Cifratura end-to-end** → 2026-10-03: sì → D6 approvata (con B vale per il contenuto del QR).
+- **Q5 — Manuali vs portale** → 2026-10-03: raccomandazione approvata → D15.
+- **Q6 — Classificazione** → 2026-10-03: raccomandazione approvata → D15.
+- **Q8 — Notifiche** → 2026-10-03: nessuna notifica → D18 (D10 scartata).

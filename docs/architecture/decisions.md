@@ -51,7 +51,7 @@ conservato e validato in `normalizza` (precedente: `Evento.sigaretta`).
 Dettaglio in [integrazione-outatime.md](integrazione-outatime.md) e [sicurezza.md](sicurezza.md).
 
 ## D6 — Cifratura end-to-end con passphrase
-**Stato**: proposta (Q4).
+**Stato**: approvata il 2026-10-03 (Q4). Con l'opzione B di Q16 si applica al contenuto del QR.
 **Decisione**: i dati su Firestore sono solo AES-256-GCM; chiave da passphrase (PBKDF2-SHA256, 600 000
 iterazioni), mai salvata in chiaro né inviata; minimo 12 caratteri.
 **Motivo**: "assolutamente sicuro" — le regole Firestore proteggono dagli estranei, la cifratura anche da un
@@ -67,7 +67,8 @@ ricreati alla prossima apertura del portale; il backup resta quello di krumiro2.
 **Conseguenze**: conservazione breve (D13); nessuna sincronizzazione da krumiro2.0 verso Firebase.
 
 ## D8 — Firebase come backend
-**Stato**: proposta (richiesta dell'utente).
+**Stato**: proposta, **sospesa** il 2026-10-03: le regole aziendali non permettono il trasferimento dei dati a un
+servizio personale (Q1 → Q16).
 **Decisione**: Authentication (solo Google), Firestore, Cloud Functions 2ª gen., Cloud Messaging, in un progetto
 dedicato del proprietario, regione UE (Q9).
 **Motivo**: richiesta esplicita; un unico fornitore per login, dati in tempo reale e notifiche.
@@ -82,7 +83,7 @@ permessi, uscita prevista) restano in krumiro2.0.
 **Conseguenze**: il destino della visualizzazione "Ora di levarsi" nella pagina del portale è Q12.
 
 ## D10 — Notifiche con Cloud Function + FCM
-**Stato**: proposta (Q8).
+**Stato**: ~~proposta~~ scartata il 2026-10-03 (Q8), sostituita da D18.
 **Decisione**: funzione `notificaGiornata` su `onDocumentWritten(utenti/{uid}/giornate/{data})` che, se la data è
 oggi, invia una Web Push generica ai token di `utenti/{uid}/dispositivi`.
 **Motivo**: le credenziali di invio restano sul server (S19); è il percorso standard supportato da Firebase.
@@ -118,7 +119,7 @@ di vettori di prova (testo in chiaro, passphrase, sale, iv, ct attesi) è copiat
 **Conseguenze**: ogni modifica del contratto è un task in entrambi i repository nella stessa fase.
 
 ## D15 — Classificazione e unione
-**Stato**: proposta (Q5, Q6).
+**Stato**: approvata il 2026-10-03 (Q5, Q6).
 **Decisione**: regole di [integrazione-outatime.md § 6–7](integrazione-outatime.md#6-classificazione-entratauscita--eventi-krumiro20-proposta-vedi-domanda-q6);
 `Evento.origine?: 'portale'`.
 **Motivo**: il portale conosce solo Entrata/Uscita; le annotazioni manuali (sigaretta, uscita anticipata, pausa
@@ -133,3 +134,25 @@ integrazione; outatime ha solo un `docs/README.md` che rimanda qui; la configura
 **Motivo**: un solo progress.md e una sola roadmap per un lavoro che attraversa due repository.
 **Conseguenze**: i task di outatime indicano il repository nel percorso (`outatime:src/…`); le fasi che toccano
 outatime hanno un branch omonimo anche lì e una PR per repository.
+
+---
+
+## Esiti della plenaria del 2026-10-03
+
+## D17 — Utente unico e pubblicazione dal repository del proprietario
+**Stato**: approvata il 2026-10-03 (Q3).
+**Decisione**: l'integrazione serve solo ed esclusivamente al proprietario (`gcampa`). La PWA si pubblica dal
+GitHub Pages di `gcampa/krumiro2.0` (`https://gcampa.github.io/krumiro2.0/`) al posto di `ricky79.github.io`.
+**Motivo**: il proprietario deve controllare il codice che gira con i suoi dati; nessun altro utente da gestire.
+**Conseguenze**: README, `vite.config.ts` (commento e `BASE` invariato `/krumiro2.0/`), Aiuto e link di
+installazione da aggiornare in un task di F2; Pages da attivare su `gcampa/krumiro2.0` (manuale, utente); i dati
+già salvati sul telefono con l'app di `ricky79.github.io` stanno in un'altra origine: si portano con *Esporta
+backup JSON* → *Importa* (passo nella checklist). Con Firebase (Q16-A) l'allowlist ha un solo UID (S3).
+
+## D18 — Nessuna notifica
+**Stato**: approvata il 2026-10-03 (Q8).
+**Decisione**: nessuna notifica push; krumiro2.0 si aggiorna quando riceve i dati (apertura dell'app con Q16-A,
+lettura del QR con Q16-B).
+**Motivo**: scelta dell'utente.
+**Conseguenze**: niente Cloud Function, niente FCM, niente piano Blaze (S19–S21, S23 decadono); la fase F5
+Notifiche esce dalla roadmap.

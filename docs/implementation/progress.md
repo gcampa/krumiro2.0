@@ -21,7 +21,11 @@ precache 16 voci (98.96 KiB), Node 22.22.0. outatime @ `f655344`, versione 0.1, 
 - [x] Inventario dei due repository — 2026-10-03
 - [x] Bozza architettura, sicurezza, decisioni proposte, roadmap — 2026-10-03
   Applied lessons: none (rubadab non disponibile)
-- [ ] Domande aperte Q1–Q15 chiuse con l'utente
+- [x] Plenaria 2026-10-03: chiuse Q1, Q3, Q4, Q5, Q6, Q8 → D6, D15 approvate; D17, D18 nuove; D10 scartata;
+  D8 sospesa; F5 tolta dalla roadmap
+  Applied lessons: none (rubadab non disponibile)
+- [ ] Q16 (bloccante): regole aziendali vs Firebase — A) autorizzazione scritta, B) QR offline
+- [ ] Domande aperte restanti (Q2, Q7, Q9–Q15, Q17) chiuse con l'utente
 - [ ] Decisioni D6–D16 approvate o sostituite
 - [ ] `docs/implementation/README.md` (esecutore), `prompts.md`, `F2-fondamenta.md`
 - [ ] `.claude/settings.json` e `.mcp.json` di rubadab (Q13)

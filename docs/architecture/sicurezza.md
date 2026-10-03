@@ -1,6 +1,7 @@
 # Modello di sicurezza — integrazione outatime / Firebase / krumiro2.0
 
-Stato: **bozza F0 — proposta, da approvare in plenaria.** Requisito dell'utente: "assolutamente sicuro". Nessun
+Stato: **bozza F0 — SOSPESA il 2026-10-03** (Q16). Con D18 decadono S19–S21 e S23. Il primo rischio del piano
+non è tecnico: è la violazione delle regole aziendali (§ 6). Requisito dell'utente: "assolutamente sicuro". Nessun
 sistema lo è in assoluto: questo documento dice **da cosa** ci si protegge, **come**, e quali **rischi residui** si
 accettano esplicitamente (§ 6). Ogni controllo ha un codice S<n> che task e checklist citano.
 
@@ -170,5 +171,6 @@ service cloud.firestore {
   (cifrati e autentici dal punto di vista di krumiro2.0). Mitigazione: krumiro2.0 mostra sempre l'origine
   "portale" e permette di correggere.
 - **Passphrase debole**: la sicurezza di S7 dipende da lei. Minimo imposto: 12 caratteri (Q4).
-- **Politiche aziendali**: portare dati del sistema presenze su un cloud personale e installare estensioni sul PC
-  aziendale può violare regole interne. Va verificato dall'utente (Q1); il piano non lo può risolvere.
+- **Politiche aziendali**: verificato il 2026-10-03 (Q1): le regole interne **non** permettono di portare i dati di
+  presenza su un servizio personale. Rischio **non accettabile** senza autorizzazione scritta (Q16-A); con il
+  trasferimento offline via QR (Q16-B) il rischio non si presenta.
