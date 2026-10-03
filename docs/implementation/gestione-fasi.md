@@ -21,10 +21,11 @@ Il lavoro attraversa due repository: `gcampa/krumiro2.0` (questa documentazione,
 | F2 | Gestione oraria di outatime (Presenza, FILM, Smart working) | i 17 casi di outatime v0.2.3 danno dal browser la stessa "Ora di levarsi"; app su `gcampa.github.io/krumiro2.0` | [F2-gestione-oraria.md](F2-gestione-oraria.md) | R1 dopo T2.12 · chiusura |
 | F3 | Pausa caffè (cronometro sigaretta o birra) | Profilo → Birra: "🍺 Pausa birra" apre il boccale con timer 15:00; "Fine pausa" mostra la durata, ore e saldo invariati | [F3-pausa-caffe.md](F3-pausa-caffe.md) | da fissare nel P · chiusura |
 | F4 | Inserimento manuale dal portale | timbrature del cartellino scritte a mano → giornata aggiornata, annotazioni manuali conservate, Annulla | `F4-inserimento-portale.md` | da fissare nel P · chiusura |
-| F5 | outatime con QR (da v0.2.3) | cartellino aperto → QR visibile; nessuna richiesta di rete esterna | `F5-outatime-qr.md` | da fissare nel P · chiusura |
-| F6 | krumiro2.0 legge il QR | QR inquadrato → giornate aggiornate; QR estraneo rifiutato | `F6-leggi-qr.md` | da fissare nel P · chiusura |
-| F7 | Dashboard statistiche | da pianificare dopo l'import dei dati (D34) | `F7-dashboard.md` | da fissare nel P · chiusura |
-| F8 | Consolidamento | revisione di sicurezza S1–S17 superata, Aiuto e README aggiornati, E2E di F2–F6 | `F8-consolidamento.md` | chiusura |
+| F5 | Immagini di permessi e vacanze | giornata con permesso → valigetta in fuga; giornata di vacanza → atollo con il corvo; icone nello storico | `F5-immagini.md` | da fissare nel P · chiusura |
+| F6 | outatime con QR (da v0.2.3) | cartellino aperto → QR visibile; nessuna richiesta di rete esterna | `F6-outatime-qr.md` | da fissare nel P · chiusura |
+| F7 | krumiro2.0 legge il QR | QR inquadrato → giornate aggiornate; QR estraneo rifiutato | `F7-leggi-qr.md` | da fissare nel P · chiusura |
+| F8 | Dashboard statistiche | da pianificare dopo l'import dei dati (D34) | `F8-dashboard.md` | da fissare nel P · chiusura |
+| F9 | Consolidamento | revisione di sicurezza S1–S17 superata, Aiuto e README aggiornati, E2E di F2–F7 | `F9-consolidamento.md` | chiusura |
 
 F1 (design) non è prevista (D26).
 

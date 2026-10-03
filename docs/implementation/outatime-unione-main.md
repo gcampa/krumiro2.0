@@ -54,7 +54,7 @@ Eseguibile da Claude su tua conferma (branch e PR in bozza); il merge lo fai tu.
 
 ## 4. Impatto sul piano
 
-- F5 (outatime con QR) parte da `main` aggiornato; il riferimento "v0.2.3 sul branch `firefox-support`" nei
+- F6 (outatime con QR) parte da `main` aggiornato; il riferimento "v0.2.3 sul branch `firefox-support`" nei
   documenti diventa "`main` (= v0.2.3)" dopo il merge.
 - F2 (gestione oraria in krumiro2.0) non dipende da questa unione: può partire prima o dopo.
 - I 17 casi di `test/lib.spec.ts` restano la fonte dei casi di riferimento di F2.

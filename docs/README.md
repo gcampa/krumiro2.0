@@ -10,7 +10,8 @@ mostrato da outatime sul PC e letto dal telefono, senza servizi esterni).
    portale) e la tabella oraria, che è la fonte di verità (D27, D28); krumiro2.0 non inventa regole che outatime non
    ha.
 2. **La pausa sigaretta/birra non incide sulle timbrature**: è solo un cronometro della pausa caffè (D31).
-3. **Immagini per permessi e vacanze**: da inventare, come la sigaretta e il boccale (Q34–Q36).
+3. **Immagini per permessi e vacanze**: animate come la sigaretta e il boccale; valigetta in fuga e atollo con il
+   corvo "Cra!" (D35, [design](design/immagini-permessi-vacanze.md)).
 4. **Prima si pianifica, poi si realizza**: nessun codice fuori da una fase approvata.
 
 Metodo: skill `metodo-fasi`, adattato in [implementation/gestione-fasi.md](implementation/gestione-fasi.md).
@@ -23,14 +24,14 @@ Stato: **F0 completa, in attesa di R-F0** — domande di F2 chiuse (D21–D26), 
 | [architecture/regole-outatime.md](architecture/regole-outatime.md) | gestione oraria di outatime v0.2.3 (Presenza, FILM, Smart working), formula unica, confronto sui 17 casi di test |
 | [architecture/integrazione-outatime.md](architecture/integrazione-outatime.md) | inventario dei due repository, architettura QR, flusso, contratto dati, classificazione e unione |
 | [architecture/sicurezza.md](architecture/sicurezza.md) | modello delle minacce, controlli S1–S17, rischi residui |
-| [architecture/decisions.md](architecture/decisions.md) | registro decisioni D1–D34 |
+| [architecture/decisions.md](architecture/decisions.md) | registro decisioni D1–D35 |
 | [implementation/gestione-fasi.md](implementation/gestione-fasi.md) | metodo adattato al progetto |
 | [implementation/README.md](implementation/README.md) | istruzioni per l'esecutore, regole B/W, comandi, DoD |
 | [implementation/prompts.md](implementation/prompts.md) | prompt del progetto |
 | [implementation/F2-gestione-oraria.md](implementation/F2-gestione-oraria.md) | piano di F2: 17 task |
 | [implementation/f2-sessioni.md](implementation/f2-sessioni.md) | sessioni, prompt e checklist di F2 |
 | [implementation/F3-pausa-caffe.md](implementation/F3-pausa-caffe.md) | piano di F3: pausa caffè, cronometro sigaretta o birra (7 task) |
-| [implementation/roadmap.md](implementation/roadmap.md) | fasi F0, F2–F8 e milestone |
+| [implementation/roadmap.md](implementation/roadmap.md) | fasi F0, F2–F9 e milestone |
 | [implementation/progress.md](implementation/progress.md) | avanzamento, Dubbi, Blocchi |
 | [implementation/outatime-unione-main.md](implementation/outatime-unione-main.md) | valutazione e procedura per riunire outatime in `main` (D22) |
 | [superpowers/](superpowers/) | archivio dei piani precedenti all'adozione (D5) |
@@ -41,38 +42,30 @@ Stato: **F0 completa, in attesa di R-F0** — domande di F2 chiuse (D21–D26), 
 |---|---|
 | Gestione oraria di outatime in krumiro2.0, orari configurabili, FILM | regole-outatime, D21, F2 |
 | Inserimento manuale delle timbrature del portale | integrazione § 6–7, D15, F4 |
-| Accedo al portale normalmente, i dati arrivano a krumiro2.0 | D19, integrazione § 4, F5–F6 |
+| Accedo al portale normalmente, i dati arrivano a krumiro2.0 | D19, integrazione § 4, F6–F7 |
 | Rispetto delle regole aziendali (nessun servizio personale) | D19, sicurezza S1–S2 |
 | Assolutamente sicuro | sicurezza (tutto), D6 |
 | Solo per me, pubblicata da `gcampa` | D17 |
 | Pausa caffè (ogni 2h di lavoro) come cronometro: sigaretta o birra, durata configurabile | D29, D31, F3 |
 | Pausa pranzo 1h–1h30 (FILM 30 min–1h30): avviso oltre il massimo | D32, F2 |
 | Dati solo miei, importati dai JSON del portale | D33, F4 |
-| Dashboard di statistiche, dopo l'import dei dati | D34, F7 |
+| Dashboard di statistiche, dopo l'import dei dati | D34, F8 |
+| Immagini animate per permessi e vacanze | D35, F5, [design](design/immagini-permessi-vacanze.md) |
 
 ## Domande aperte
 
 Nessuna blocca F2. Restano quelle delle fasi successive, da chiudere nel loro P (a scelta multipla).
 
-- **Q7 — Struttura del cartellino** (F4/F5): la fixture sintetica di `test/content.spec.ts` di outatime descrive la
+- **Q7 — Struttura del cartellino** (F4/F6): la fixture sintetica di `test/content.spec.ts` di outatime descrive la
   struttura; resta da sapere se esistono diciture oltre a Entrata/Uscita/SMART WORKING (ferie, giustificativi,
   timbrature corrette).
-- **Q12 — "Ora di levarsi" nella pagina del portale** (F5): *raccomandazione* tenerla e allinearla a D23.
-- **Q15 — Distribuzione dell'estensione** (F5): *raccomandazione* zip Chrome delle release, caricato non
+- **Q12 — "Ora di levarsi" nella pagina del portale** (F6): *raccomandazione* tenerla e allinearla a D23.
+- **Q15 — Distribuzione dell'estensione** (F6): *raccomandazione* zip Chrome delle release, caricato non
   pacchettizzato.
-- **Q17 — Telefono** (F6): iPhone o Android, per la lettura del QR.
+- **Q17 — Telefono** (F7): iPhone o Android, per la lettura del QR.
 - **Q33 — JSON del portale** (F4): un esempio **anonimizzato** del JSON che scarichi dal portale (struttura, campi,
   diciture), per scrivere l'import e i suoi test con dati sintetici (S15).
-- **Q34 — Immagini di permessi e vacanze: dove** (da collocare in una fase). Dove compaiono? Ipotesi da valutare:
-  nella giornata (timeline e scheda principale) quando c'è un permesso o un giorno di vacanza, nello storico del mese,
-  in una schermata animata come la pausa caffè.
-- **Q35 — "Vacanze" in krumiro2.0** : oggi krumiro2.0 non ha giorni di ferie (solo permessi e giorni liberi con 0 ore
-  dovute). Le vacanze si segnano a mano, arrivano dai JSON del portale (F4, giustificativi del cartellino), o
-  entrambe? Contano come ore coperte?
-- **Q36 — Stile delle immagini**: disegni SVG animati come sigaretta e boccale (stesso stile, sempre leggibili in tema
-  chiaro e scuro, fermi con "riduci movimento"), illustrazioni statiche, o emoji? Quali soggetti (es. permesso =
-  porta che si apre, vacanze = ombrellone)?
-- **Q23 — Chiave del QR** (F5): passphrase oppure QR di abbinamento. *Raccomandazione*: QR di abbinamento.
+- **Q23 — Chiave del QR** (F6): passphrase oppure QR di abbinamento. *Raccomandazione*: QR di abbinamento.
 
 ## Domande chiuse
 
@@ -88,6 +81,10 @@ Nessuna blocca F2. Restano quelle delle fasi successive, da chiudere nel loro P 
 - **Q8 — Notifiche** → 2026-10-03: nessuna notifica → D18 (D10 scartata).
 - **Q16 — Conflitto con le regole aziendali** → 2026-10-03: opzione B, trasferimento offline con QR → D19; D8
   scartata. Ordine delle fasi → D20.
+- **Q34 — Dove compaiono le immagini** → 2026-10-03: giornata (animate) e storico (icone ferme) → D35.
+- **Q35 — Vacanze** → 2026-10-03: arrivano dai dati del portale (JSON o timbrature) → D35.
+- **Q36 — Stile** → 2026-10-03: animate come sigaretta e birra; permesso = valigetta in fuga; vacanza = atollo con
+  corvo che gracchia "Cra!" (ispirato a City Hunter, disegno originale) → D35.
 - **Q9, Q10** (regione dei dati, sessioni) → 2026-10-03: decadute con D19 (nessun server).
 - **Q24 — Configurazioni** → 2026-10-03: FILM globale, smart working per giornata, tutto modificabile → D21.
 - **Q25 — FILM, pausa dopo le 15:00** → 2026-10-03: come outatime (non riduce il lavoro) → D23.

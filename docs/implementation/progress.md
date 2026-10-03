@@ -80,7 +80,11 @@ precache 16 voci (98.96 KiB), Node 22.22.0. outatime @ `f655344`, versione 0.1, 
 - [x] Plenaria 2026-10-03 (13): regole base scritte in testa a docs/README.md; nuovo requisito "immagini per
   permessi e vacanze" registrato come domande Q34–Q36, da collocare in una fase nella plenaria dal PC
   Applied lessons: none (rubadab non disponibile)
-- [ ] Plenaria dal PC: rilettura del piano, Q34–Q36 (immagini permessi e vacanze), R-F0
+- [x] Plenaria 2026-10-03 (14): Q34–Q36 chiuse → D35: F5 "Immagini di permessi e vacanze" (valigetta in fuga, atollo
+  con corvo "Cra!"), animate nella giornata, icone nello storico; fasi successive rinumerate F6–F9;
+  `docs/design/immagini-permessi-vacanze.md`
+  Applied lessons: none (rubadab non disponibile)
+- [ ] Plenaria dal PC: rilettura del piano, R-F0
 - [ ] Merge di gcampa/outatime#3 (utente, "Create a merge commit") e pulizia dei rami (D22)
 - [ ] Decisioni proposte D7, D9, D14 approvate o sostituite in R-F0
 - [ ] Hook rubadab attivati in locale (D25)

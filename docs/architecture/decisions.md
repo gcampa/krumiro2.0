@@ -28,7 +28,7 @@ conservato e validato in `normalizza` (precedente: `Evento.sigaretta`).
 **Stato**: rilevata all'adozione.
 **Decisione**: testi dell'interfaccia, nomi di funzioni e variabili, commenti e documenti in italiano.
 **Motivo**: convenzione di tutto il codice esistente.
-**Conseguenze**: vale anche per le parti nuove di outatime (F5); il codice esistente di outatime v0.2.3 ha nomi in inglese e resta com'è.
+**Conseguenze**: vale anche per le parti nuove di outatime (F6); il codice esistente di outatime v0.2.3 ha nomi in inglese e resta com'è.
 
 ## D4 — Deploy
 **Stato**: rilevata all'adozione.
@@ -73,7 +73,7 @@ un servizio personale (Q1 → Q16); sostituita da D19.
 dedicato del proprietario, regione UE (Q9).
 **Motivo**: richiesta esplicita; un unico fornitore per login, dati in tempo reale e notifiche.
 **Conseguenze**: krumiro2.0 non è più "senza backend" quando la sincronizzazione è attiva: README e Aiuto da
-aggiornare (F8).
+aggiornare (F9).
 
 ## D9 — outatime trasmette timbrature grezze
 **Stato**: proposta.
@@ -91,7 +91,7 @@ oggi, invia una Web Push generica ai token di `utenti/{uid}/dispositivi`.
 (iOS 16.4+) e permesso concesso.
 
 ## D11 — outatime 1.0 riscritta
-**Stato**: ~~proposta~~ superata il 2026-10-03: outatime v0.2.3 è già TypeScript con build, test e CI; F5 la estende
+**Stato**: ~~proposta~~ superata il 2026-10-03: outatime v0.2.3 è già TypeScript con build, test e CI; F6 la estende
 (cifratura e QR) invece di riscriverla. Restano esbuild e Jest in outatime.
 **Decisione**: TypeScript, build Vite, test Vitest, CI GitHub Actions, content script automatico sulla pagina del
 cartellino, service worker per autenticazione e scrittura, popup per accesso, passphrase e stato.
@@ -155,7 +155,7 @@ già salvati con l'app di `ricky79.github.io` non interessano (D33). Con Firebas
 **Decisione**: nessuna notifica push; krumiro2.0 si aggiorna quando riceve i dati (apertura dell'app con Q16-A,
 lettura del QR con Q16-B).
 **Motivo**: scelta dell'utente.
-**Conseguenze**: niente Cloud Function, niente FCM, niente piano Blaze (S19–S21, S23 decadono); la fase F6
+**Conseguenze**: niente Cloud Function, niente FCM, niente piano Blaze (S19–S21, S23 decadono); la fase F7
 Notifiche esce dalla roadmap.
 
 ## D19 — Trasferimento offline con QR
@@ -171,8 +171,8 @@ riscritto ([sicurezza.md](sicurezza.md)); formato del QR in [integrazione-outati
 ## D20 — Ordine delle fasi
 **Stato**: approvata il 2026-10-03.
 **Decisione**: prima la timbratura manuale in krumiro2.0 con le regole di outatime (F2), poi l'acquisizione:
-inserimento manuale delle timbrature del portale (F4), outatime con QR (F5), lettura del QR in krumiro2.0 (F6),
-consolidamento (F8).
+inserimento manuale delle timbrature del portale (F4), outatime con QR (F6), lettura del QR in krumiro2.0 (F7),
+consolidamento (F9).
 **Motivo**: richiesta dell'utente; ogni fase dà qualcosa di usabile; F4 costruisce classificazione e unione senza
 dipendere dall'estensione.
 **Conseguenze**: roadmap e gestione-fasi riscritte; confronto delle regole in
@@ -200,7 +200,7 @@ aperta da Claude, merge dell'utente.
 `feature/bun-firefox` e si lavora solo da `main`.
 **Motivo**: richiesta dell'utente di rispettare quanto rilasciato nell'ultima versione; oggi il ramo predefinito
 mostra la 0.1. Il merge conserva la storia e lascia i tag `v0.2.0`–`v0.2.3` raggiungibili da `main`.
-**Conseguenze**: nessun cambio di codice né nuova release (`main` = `v0.2.3` + `.npmrc`); F5 parte da `main`.
+**Conseguenze**: nessun cambio di codice né nuova release (`main` = `v0.2.3` + `.npmrc`); F6 parte da `main`.
 
 ## D23 — Dettagli del calcolo della gestione oraria
 **Stato**: approvata il 2026-10-03 (Q25–Q28, fasce per configurazione); i punti marcati *(plenaria)* sono
@@ -250,7 +250,7 @@ copia in `.claude/settings.json` e crea `.mcp.json` sulla macchina dove gira rub
 ## D26 — Nessuna fase F1 di design
 **Stato**: approvata il 2026-10-03 (Q11).
 **Decisione**: niente F1 separata; F2 e F4 descrivono i controlli nuovi nei task, nello stile esistente; le
-schermate del QR si progettano nel P di F5.
+schermate del QR si progettano nel P di F6.
 **Motivo**: interfaccia nuova piccola, nello stile già definito.
 **Conseguenze**: deroga allo scheletro (F1 "solo se c'è UI") registrata in progress.md.
 
@@ -286,11 +286,11 @@ bollicine) nella **durata della birra, configurabile, predefinita 15 min** (`tol
 
 ## D30 — Ordine delle fasi con la pausa birra
 **Stato**: approvata il 2026-10-03; aggiorna D20.
-**Decisione**: F2 gestione oraria → **F3 pausa birra** → F4 inserimento manuale dal portale → F5 outatime con QR →
-F6 lettura del QR → F8 consolidamento. I riferimenti alle fasi nei documenti (anche nelle voci precedenti di questo
+**Decisione**: F2 gestione oraria → **F3 pausa birra** → F4 inserimento manuale dal portale → F6 outatime con QR →
+F7 lettura del QR → F9 consolidamento. I riferimenti alle fasi nei documenti (anche nelle voci precedenti di questo
 registro) sono stati rinumerati il 2026-10-03; le righe storiche di progress.md restano con i numeri di allora.
 **Motivo**: la pausa birra è piccola e indipendente da outatime; si fa subito dopo F2.
-**Conseguenze**: milestone M1 = F2–F3, M2 = F4–F6, M3 = F8.
+**Conseguenze**: milestone M1 = F2–F3, M2 = F4–F7, M3 = F9.
 
 ## D31 — La pausa caffè è solo un cronometro
 **Stato**: approvata il 2026-10-03 (indicazione dell'utente); sostituisce la parte di D29 sul permesso e la pausa
@@ -325,7 +325,18 @@ migrazione v1→v2 di F2 resta solo come meccanismo dello schema (nessun dato re
 
 ## D34 — Dashboard di statistiche dopo l'import dei dati
 **Stato**: approvata il 2026-10-03 (indicazione dell'utente).
-**Decisione**: una fase **F7 "Dashboard statistiche"**, da pianificare solo dopo che i dati saranno stati importati
-(dopo F4–F6); il consolidamento diventa F8.
+**Decisione**: una fase **F8 "Dashboard statistiche"**, da pianificare solo dopo che i dati saranno stati importati
+(dopo F4–F7); il consolidamento diventa F9.
 **Motivo**: le statistiche hanno senso sui dati reali importati dal portale.
-**Conseguenze**: roadmap aggiornata; contenuti della dashboard da decidere nel P di F7.
+**Conseguenze**: roadmap aggiornata; contenuti della dashboard da decidere nel P di F8.
+
+## D35 — Immagini animate di permessi e vacanze
+**Stato**: approvata il 2026-10-03 (Q34–Q36 e domande a scelta multipla).
+**Decisione**: nuova fase **F5** subito dopo F4. Disegni SVG originali animati come sigaretta e boccale: **permesso**
+= valigetta da ufficio con le gambine che corre via; **vacanza** = piccolo atollo con palma e mare, attraversato ogni
+tanto da un corvo nero che gracchia **"Cra!"** (ispirato alla gag di *City Hunter*, ma senza personaggi, grafica o
+testi dell'anime). Animate nella scheda della giornata, icone ferme nello storico. Vacanze e permessi arrivano dai dati
+del portale (JSON o timbrature). Dettagli in [immagini-permessi-vacanze.md](../design/immagini-permessi-vacanze.md).
+**Motivo**: richiesta dell'utente.
+**Conseguenze**: fasi successive rinumerate: F6 outatime con QR, F7 lettura del QR, F8 dashboard, F9 consolidamento
+(aggiorna D30 e D34); i task di F5 si scrivono nel suo P, dopo che F4 ha fissato il formato delle vacanze.
