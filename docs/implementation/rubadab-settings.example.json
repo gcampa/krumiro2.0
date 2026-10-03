@@ -1,0 +1,19 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      { "hooks": [ {
+        "type": "command",
+        "command": "rubadab hook --mode index --project krumiro2.0 --api-url http://localhost:8899 --threshold 0.15",
+        "timeout": 30,
+        "statusMessage": "rubadab: recalling lessons..."
+      } ] }
+    ],
+    "Stop": [
+      { "hooks": [ {
+        "type": "command",
+        "command": "rubadab hook --stop --project krumiro2.0 --api-url http://localhost:8899",
+        "timeout": 30
+      } ] }
+    ]
+  }
+}
