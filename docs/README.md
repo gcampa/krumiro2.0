@@ -5,9 +5,13 @@ Scopo: krumiro2.0 è una PWA che registra le timbrature e calcola l'uscita previ
 adotta le regole di calcolo di outatime, poi acquisisce le timbrature del portale (a mano, poi con un QR cifrato
 mostrato da outatime sul PC e letto dal telefono, senza servizi esterni).
 
-**Requisito dell'utente: krumiro2.0 con provider dati outatime.** outatime fornisce le timbrature (dal
-cartellino del portale) e la tabella oraria, che è la fonte di verità (D27, D28); krumiro2.0 non inventa regole che
-outatime non ha.
+**Regole base (utente, 2026-10-03)**
+1. **krumiro2.0 è il frontend, outatime è il provider dei dati.** outatime fornisce le timbrature (dal cartellino del
+   portale) e la tabella oraria, che è la fonte di verità (D27, D28); krumiro2.0 non inventa regole che outatime non
+   ha.
+2. **La pausa sigaretta/birra non incide sulle timbrature**: è solo un cronometro della pausa caffè (D31).
+3. **Immagini per permessi e vacanze**: da inventare, come la sigaretta e il boccale (Q34–Q36).
+4. **Prima si pianifica, poi si realizza**: nessun codice fuori da una fase approvata.
 
 Metodo: skill `metodo-fasi`, adattato in [implementation/gestione-fasi.md](implementation/gestione-fasi.md).
 Stato: **F0 completa, in attesa di R-F0** — domande di F2 chiuse (D21–D26), piano di F2 scritto.
@@ -59,6 +63,15 @@ Nessuna blocca F2. Restano quelle delle fasi successive, da chiudere nel loro P 
 - **Q17 — Telefono** (F6): iPhone o Android, per la lettura del QR.
 - **Q33 — JSON del portale** (F4): un esempio **anonimizzato** del JSON che scarichi dal portale (struttura, campi,
   diciture), per scrivere l'import e i suoi test con dati sintetici (S15).
+- **Q34 — Immagini di permessi e vacanze: dove** (da collocare in una fase). Dove compaiono? Ipotesi da valutare:
+  nella giornata (timeline e scheda principale) quando c'è un permesso o un giorno di vacanza, nello storico del mese,
+  in una schermata animata come la pausa caffè.
+- **Q35 — "Vacanze" in krumiro2.0** : oggi krumiro2.0 non ha giorni di ferie (solo permessi e giorni liberi con 0 ore
+  dovute). Le vacanze si segnano a mano, arrivano dai JSON del portale (F4, giustificativi del cartellino), o
+  entrambe? Contano come ore coperte?
+- **Q36 — Stile delle immagini**: disegni SVG animati come sigaretta e boccale (stesso stile, sempre leggibili in tema
+  chiaro e scuro, fermi con "riduci movimento"), illustrazioni statiche, o emoji? Quali soggetti (es. permesso =
+  porta che si apre, vacanze = ombrellone)?
 - **Q23 — Chiave del QR** (F5): passphrase oppure QR di abbinamento. *Raccomandazione*: QR di abbinamento.
 
 ## Domande chiuse
