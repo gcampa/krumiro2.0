@@ -488,7 +488,6 @@ Riferimenti: D17.
    `| Pausa minima | Presenza 60 min; FILM 30 min contati tra 13:00 e 15:00; Smart working 30 min |`,
    `| Fasce obbligatorie | avviso se restano scoperte (predefinite 10:00–12:30 e 15:00–17:30, FILM fino alle 17:00) |`;
    sezione "Come si usa" → "Impostazioni": `ore dovute, orari delle tre configurazioni, FILM, fasce obbligatorie, tolleranza della pausa sigaretta, export e import dei dati`.
-   Aggiungere sotto "Attenzione ai dati": `Chi usava l'app su ricky79.github.io: esporta il backup JSON da lì e importalo qui (Impostazioni → Importa CSV o backup JSON…).`
 2. `vite.config.ts`: commento → `// GitHub Pages pubblica il sito su https://gcampa.github.io/krumiro2.0/`.
 3. `package.json`: `"version": "2.0.0"`; `package-lock.json` aggiornato con `npm install --package-lock-only`.
 **Verifica**: `npm test` · `npm run build` · `grep -rn ricky79 README.md vite.config.ts src` vuoto.

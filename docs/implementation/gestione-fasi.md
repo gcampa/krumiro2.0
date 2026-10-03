@@ -23,7 +23,8 @@ Il lavoro attraversa due repository: `gcampa/krumiro2.0` (questa documentazione,
 | F4 | Inserimento manuale dal portale | timbrature del cartellino scritte a mano → giornata aggiornata, annotazioni manuali conservate, Annulla | `F4-inserimento-portale.md` | da fissare nel P · chiusura |
 | F5 | outatime con QR (da v0.2.3) | cartellino aperto → QR visibile; nessuna richiesta di rete esterna | `F5-outatime-qr.md` | da fissare nel P · chiusura |
 | F6 | krumiro2.0 legge il QR | QR inquadrato → giornate aggiornate; QR estraneo rifiutato | `F6-leggi-qr.md` | da fissare nel P · chiusura |
-| F7 | Consolidamento | revisione di sicurezza S1–S17 superata, Aiuto e README aggiornati, E2E di F2–F6 | `F7-consolidamento.md` | chiusura |
+| F7 | Dashboard statistiche | da pianificare dopo l'import dei dati (D34) | `F7-dashboard.md` | da fissare nel P · chiusura |
+| F8 | Consolidamento | revisione di sicurezza S1–S17 superata, Aiuto e README aggiornati, E2E di F2–F6 | `F8-consolidamento.md` | chiusura |
 
 F1 (design) non è prevista (D26).
 

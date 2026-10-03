@@ -27,7 +27,7 @@ Firebase è nella storia git (commit `069c21e`). Ogni controllo ha un codice S<n
 
 ### Nessun canale di rete
 - **S1 — outatime senza rete esterna**: `host_permissions` solo sull'host del portale; nessuna `fetch` verso altri
-  host; nessun SDK di terze parti con telemetria. Verifica in F7: nessuna richiesta di rete di outatime (scheda
+  host; nessun SDK di terze parti con telemetria. Verifica in F8: nessuna richiesta di rete di outatime (scheda
   Network del service worker).
 - **S2 — krumiro2.0 non invia dati**: la lettura del QR avviene nel browser; nessuna chiamata di rete nuova.
 
@@ -62,7 +62,7 @@ Firebase è nella storia git (commit `069c21e`). Ogni controllo ha un codice S<n
 ### Processo
 - **S15 — Nessun dato reale nel repository**: HTML del portale solo sintetico.
 - **S16 — `npm audit --omit=dev` pulito** alla chiusura di ogni fase; versioni esatte.
-- **S17 — Revisione di sicurezza** in F7 con questa lista come checklist.
+- **S17 — Revisione di sicurezza** in F8 con questa lista come checklist.
 
 ## 4. Matrice minacce → controlli
 

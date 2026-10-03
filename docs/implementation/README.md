@@ -54,7 +54,7 @@ Nessuno lavora su `main`.
 | [F2-gestione-oraria.md](F2-gestione-oraria.md) | gestione oraria di outatime in krumiro2.0 (17 task) |
 | [F3-pausa-caffe.md](F3-pausa-caffe.md) | pausa caffè: cronometro sigaretta o birra (7 task) |
 | `F4-inserimento-portale.md` | da scrivere nel P di F4 |
-| `F5-outatime-qr.md`, `F6-leggi-qr.md`, `F7-consolidamento.md` | da scrivere nei rispettivi P |
+| `F5-outatime-qr.md`, `F6-leggi-qr.md`, `F8-consolidamento.md` | da scrivere nei rispettivi P |
 
 ## Documenti di riferimento
 | Documento | Per cosa |
@@ -62,7 +62,7 @@ Nessuno lavora su `main`.
 | [regole-outatime.md](../architecture/regole-outatime.md) | configurazioni, formula, i 17 casi di riferimento |
 | [decisions.md](../architecture/decisions.md) | D21 (configurazioni), D23 (dettagli di calcolo), D24 (effort) |
 | [integrazione-outatime.md](../architecture/integrazione-outatime.md) | contratto dati e QR (F4–F6) |
-| [sicurezza.md](../architecture/sicurezza.md) | controlli S1–S17 (F5–F7) |
+| [sicurezza.md](../architecture/sicurezza.md) | controlli S1–S17 (F5–F8) |
 
 ## Versioni
 | Pacchetto | Versione installata | Progetto |

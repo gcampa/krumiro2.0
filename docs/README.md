@@ -19,14 +19,14 @@ Stato: **F0 completa, in attesa di R-F0** — domande di F2 chiuse (D21–D26), 
 | [architecture/regole-outatime.md](architecture/regole-outatime.md) | gestione oraria di outatime v0.2.3 (Presenza, FILM, Smart working), formula unica, confronto sui 17 casi di test |
 | [architecture/integrazione-outatime.md](architecture/integrazione-outatime.md) | inventario dei due repository, architettura QR, flusso, contratto dati, classificazione e unione |
 | [architecture/sicurezza.md](architecture/sicurezza.md) | modello delle minacce, controlli S1–S17, rischi residui |
-| [architecture/decisions.md](architecture/decisions.md) | registro decisioni D1–D32 |
+| [architecture/decisions.md](architecture/decisions.md) | registro decisioni D1–D34 |
 | [implementation/gestione-fasi.md](implementation/gestione-fasi.md) | metodo adattato al progetto |
 | [implementation/README.md](implementation/README.md) | istruzioni per l'esecutore, regole B/W, comandi, DoD |
 | [implementation/prompts.md](implementation/prompts.md) | prompt del progetto |
 | [implementation/F2-gestione-oraria.md](implementation/F2-gestione-oraria.md) | piano di F2: 17 task |
 | [implementation/f2-sessioni.md](implementation/f2-sessioni.md) | sessioni, prompt e checklist di F2 |
 | [implementation/F3-pausa-caffe.md](implementation/F3-pausa-caffe.md) | piano di F3: pausa caffè, cronometro sigaretta o birra (7 task) |
-| [implementation/roadmap.md](implementation/roadmap.md) | fasi F0, F2–F7 e milestone |
+| [implementation/roadmap.md](implementation/roadmap.md) | fasi F0, F2–F8 e milestone |
 | [implementation/progress.md](implementation/progress.md) | avanzamento, Dubbi, Blocchi |
 | [implementation/outatime-unione-main.md](implementation/outatime-unione-main.md) | valutazione e procedura per riunire outatime in `main` (D22) |
 | [superpowers/](superpowers/) | archivio dei piani precedenti all'adozione (D5) |
@@ -43,6 +43,8 @@ Stato: **F0 completa, in attesa di R-F0** — domande di F2 chiuse (D21–D26), 
 | Solo per me, pubblicata da `gcampa` | D17 |
 | Pausa caffè (ogni 2h di lavoro) come cronometro: sigaretta o birra, durata configurabile | D29, D31, F3 |
 | Pausa pranzo 1h–1h30 (FILM 30 min–1h30): avviso oltre il massimo | D32, F2 |
+| Dati solo miei, importati dai JSON del portale | D33, F4 |
+| Dashboard di statistiche, dopo l'import dei dati | D34, F7 |
 
 ## Domande aperte
 
@@ -55,6 +57,8 @@ Nessuna blocca F2. Restano quelle delle fasi successive, da chiudere nel loro P 
 - **Q15 — Distribuzione dell'estensione** (F5): *raccomandazione* zip Chrome delle release, caricato non
   pacchettizzato.
 - **Q17 — Telefono** (F6): iPhone o Android, per la lettura del QR.
+- **Q33 — JSON del portale** (F4): un esempio **anonimizzato** del JSON che scarichi dal portale (struttura, campi,
+  diciture), per scrivere l'import e i suoi test con dati sintetici (S15).
 - **Q23 — Chiave del QR** (F5): passphrase oppure QR di abbinamento. *Raccomandazione*: QR di abbinamento.
 
 ## Domande chiuse

@@ -15,8 +15,6 @@ Uscita (dall'interfaccia, `npm run dev`, giorno feriale, giornata con Entrata re
 4. Con "Durata della birra" 1 min e 2 min di attesa → boccale vuoto con un velo di schiuma, timer "+01:00" in rosso;
    "Fine pausa" → toast "Pausa birra: 2 min".
 5. Profilo → **Sigaretta** → "🚬 Pausa sigaretta" con la sigaretta che si consuma in 11 min, stesso comportamento.
-6. Una giornata salvata con la 1.5.0 che contiene una pausa sigaretta (uscita e rientro registrati dal vecchio
-   pulsante) non ha più quelle due timbrature: le ore tornano come se la pausa caffè non ci fosse stata.
 
 Riferimenti: D29, D31; `src/core/sigaretta.ts`, `src/ui/sigaretta.ts`, `src/core/calcolo.ts`, `src/core/tipi.ts`,
 `src/core/csv.ts`, `src/storage/migrazioni.ts`, `src/ui/impostazioni.ts`, `src/ui/giorno.ts`, `src/ui/editor.ts`,
@@ -29,13 +27,12 @@ riscrive questa sezione sul codice di allora. Punti già noti:
   e oltre la conta a blocchi da 30 min (`permessoSigaretta`, `RisultatoGiornata.sigarette`, `anteprimaSigaretta`).
   **Questo comportamento si toglie** (D31): resta solo la schermata del cronometro, che non scrive nulla nelle
   giornate.
-- Le pause sigaretta già salvate dalla 1.5.0 **non sono timbrature** (D31): la migrazione v2 → v3 toglie l'uscita
-  marcata `sigaretta` e il rientro che la chiude; anche l'import di un CSV della 1.5.0 le toglie.
+- Nessuna compatibilità con i dati della 1.5.0 (D33): il flag `sigaretta` si toglie e basta, senza migrazioni.
 - Il campo `tolleranzaSigaretta` resta con questo nome nei dati (evita una migrazione): da F3 significa "durata
   della sigaretta" ed è etichettato così nell'interfaccia. Lo stesso vale per `tolleranzaBirra`.
 - La chiave locale `timbrature-sigaretta` (istante di partenza, stato del dispositivo) si riusa per il cronometro.
 - Ordine dei task: prima il cronometro senza timbrature (T3.03), poi la rimozione del permesso dal calcolo (T3.05) e
-  dai dati con la migrazione v3 (T3.06), così ogni task compila.
+  dai dati (T3.06), così ogni task compila.
 
 ---
 
@@ -188,59 +185,29 @@ Riferimenti: D31; `src/core/calcolo.ts`, `src/core/tipi.ts`, `src/core/sigaretta
 5. **Test**: in `tests/sigaretta.test.ts` togliere i `describe` "permesso a blocchi", "esito del rientro",
    "istante di inizio ricavato dalla timbratura", "pausa sigaretta in corso", "schermata da riaprire da sola";
    "countdown" resta. In `tests/calcolo.test.ts` il `describe('pausa sigaretta')` si toglie (il calcolo non distingue
-   più la sigaretta; le vecchie pause spariscono dai dati in T3.06). In `tests/csv.test.ts` il test "pausa
-   sigaretta: suffisso nel CSV, permesso a blocchi e ritorno" perde le asserzioni sul permesso a blocchi (il resto
-   cambia in T3.06).
+   più la sigaretta). In `tests/csv.test.ts` il test "pausa sigaretta: suffisso nel CSV, permesso a blocchi e
+   ritorno" perde le asserzioni sul permesso a blocchi (il test si toglie in T3.06).
 **Verifica**: `npm test` tutti verdi · `npm run typecheck` ·
 `grep -rn "permessoSigaretta\|sigarette\|anteprimaSigaretta" src tests` vuoto.
 **Fuori scope**: campo `sigaretta` nei dati (T3.06).
 
-## T3.06 — Dati: via le vecchie pause sigaretta (schema v3)            Effort: medium
-Riferimenti: D31; `src/core/sigaretta.ts`, `src/core/tipi.ts`, `src/storage/migrazioni.ts`, `src/core/csv.ts`,
-`src/ui/editor.ts`, `src/ui/giorno.ts`.
-1. **Core** `src/core/sigaretta.ts`, nuova funzione pura:
-   ```ts
-   /**
-    * Toglie le pause sigaretta della 1.5.0, che non sono timbrature (D31): ogni uscita in permesso con
-    * `sigaretta === true` e il primo rientro da permesso che la segue nell'ordine degli orari.
-    * Un'uscita senza rientro successivo (pausa rimasta aperta) si toglie da sola.
-    */
-   export function senzaVecchiePauseSigaretta<T extends { tipo?: unknown; minuti?: unknown; sigaretta?: unknown }>(eventi: readonly T[]): T[] {
-     const ordinati = eventi.map((e, i) => ({ e, i })).sort((a, b) => Number(a.e.minuti) - Number(b.e.minuti) || a.i - b.i);
-     const via = new Set<number>();
-     ordinati.forEach(({ e }, k) => {
-       if (e.tipo !== 'USCITA_PERMESSO' || e.sigaretta !== true) return;
-       via.add(ordinati[k]!.i);
-       const rientro = ordinati.slice(k + 1).find((x) => x.e.tipo === 'RIENTRO_PERMESSO' && !via.has(x.i));
-       if (rientro) via.add(rientro.i);
-     });
-     return eventi.filter((_, i) => !via.has(i));
-   }
-   ```
-2. **Storage** `src/storage/migrazioni.ts`: `VERSIONE_CORRENTE = 3`; `MIGRAZIONI[2]` porta a `version: 3` e, per ogni
-   giornata oggetto con `eventi` array, sostituisce `eventi` con `senzaVecchiePauseSigaretta(eventi)`.
-   `normalizzaGiornata` non conserva più `sigaretta`.
-3. **Core** `src/core/tipi.ts`: togliere `Evento.sigaretta`.
-4. **Core** `src/core/csv.ts`: `eventiInTesto` non scrive più `(sigaretta)`; `importaCsv` riconosce ancora il suffisso
-   `(sigaretta)` (CSV della 1.5.0) con un flag locale e, prima di salvare la giornata, applica
-   `senzaVecchiePauseSigaretta` agli eventi letti (poi il flag non passa negli `Evento`).
-5. **UI** `src/ui/editor.ts`: togliere `if (tipo !== 'USCITA_PERMESSO') delete e.sigaretta;`. `src/ui/giorno.ts`, caso
+## T3.06 — Dati: via il flag sigaretta                                Effort: medium
+Riferimenti: D31, D33; `src/core/tipi.ts`, `src/storage/migrazioni.ts`, `src/core/csv.ts`, `src/ui/editor.ts`,
+`src/ui/giorno.ts`.
+Nessuna compatibilità con i dati della 1.5.0 (D33): i dati dell'utente partono da zero, quindi non serve una
+migrazione per le vecchie pause sigaretta.
+1. **Core** `src/core/tipi.ts`: togliere `Evento.sigaretta`.
+2. **Storage** `src/storage/migrazioni.ts`, `normalizzaGiornata`: togliere la riga che conserva `sigaretta`.
+3. **Core** `src/core/csv.ts`: `eventiInTesto` non scrive più `(sigaretta)`; in `importaCsv` la regex perde
+   l'alternativa `|(sigaretta)` e la riga `if (m[4] !== undefined && tipo === 'USCITA_PERMESSO') ev.sigaretta = true;`
+   si toglie.
+4. **UI** `src/ui/editor.ts`: togliere `if (tipo !== 'USCITA_PERMESSO') delete e.sigaretta;`. `src/ui/giorno.ts`, caso
    `NON_RIENTRO`: togliere `delete ultima.sigaretta;`.
-6. **Test**:
-   - `tests/sigaretta.test.ts`, `describe('vecchie pause sigaretta')`: Entrata 08:30, Uscita in permesso 10:05
-     sigaretta, Rientro 10:20, Uscita in permesso 15:00 (normale), Rientro 16:00, Uscita 18:00 → restano Entrata 08:30,
-     Uscita in permesso 15:00, Rientro 16:00, Uscita 18:00; uscita sigaretta 10:05 senza rientro → tolta solo lei;
-     nessuna sigaretta → eventi identici.
-   - `tests/migrazioni.test.ts`: il test "conserva la pausa sigaretta solo sulle uscite in permesso" diventa "la v3
-     toglie le vecchie pause sigaretta": dati `version: 2` con Entrata 510, Uscita in permesso 600 sigaretta, Rientro
-     620 → resta solo Entrata 510; `VERSIONE_CORRENTE` 3; i test che si aspettano `version` usano
-     `VERSIONE_CORRENTE`.
-   - `tests/csv.test.ts`: export di un'uscita in permesso → `10:05 Uscita in permesso` senza suffisso; import di
-     `08:30 Entrata, 10:05 Uscita in permesso (sigaretta), 10:20 Rientro da permesso, 18:00 Uscita` → Entrata 08:30 e
-     Uscita 18:00; il test "il suffisso (sigaretta) vale solo sulle uscite in permesso" diventa: `08:30 Entrata
-     (sigaretta)` → Entrata 08:30 conservata (il suffisso su un'entrata si ignora).
-**Verifica**: `npm test` · `npm run typecheck` · `grep -rn "\.sigaretta\b" src tests` trova solo
-`senzaVecchiePauseSigaretta`, la migrazione e l'import CSV.
+5. **Test**: in `tests/migrazioni.test.ts` togliere il test "conserva la pausa sigaretta solo sulle uscite in
+   permesso"; in `tests/csv.test.ts` togliere i test "pausa sigaretta: suffisso nel CSV, permesso a blocchi e
+   ritorno" e "il suffisso (sigaretta) vale solo sulle uscite in permesso".
+**Verifica**: `npm test` · `npm run typecheck` · `grep -rn "sigaretta: true\|\.sigaretta\b\|(sigaretta)" src tests`
+vuoto.
 **Fuori scope**: testi dell'aiuto.
 
 ## T3.07 — Aiuto e README                                               Effort: medium

@@ -73,7 +73,7 @@ un servizio personale (Q1 → Q16); sostituita da D19.
 dedicato del proprietario, regione UE (Q9).
 **Motivo**: richiesta esplicita; un unico fornitore per login, dati in tempo reale e notifiche.
 **Conseguenze**: krumiro2.0 non è più "senza backend" quando la sincronizzazione è attiva: README e Aiuto da
-aggiornare (F7).
+aggiornare (F8).
 
 ## D9 — outatime trasmette timbrature grezze
 **Stato**: proposta.
@@ -148,8 +148,7 @@ GitHub Pages di `gcampa/krumiro2.0` (`https://gcampa.github.io/krumiro2.0/`) al 
 **Motivo**: il proprietario deve controllare il codice che gira con i suoi dati; nessun altro utente da gestire.
 **Conseguenze**: README, `vite.config.ts` (commento e `BASE` invariato `/krumiro2.0/`), Aiuto e link di
 installazione da aggiornare in un task di F2; Pages da attivare su `gcampa/krumiro2.0` (manuale, utente); i dati
-già salvati sul telefono con l'app di `ricky79.github.io` stanno in un'altra origine: si portano con *Esporta
-backup JSON* → *Importa* (passo nella checklist). Con Firebase (Q16-A) l'allowlist ha un solo UID (S3).
+già salvati con l'app di `ricky79.github.io` non interessano (D33). Con Firebase (Q16-A) l'allowlist ha un solo UID (S3).
 
 ## D18 — Nessuna notifica
 **Stato**: approvata il 2026-10-03 (Q8).
@@ -173,7 +172,7 @@ riscritto ([sicurezza.md](sicurezza.md)); formato del QR in [integrazione-outati
 **Stato**: approvata il 2026-10-03.
 **Decisione**: prima la timbratura manuale in krumiro2.0 con le regole di outatime (F2), poi l'acquisizione:
 inserimento manuale delle timbrature del portale (F4), outatime con QR (F5), lettura del QR in krumiro2.0 (F6),
-consolidamento (F7).
+consolidamento (F8).
 **Motivo**: richiesta dell'utente; ogni fase dà qualcosa di usabile; F4 costruisce classificazione e unione senza
 dipendere dall'estensione.
 **Conseguenze**: roadmap e gestione-fasi riscritte; confronto delle regole in
@@ -288,10 +287,10 @@ bollicine) nella **durata della birra, configurabile, predefinita 15 min** (`tol
 ## D30 — Ordine delle fasi con la pausa birra
 **Stato**: approvata il 2026-10-03; aggiorna D20.
 **Decisione**: F2 gestione oraria → **F3 pausa birra** → F4 inserimento manuale dal portale → F5 outatime con QR →
-F6 lettura del QR → F7 consolidamento. I riferimenti alle fasi nei documenti (anche nelle voci precedenti di questo
+F6 lettura del QR → F8 consolidamento. I riferimenti alle fasi nei documenti (anche nelle voci precedenti di questo
 registro) sono stati rinumerati il 2026-10-03; le righe storiche di progress.md restano con i numeri di allora.
 **Motivo**: la pausa birra è piccola e indipendente da outatime; si fa subito dopo F2.
-**Conseguenze**: milestone M1 = F2–F3, M2 = F4–F6, M3 = F7.
+**Conseguenze**: milestone M1 = F2–F3, M2 = F4–F6, M3 = F8.
 
 ## D31 — La pausa caffè è solo un cronometro
 **Stato**: approvata il 2026-10-03 (indicazione dell'utente); sostituisce la parte di D29 sul permesso e la pausa
@@ -299,13 +298,11 @@ sigaretta della 1.5.0.
 **Decisione**: la pausa sigaretta o birra è la pausa che spetta ogni 2 ore di lavoro; parte manualmente con un
 pulsante e **serve solo a misurare il tempo** al caffè. Non registra timbrature, non crea permessi, non cambia ore,
 saldo o ora di levarsi. "Fine pausa" mostra solo la durata, senza lasciare traccia. krumiro2.0 non calcola quando la
-pausa spetta. Durate configurabili: sigaretta 11 min, birra 15 min. Le pause sigaretta salvate con la 1.5.0 **non
-incidono sugli orari di timbratura**: la migrazione v3 toglie l'uscita marcata sigaretta e il rientro che la chiude
-(anche all'import di un CSV della 1.5.0).
+pausa spetta. Durate configurabili: sigaretta 11 min, birra 15 min. La pausa **non incide sugli orari di timbratura**.
 **Motivo**: "Non diventa permesso, non fare assunzioni … serve solo come misuratore del tempo d'aria al caffè"
 (utente).
-**Conseguenze**: F3 toglie dal calcolo il permesso a blocchi della sigaretta (T3.05) e dai dati le vecchie pause,
-con lo schema v3 (T3.06).
+**Conseguenze**: F3 toglie dal calcolo il permesso a blocchi della sigaretta (T3.05) e il flag dai dati (T3.06),
+senza migrazioni (D33).
 
 ## D32 — Pausa pranzo massima con avviso
 **Stato**: approvata il 2026-10-03 (domanda a scelta multipla).
@@ -315,3 +312,20 @@ un massimo. Oltre il massimo la giornata mostra l'avviso "Pausa pranzo di …: o
 quello di outatime (D27), che non ha un massimo.
 **Motivo**: regola indicata dall'utente; solo avviso per non contraddire outatime.
 **Conseguenze**: T2.01, T2.02, T2.03, T2.07, T2.09, T2.12 e checklist R1 di F2.
+
+## D33 — Dati dell'utente: niente compatibilità con la 1.5.0, import dal portale
+**Stato**: approvata il 2026-10-03 (indicazione dell'utente).
+**Decisione**: i dati sono solo dell'utente e partono da zero sull'app di `gcampa`: nessuna compatibilità con i dati
+o i backup dell'app di ricky79 (1.5.0), nessuna migrazione per loro. Le timbrature arriveranno importando i **JSON
+scaricati dal portale** (formato da fissare nel P di F4 con un esempio anonimizzato, Q33).
+**Motivo**: "Non mi interessa la modalità di ricky79. I dati sono miei e basta, potrò importarli con i JSON che
+scaricherò dal portale" (utente).
+**Conseguenze**: F3 senza migrazioni per le vecchie pause sigaretta; F4 include l'import dei JSON del portale; la
+migrazione v1→v2 di F2 resta solo come meccanismo dello schema (nessun dato reale da convertire).
+
+## D34 — Dashboard di statistiche dopo l'import dei dati
+**Stato**: approvata il 2026-10-03 (indicazione dell'utente).
+**Decisione**: una fase **F7 "Dashboard statistiche"**, da pianificare solo dopo che i dati saranno stati importati
+(dopo F4–F6); il consolidamento diventa F8.
+**Motivo**: le statistiche hanno senso sui dati reali importati dal portale.
+**Conseguenze**: roadmap aggiornata; contenuti della dashboard da decidere nel P di F7.
