@@ -91,6 +91,9 @@ configurazioni** e la scelta della configurazione per giornata.
 - **Uscita prevista prima della pausa**: outatime non la calcola con meno di 3 timbrature; krumiro2.0 la stima
   aggiungendo la pausa minima.
 - **Giornate passate**: saldo, storico, CSV.
+- **Ore dovute per giorno della settimana**: impostazione già presente in krumiro2.0 1.5.0, non una regola di
+  outatime. I predefiniti sono 8:00 lun–ven (= `minimumWorkingHours` di outatime) e 0 sab–dom (giorni liberi).
+  Il piano non introduce giorni con ore diverse da 8:00.
 
 ## 5. Decisioni (2026-10-03)
 

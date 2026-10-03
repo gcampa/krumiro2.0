@@ -216,7 +216,9 @@ dedotti dalla plenaria per rendere eseguibili i task, l'utente può sostituirli 
 - FILM: vedi D28 (configurazione del profilo dell'utente). La regola intermedia "FILM salvato sul giorno" del
   2026-10-03 è ritirata dall'utente prima di essere implementata.
 - ~~Uscita minima solo nei giorni con le ore dovute predefinite~~ → sostituito il 2026-10-03: **uscita minima
-  sempre**, come outatime (D27), anche nei giorni con ore ridotte; non vale solo nei giorni liberi (0 ore dovute).
+  sempre**, come outatime (D27); non vale solo nei giorni liberi (0 ore dovute: sabato e domenica con le impostazioni
+  predefinite di krumiro2.0). outatime non ha giorni con ore diverse da 8:00: nessun caso o test del piano ne
+  inventa (correzione del 2026-10-03).
 - **Pausa prevista** separata dalla pausa minima *(plenaria)*: serve a non cambiare i risultati dei 92 test storici;
   i predefiniti coincidono con la pausa minima (60/30/30).
 - **Durante la pausa** l'ora di levarsi si stima simulando il rientro *(plenaria)*: tiene conto di FILM e uscita

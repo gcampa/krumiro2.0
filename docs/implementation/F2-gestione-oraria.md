@@ -236,8 +236,6 @@ Riferimenti: regole-outatime.md § 2; D23.
    - `describe('uscita minima')` con `impostazioniOutatime()` (Presenza): Entrata 08:00, pausa 13:30–13:40, adesso
      13:41 → 17:30 e `uscitaPrevistaMinima` false (17:30 è il risultato del calcolo); Smart working (`smart: true`):
      Entrata 08:25, pausa 13:00–14:00, adesso 14:01 → 17:30 e `uscitaPrevistaMinima` true.
-   - giorno con ore dovute 360 (venerdì 6h, `minutiDovuti.perGiorno[5] = 360`, data `2026-10-02`): Entrata 08:30,
-     pausa 12:30–13:30, adesso 13:31 → 17:30 e `uscitaPrevistaMinima` true (come outatime, D27).
    - giorno libero (`SABATO`, dovute 0): Entrata 09:00, adesso 10:00 → 09:00 e `uscitaPrevistaMinima` false
      (l'uscita minima non vale con 0 ore dovute).
    - durante la pausa, Presenza outatime: Entrata 08:30, Inizio pausa 13:00, adesso 13:20 → 17:30

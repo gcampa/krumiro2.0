@@ -57,6 +57,10 @@ precache 16 voci (98.96 KiB), Node 22.22.0. outatime @ `f655344`, versione 0.1, 
   la regola "FILM salvato sul giorno"; piano F2 (T2.01, T2.02, T2.09, T2.11, T2.14, T2.15, T2.17) e checklist R1
   aggiornati
   Applied lessons: none (rubadab non disponibile)
+- [x] Plenaria 2026-10-03 (8): tolto da T2.05 il caso "venerdì 6h", inventato dalla plenaria (outatime ha sempre
+  8:00); D23 e regole-outatime § 4 chiariscono che le ore dovute per giorno sono un'impostazione esistente di
+  krumiro2.0, non una regola di outatime
+  Applied lessons: none (rubadab non disponibile)
 - [ ] Merge di gcampa/outatime#3 (utente, "Create a merge commit") e pulizia dei rami (D22)
 - [ ] Decisioni proposte D7, D9, D14 approvate o sostituite in R-F0
 - [ ] Hook rubadab attivati in locale (D25)
