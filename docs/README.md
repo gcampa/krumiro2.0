@@ -5,6 +5,10 @@ Scopo: krumiro2.0 è una PWA che registra le timbrature e calcola l'uscita previ
 adotta le regole di calcolo di outatime, poi acquisisce le timbrature del portale (a mano, poi con un QR cifrato
 mostrato da outatime sul PC e letto dal telefono, senza servizi esterni).
 
+**Requisito dell'utente: krumiro2.0 con provider dati outatime.** outatime fornisce le timbrature (dal
+cartellino del portale) e la tabella oraria, che è la fonte di verità (D27, D28); krumiro2.0 non inventa regole che
+outatime non ha.
+
 Metodo: skill `metodo-fasi`, adattato in [implementation/gestione-fasi.md](implementation/gestione-fasi.md).
 Stato: **F0 completa, in attesa di R-F0** — domande di F2 chiuse (D21–D26), piano di F2 scritto.
 
